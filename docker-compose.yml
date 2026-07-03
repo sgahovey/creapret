@@ -36,12 +36,14 @@ services:
     restart: unless-stopped
 
   # ---------------------------------------------------------------------------
-  # nginx : serveur web — expose l'application sur http://localhost:8000
+  # nginx : serveur web — sert l'application HTTP.
+  # Port hôte : défaut 8000 (portable). Surcharge via NGINX_PORT dans .env.local
+  # (8001 sur cette machine, cohabitation avec la stack CreaSlot). Port conteneur : 80.
   # ---------------------------------------------------------------------------
   nginx:
     image: nginx:1.27-alpine
     ports:
-      - "8000:80"
+      - "${NGINX_PORT:-8000}:80"
     volumes:
       # Accès au répertoire public/ pour servir les assets statiques
       - .:/var/www/html:ro
@@ -60,12 +62,13 @@ services:
     restart: unless-stopped
 
   # ---------------------------------------------------------------------------
-  # phpmyadmin : interface web MySQL — http://localhost:8080 (dev uniquement)
+  # phpmyadmin : interface web MySQL (dev uniquement).
+  # Port hôte : défaut 8080 (portable). Surcharge via PMA_PORT dans .env.local (8081 sur cette machine).
   # ---------------------------------------------------------------------------
   phpmyadmin:
     image: phpmyadmin:5.2-apache
     ports:
-      - "8080:80"
+      - "${PMA_PORT:-8080}:80"
     environment:
       PMA_HOST: db
       PMA_USER: ${MYSQL_USER:-creapret}
