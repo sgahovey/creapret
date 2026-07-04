@@ -100,14 +100,18 @@ jobs:
         run: vendor/bin/phpstan analyse --no-progress
 
   # ---------------------------------------------------------------------------
-  # Tests — PHPUnit (périmètre US-0.3 : sans base ni couverture)
-  # DB (migrations + fixtures) et couverture/Sonar reviendront en itération 1.
+  # Tests — PHPUnit + couverture (pcov) puis analyse SonarCloud
+  # Génère coverage.xml (clover) consommé par Sonar (sonar.php.coverage.reportPaths).
+  # DB (migrations + fixtures) reviendra en itération 1.
   # ---------------------------------------------------------------------------
   phpunit:
-    name: Tests (PHPUnit)
+    name: Tests (PHPUnit + couverture)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Historique complet requis par SonarCloud pour le blame git (sinon « shallow clone »).
+          fetch-depth: 0
 
       - name: Configurer PHP 8.4
         uses: shivammathur/setup-php@v2
@@ -115,7 +119,7 @@ jobs:
           php-version: '8.4'
           extensions: pdo_mysql, intl, zip, ctype, iconv
           tools: composer:v2
-          coverage: none
+          coverage: pcov
 
       - name: Répertoire de cache Composer
         id: composer-cache
@@ -131,5 +135,12 @@ jobs:
       - name: Installer les dépendances
         run: composer install --no-scripts --no-interaction --prefer-dist --no-progress
 
-      - name: Lancer la suite de tests
-        run: php bin/phpunit
+      - name: Lancer la suite avec couverture
+        # PCOV actif via setup-php. Génère coverage.xml (clover) consommé par SonarCloud
+        # (sonar.php.coverage.reportPaths). failOnDeprecation/Notice/Warning reste actif.
+        run: php bin/phpunit --coverage-clover=coverage.xml
+
+      - name: Analyse SonarCloud
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
