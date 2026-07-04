@@ -106,11 +106,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface, 
         return $this->motDePasseHash;
     }
 
-    public function getMotDePasseHash(): string
-    {
-        return $this->motDePasseHash;
-    }
-
     public function setMotDePasseHash(string $motDePasseHash): static
     {
         $this->motDePasseHash = $motDePasseHash;
