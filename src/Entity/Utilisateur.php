@@ -57,6 +57,12 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface, 
     #[ORM\Column(name: 'date_creation', type: Types::DATETIME_IMMUTABLE)]
     private \DateTimeImmutable $dateCreation;
 
+    #[ORM\Column(name: 'date_consentement', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $dateConsentement = null;
+
+    #[ORM\Column(name: 'version_cgu', length: 10, nullable: true)]
+    private ?string $versionCgu = null;
+
     public function __construct()
     {
         $this->dateCreation = new \DateTimeImmutable();
@@ -181,6 +187,39 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface, 
     public function getDateCreation(): \DateTimeImmutable
     {
         return $this->dateCreation;
+    }
+
+    public function getDateConsentement(): ?\DateTimeImmutable
+    {
+        return $this->dateConsentement;
+    }
+
+    public function setDateConsentement(?\DateTimeImmutable $dateConsentement): static
+    {
+        $this->dateConsentement = $dateConsentement;
+
+        return $this;
+    }
+
+    public function getVersionCgu(): ?string
+    {
+        return $this->versionCgu;
+    }
+
+    public function setVersionCgu(?string $versionCgu): static
+    {
+        $this->versionCgu = $versionCgu;
+
+        return $this;
+    }
+
+    /** Enregistre le consentement RGPD a une version donnee des CGU (accountability art. 7.1). */
+    public function consentir(string $versionCgu): static
+    {
+        $this->dateConsentement = new \DateTimeImmutable();
+        $this->versionCgu = $versionCgu;
+
+        return $this;
     }
 
     public function eraseCredentials(): void
