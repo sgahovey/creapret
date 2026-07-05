@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+    <main class="container py-5" style="max-width: 32rem;">
+        <h1 class="mb-4">Creer un compte</h1>
+
+        {{ form_start(formulaire, {'attr': {'novalidate': 'novalidate'}}) }}
+            <div class="mb-3">
+                {{ form_label(formulaire.email, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(formulaire.email, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(formulaire.email) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(formulaire.prenom, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(formulaire.prenom, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(formulaire.prenom) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(formulaire.nom, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(formulaire.nom, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(formulaire.nom) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(formulaire.plainPassword, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(formulaire.plainPassword, {'attr': {'class': 'form-control'}}) }}
+                {% if formulaire.plainPassword.vars.help %}
+                    <div class="form-text">{{ formulaire.plainPassword.vars.help }}</div>
+                {% endif %}
+                {{ form_errors(formulaire.plainPassword) }}
+            </div>
+            <div class="mb-3 form-check">
+                {{ form_widget(formulaire.accepteCgu, {'attr': {'class': 'form-check-input'}}) }}
+                {{ form_label(formulaire.accepteCgu, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                {{ form_errors(formulaire.accepteCgu) }}
+            </div>
+            <button type="submit" class="btn btn-primary">Creer mon compte</button>
+        {{ form_end(formulaire) }}
+    </main>
+{% endblock %}
