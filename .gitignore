@@ -27,3 +27,7 @@
 ###> creapret — artefacts de tests/CI ###
 /coverage.xml
 ###< creapret ###
+
+###> creapret - config de reference generee ###
+/config/reference.php
+###< creapret ###
