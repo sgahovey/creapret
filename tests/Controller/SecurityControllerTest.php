@@ -119,4 +119,26 @@ final class SecurityControllerTest extends WebTestCase
 
         $this->purger($em, $email);
     }
+
+    public function test_un_utilisateur_deja_connecte_est_redirige_depuis_connexion(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        $em = $container->get(EntityManagerInterface::class);
+        $hasher = $container->get(UserPasswordHasherInterface::class);
+
+        $email = 'dejaco.' . uniqid() . '@cnam-reunion.fr';
+        $this->purger($em, $email);
+        $u = $this->creerUtilisateur($em, $hasher, $email, 'Motdepasse1!', true);
+
+        // Authentifie le client sans passer par le formulaire (API de test Symfony).
+        $client->loginUser($u);
+
+        $client->request('GET', '/connexion');
+
+        // Deja connecte : le controleur redirige vers app_home (branche login L19).
+        self::assertResponseRedirects();
+
+        $this->purger($em, $email);
+    }
 }

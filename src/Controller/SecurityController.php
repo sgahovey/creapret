@@ -25,6 +25,9 @@ final class SecurityController extends AbstractController
         ]);
     }
 
+    /**
+     * @codeCoverageIgnore Interceptee par le pare-feu (cle 'logout' de security.yaml) : jamais executee.
+     */
     #[Route('/deconnexion', name: 'app_logout', methods: ['GET'])]
     public function logout(): never
     {
