@@ -110,4 +110,22 @@ final class UtilisateurTest extends TestCase
 
         self::assertFalse($u->isEqualTo($autre), 'isEqualTo doit refuser un utilisateur d\'un autre type.');
     }
+
+    public function test_consentement_rgpd_par_defaut_absent(): void
+    {
+        $u = new Utilisateur();
+
+        self::assertNull($u->getDateConsentement());
+        self::assertNull($u->getVersionCgu());
+    }
+
+    public function test_consentir_enregistre_date_et_version(): void
+    {
+        $u = new Utilisateur();
+        $u->consentir('1.0');
+
+        self::assertSame('1.0', $u->getVersionCgu());
+        self::assertInstanceOf(\DateTimeImmutable::class, $u->getDateConsentement());
+        self::assertLessThanOrEqual(new \DateTimeImmutable(), $u->getDateConsentement());
+    }
 }

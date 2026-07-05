@@ -107,6 +107,25 @@ jobs:
   phpunit:
     name: Tests (PHPUnit + couverture)
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: creapret_test
+          MYSQL_USER: creapret
+          MYSQL_PASSWORD: creapret
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    env:
+      # Base logique 'creapret' : Doctrine ajoute le suffixe _test (config/packages/doctrine.yaml when@test)
+      # -> la base physique ciblee est creapret_test, creee par le service MySQL ci-dessus.
+      DATABASE_URL: "mysql://creapret:creapret@127.0.0.1:3306/creapret?serverVersion=8.0&charset=utf8mb4"
     steps:
       - uses: actions/checkout@v4
         with:
@@ -117,7 +136,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: pdo_mysql, intl, zip, ctype, iconv
+          extensions: pdo_mysql, intl, zip, ctype, iconv, sodium
           tools: composer:v2
           coverage: pcov
 
@@ -135,9 +154,23 @@ jobs:
       - name: Installer les dépendances
         run: composer install --no-scripts --no-interaction --prefer-dist --no-progress
 
+      - name: Preparer le schema de la base de test
+        env:
+          APP_ENV: test
+        run: |
+          php bin/console doctrine:database:create --if-not-exists --no-interaction
+          php bin/console doctrine:migrations:migrate --no-interaction
+
+      - name: Installer les assets de l'importmap (requis pour le rendu des WebTests)
+        env:
+          APP_ENV: test
+        run: php bin/console importmap:install
+
       - name: Lancer la suite avec couverture
         # PCOV actif via setup-php. Génère coverage.xml (clover) consommé par SonarCloud
         # (sonar.php.coverage.reportPaths). failOnDeprecation/Notice/Warning reste actif.
+        env:
+          APP_ENV: test
         run: php bin/phpunit --coverage-clover=coverage.xml
 
       - name: Analyse SonarCloud
