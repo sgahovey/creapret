@@ -1,0 +1,12 @@
+# Hachage allege en environnement de test : meme algorithme (argon2id, parite prod/dev),
+# mais cout plancher pour des tests rapides (on valide la logique, pas la resistance crypto).
+#
+# ATTENTION : time_cost minimum valide pour argon2id via Sodium = 3
+# (opsLimit < 3 leve « $opsLimit must be 3 or greater »). memory_cost min = 10.
+# Cf. CLAUDE.md §5/§10 (leçon CreaSlot : time_cost >= 3 « a appliquer d'entree »).
+security:
+    password_hashers:
+        App\Entity\Utilisateur:
+            algorithm: argon2id
+            memory_cost: 10
+            time_cost: 3
