@@ -20,7 +20,7 @@
             <div class="col-sm-6 col-lg-4">
                 <div class="card h-100">
                     <div class="card-body">
-                        <h2 class="h5 card-title">{{ ligne.materiel.nom }}</h2>
+                        <h2 class="h5 card-title"><a href="{{ path('app_catalogue_show', {id: ligne.materiel.id}) }}">{{ ligne.materiel.nom }}</a></h2>
                         <p class="card-subtitle text-muted mb-2">{{ ligne.materiel.categorie.nom }}</p>
                         {% if ligne.materiel.marque %}
                             <p class="card-text mb-2">{{ ligne.materiel.marque }}{% if ligne.materiel.modele %} - {{ ligne.materiel.modele }}{% endif %}</p>

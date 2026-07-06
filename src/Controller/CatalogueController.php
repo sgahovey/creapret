@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Materiel;
 use App\Repository\CategorieRepository;
+use App\Repository\ExemplaireRepository;
 use App\Repository\MaterielRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,6 +31,15 @@ final class CatalogueController extends AbstractController
             'catalogue'       => $materiels->catalogueAvecDisponibilite($categorieId),
             'categories'      => $categories->findBy([], ['nom' => 'ASC']),
             'categorieActive' => $categorieId,
+        ]);
+    }
+
+    #[Route('/{id}', name: 'app_catalogue_show', methods: ['GET'])]
+    public function show(Materiel $materiel, ExemplaireRepository $exemplaires): Response
+    {
+        return $this->render('catalogue/show.html.twig', [
+            'materiel'      => $materiel,
+            'nbDisponibles' => $exemplaires->compterDisponibles($materiel),
         ]);
     }
 }
