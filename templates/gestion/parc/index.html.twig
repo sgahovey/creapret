@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Etat du parc{% endblock %}
+
+{% block body %}
+    <main class="container py-5">
+        <h1 class="mb-4">Etat du parc</h1>
+        <p class="lead">Nombre d'exemplaires par etat, pour chaque materiel du catalogue.</p>
+
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Materiel</th>
+                    {% for etat in etats %}
+                        <th scope="col" class="text-center">{{ etat.libelle }}</th>
+                    {% endfor %}
+                    <th scope="col" class="text-center">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for ligne in parc %}
+                <tr>
+                    <td>{{ ligne.materiel.nom }}</td>
+                    {% for etat in etats %}
+                        <td class="text-center">
+                            {% set nb = ligne.etats[etat.value] %}
+                            {% if nb > 0 %}
+                                <span class="badge text-bg-{{ etat.couleurBadge }}">{{ nb }}</span>
+                            {% else %}
+                                <span class="text-muted">0</span>
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                    <td class="text-center fw-semibold">{{ ligne.total }}</td>
+                </tr>
+            {% else %}
+                <tr><td colspan="{{ etats|length + 2 }}">Aucun materiel pour le moment.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ path('app_gestion') }}">Retour a l'espace gestion</a>
+    </main>
+{% endblock %}
