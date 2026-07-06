@@ -10,6 +10,9 @@ use App\Entity\Pret;
 use App\Entity\Utilisateur;
 use App\Form\DemandePretType;
 use App\Repository\ExemplaireRepository;
+use App\Repository\PretRepository;
+use App\Security\Voter\PretVoter;
+use App\Service\PretService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -73,5 +76,35 @@ final class PretController extends AbstractController
         $this->addFlash('success', 'Votre demande de pret a ete enregistree.');
 
         return $this->redirectToRoute('app_catalogue_show', ['id' => $materiel->getId()]);
+    }
+
+    #[Route('/pret/mes-prets', name: 'app_pret_mes_prets', methods: ['GET'])]
+    public function mesPrets(PretRepository $prets): Response
+    {
+        $utilisateur = $this->getUser();
+        \assert($utilisateur instanceof Utilisateur);
+
+        return $this->render('pret/mes_prets.html.twig', [
+            'prets' => $prets->findByEmprunteur($utilisateur),
+        ]);
+    }
+
+    #[Route('/pret/mes-prets/{id}/annuler', name: 'app_pret_annuler', methods: ['POST'])]
+    #[IsGranted(PretVoter::ANNULER, subject: 'pret')]
+    public function annuler(Request $request, Pret $pret, PretService $service): Response
+    {
+        if (!$this->isCsrfTokenValid('annuler' . $pret->getId(), (string) $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Jeton de securite invalide.');
+
+            return $this->redirectToRoute('app_pret_mes_prets');
+        }
+
+        $utilisateur = $this->getUser();
+        \assert($utilisateur instanceof Utilisateur);
+
+        $service->annuler($pret, $utilisateur);
+        $this->addFlash('success', 'Demande annulee.');
+
+        return $this->redirectToRoute('app_pret_mes_prets');
     }
 }
