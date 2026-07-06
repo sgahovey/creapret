@@ -46,4 +46,19 @@ final class PretRepository extends ServiceEntityRepository
 
         return $n > 0;
     }
+
+    /**
+     * Les demandes en attente de traitement (statut DEMANDE), les plus anciennes d'abord.
+     *
+     * @return Pret[]
+     */
+    public function findDemandesEnAttente(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.statut = :demande')
+            ->setParameter('demande', StatutPret::DEMANDE->value)
+            ->orderBy('p.dateDemande', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
