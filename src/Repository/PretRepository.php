@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Exemplaire;
 use App\Entity\Pret;
+use App\Entity\Utilisateur;
 use App\Enum\StatutPret;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -74,6 +75,22 @@ final class PretRepository extends ServiceEntityRepository
             ->andWhere('p.statut = :valide')
             ->setParameter('valide', StatutPret::VALIDE->value)
             ->orderBy('p.dateDebut', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Tous les prets d'un emprunteur, les plus recents d'abord. Sert a l'ecran « Mes prets »
+     * (BF-5). Le filtre par emprunteur est la premiere garde : on ne requete que ses prets.
+     *
+     * @return Pret[]
+     */
+    public function findByEmprunteur(Utilisateur $emprunteur): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.emprunteur = :emprunteur')
+            ->setParameter('emprunteur', $emprunteur)
+            ->orderBy('p.dateDemande', 'DESC')
             ->getQuery()
             ->getResult();
     }

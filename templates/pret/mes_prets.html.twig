@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes prets{% endblock %}
+
+{% block body %}
+    <h1 class="h3 mb-4">Mes prets</h1>
+
+    {% if prets is empty %}
+        <p class="text-muted">Vous n'avez aucun pret pour le moment.</p>
+    {% else %}
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Materiel</th>
+                    <th scope="col">Exemplaire</th>
+                    <th scope="col">Periode</th>
+                    <th scope="col">Statut</th>
+                    <th scope="col">Demande le</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pret in prets %}
+                    <tr>
+                        <td>{{ pret.exemplaire.materiel.nom }}</td>
+                        <td>{{ pret.exemplaire.numeroInventaire }}</td>
+                        <td>{{ pret.dateDebut|date('d/m/Y') }} au {{ pret.dateFin|date('d/m/Y') }}</td>
+                        <td><span class="badge bg-{{ pret.statut.couleurBadge }}">{{ pret.statut.libelle }}</span></td>
+                        <td>{{ pret.dateDemande|date('d/m/Y H:i') }}</td>
+                        <td>
+                            {% if is_granted(constant('App\\Security\\Voter\\PretVoter::ANNULER'), pret) %}
+                                <form method="post" action="{{ path('app_pret_annuler', {id: pret.id}) }}"
+                                      onsubmit="return confirm('Annuler cette demande ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('annuler' ~ pret.id) }}">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">Annuler</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
