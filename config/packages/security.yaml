@@ -52,6 +52,8 @@ security:
         - { path: ^/gestion, roles: ROLE_GESTIONNAIRE }
         # Catalogue emprunteur : reserve a tout utilisateur connecte (lecture seule).
         - { path: ^/catalogue, roles: IS_AUTHENTICATED_FULLY }
+        # Demande de pret : tout utilisateur connecte (l'emprunteur = utilisateur courant).
+        - { path: ^/pret, roles: IS_AUTHENTICATED_FULLY }
 
 # Cout de hachage de test : voir config/packages/test/security.yaml (source unique,
 # argon2id time_cost 3 = plancher Sodium, cible App\Entity\Utilisateur).
