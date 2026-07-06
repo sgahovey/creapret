@@ -104,6 +104,8 @@ final class GestionControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertSelectorExists('a[href="/gestion/categorie"]');
         self::assertSelectorExists('a[href="/gestion/materiel"]');
+        self::assertSelectorExists('a[href="/gestion/exemplaire"]');
+        self::assertSelectorExists('a[href="/gestion/parc"]');
 
         $this->purger($em, $email);
     }

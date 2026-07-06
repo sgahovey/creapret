@@ -7,12 +7,14 @@ namespace App\Entity;
 use App\Enum\EtatExemplaire;
 use App\Repository\ExemplaireRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExemplaireRepository::class)]
 #[ORM\Table(name: 'exemplaire')]
 #[ORM\UniqueConstraint(name: 'uniq_exemplaire_numero', columns: ['numero_inventaire'])]
 #[ORM\Index(name: 'idx_exemplaire_materiel_etat', columns: ['id_materiel', 'etat'])]
+#[UniqueEntity(fields: ['numeroInventaire'], message: 'Ce numero d\'inventaire est deja utilise.')]
 class Exemplaire
 {
     #[ORM\Id]

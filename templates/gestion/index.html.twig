@@ -26,6 +26,24 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h2 class="h5 card-title">Exemplaires</h2>
+                        <p class="card-text">Gerer les exemplaires physiques et leur etat (disponible, maintenance, hors service...).</p>
+                        <a href="{{ path('app_exemplaire_index') }}" class="btn btn-primary">Gerer les exemplaires</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h2 class="h5 card-title">Etat du parc</h2>
+                        <p class="card-text">Consulter le nombre d'exemplaires par etat, pour chaque materiel.</p>
+                        <a href="{{ path('app_parc_index') }}" class="btn btn-primary">Voir l'etat du parc</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 {% endblock %}
