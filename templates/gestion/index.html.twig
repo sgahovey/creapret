@@ -6,6 +6,26 @@
     <main class="container py-5">
         <h1 class="mb-4">Espace gestion</h1>
         <p class="lead">Bienvenue dans l'espace de gestion du parc de materiel.</p>
-        <p>La gestion du catalogue (categories, materiels) et de l'inventaire sera accessible ici.</p>
+
+        <div class="row g-4 mt-2">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h2 class="h5 card-title">Categories</h2>
+                        <p class="card-text">Gerer les categories du catalogue (informatique, audiovisuel, mesure...).</p>
+                        <a href="{{ path('app_categorie_index') }}" class="btn btn-primary">Gerer les categories</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h2 class="h5 card-title">Materiels</h2>
+                        <p class="card-text">Gerer les materiels du catalogue et leur rattachement aux categories.</p>
+                        <a href="{{ path('app_materiel_index') }}" class="btn btn-primary">Gerer les materiels</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 {% endblock %}

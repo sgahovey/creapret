@@ -86,4 +86,25 @@ final class GestionControllerTest extends WebTestCase
 
         $this->purger($em, $email);
     }
+
+    public function test_le_tableau_de_bord_expose_les_liens_crud(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        $em = $container->get(EntityManagerInterface::class);
+        $hasher = $container->get(UserPasswordHasherInterface::class);
+
+        $email = 'gestion.liens.' . uniqid() . '@cnam-reunion.fr';
+        $this->purger($em, $email);
+        $u = $this->creerUtilisateur($em, $hasher, $email, Role::GESTIONNAIRE);
+
+        $client->loginUser($u);
+        $client->request('GET', '/gestion');
+
+        self::assertResponseIsSuccessful();
+        self::assertSelectorExists('a[href="/gestion/categorie"]');
+        self::assertSelectorExists('a[href="/gestion/materiel"]');
+
+        $this->purger($em, $email);
+    }
 }
