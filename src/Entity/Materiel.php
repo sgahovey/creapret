@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\MaterielRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -41,6 +43,15 @@ class Materiel
     #[ORM\ManyToOne(inversedBy: 'materiels')]
     #[ORM\JoinColumn(name: 'id_categorie', nullable: false, onDelete: 'RESTRICT')]
     private Categorie $categorie;
+
+    /** @var Collection<int, Exemplaire> */
+    #[ORM\OneToMany(mappedBy: 'materiel', targetEntity: Exemplaire::class)]
+    private Collection $exemplaires;
+
+    public function __construct()
+    {
+        $this->exemplaires = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -115,6 +126,30 @@ class Materiel
     public function setCategorie(Categorie $categorie): static
     {
         $this->categorie = $categorie;
+
+        return $this;
+    }
+
+    /** @return Collection<int, Exemplaire> */
+    public function getExemplaires(): Collection
+    {
+        return $this->exemplaires;
+    }
+
+    public function addExemplaire(Exemplaire $exemplaire): static
+    {
+        if (!$this->exemplaires->contains($exemplaire)) {
+            $this->exemplaires->add($exemplaire);
+            $exemplaire->setMateriel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExemplaire(Exemplaire $exemplaire): static
+    {
+        // Relation NOT NULL cote exemplaire : retrait de la collection en memoire only.
+        $this->exemplaires->removeElement($exemplaire);
 
         return $this;
     }
