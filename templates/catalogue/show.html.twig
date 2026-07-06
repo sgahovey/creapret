@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ materiel.nom }}{% endblock %}
+
+{% block body %}
+    <main class="container py-5" style="max-width: 48rem;">
+        <nav aria-label="fil d'ariane" class="mb-3">
+            <a href="{{ path('app_catalogue_index') }}">&larr; Retour au catalogue</a>
+        </nav>
+
+        <h1 class="mb-2">{{ materiel.nom }}</h1>
+        <p class="text-muted">{{ materiel.categorie.nom }}</p>
+
+        {% if nbDisponibles > 0 %}
+            <p><span class="badge text-bg-success">{{ nbDisponibles }} exemplaire{{ nbDisponibles > 1 ? 's' : '' }} disponible{{ nbDisponibles > 1 ? 's' : '' }} actuellement</span></p>
+        {% else %}
+            <p><span class="badge text-bg-secondary">Aucun exemplaire disponible actuellement</span></p>
+        {% endif %}
+
+        <dl class="row mt-4">
+            {% if materiel.description %}
+                <dt class="col-sm-3">Description</dt>
+                <dd class="col-sm-9">{{ materiel.description }}</dd>
+            {% endif %}
+            {% if materiel.marque %}
+                <dt class="col-sm-3">Marque</dt>
+                <dd class="col-sm-9">{{ materiel.marque }}</dd>
+            {% endif %}
+            {% if materiel.modele %}
+                <dt class="col-sm-3">Modele</dt>
+                <dd class="col-sm-9">{{ materiel.modele }}</dd>
+            {% endif %}
+            {% if materiel.reference %}
+                <dt class="col-sm-3">Reference</dt>
+                <dd class="col-sm-9">{{ materiel.reference }}</dd>
+            {% endif %}
+        </dl>
+
+        {# Iteration 3 (CU-04) : le bouton « Demander un pret » prendra place ici,
+           conditionne a la disponibilite sur la periode choisie (RG-4). #}
+    </main>
+{% endblock %}

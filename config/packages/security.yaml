@@ -50,6 +50,8 @@ security:
         # Zone de gestion cloisonnee : toute la branche /gestion (et /gestion/*)
         # exige ROLE_GESTIONNAIRE (donc aussi ROLE_SUPER_ADMIN par hierarchie).
         - { path: ^/gestion, roles: ROLE_GESTIONNAIRE }
+        # Catalogue emprunteur : reserve a tout utilisateur connecte (lecture seule).
+        - { path: ^/catalogue, roles: IS_AUTHENTICATED_FULLY }
 
 # Cout de hachage de test : voir config/packages/test/security.yaml (source unique,
 # argon2id time_cost 3 = plancher Sodium, cible App\Entity\Utilisateur).
