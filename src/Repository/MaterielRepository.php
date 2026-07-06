@@ -73,4 +73,40 @@ class MaterielRepository extends ServiceEntityRepository
 
         return array_values($parMateriel);
     }
+
+    /**
+     * Catalogue cote emprunteur : chaque materiel avec son nombre d'exemplaires DISPONIBLE.
+     *
+     * La condition etat=DISPONIBLE est placee dans le WITH du LEFT JOIN (clause ON), et NON
+     * dans le WHERE : ainsi un materiel sans aucun exemplaire disponible reste present avec un
+     * compte a 0 (un WHERE transformerait le LEFT JOIN en INNER JOIN et l'exclurait).
+     * getResult() est correct ici : GROUP BY m.id => une seule ligne par materiel, donc pas de
+     * deduplication de root entity (contrairement a etatDuParc qui avait plusieurs etats par
+     * materiel et imposait getScalarResult).
+     *
+     * @return list<array{materiel: Materiel, nbDisponibles: int}>
+     */
+    public function catalogueAvecDisponibilite(?int $categorieId = null): array
+    {
+        $qb = $this->createQueryBuilder('m')
+            ->select('m AS materiel', 'COUNT(e.id) AS nbDisponibles')
+            ->leftJoin('m.exemplaires', 'e', 'WITH', 'e.etat = :disponible')
+            ->setParameter('disponible', EtatExemplaire::DISPONIBLE->value)
+            ->groupBy('m.id')
+            ->orderBy('m.nom', 'ASC');
+
+        if (null !== $categorieId) {
+            $qb->andWhere('m.categorie = :cat')->setParameter('cat', $categorieId);
+        }
+
+        /** @var list<array{materiel: Materiel, nbDisponibles: int|string}> $lignes */
+        $lignes = $qb->getQuery()->getResult();
+
+        $catalogue = [];
+        foreach ($lignes as $ligne) {
+            $catalogue[] = ['materiel' => $ligne['materiel'], 'nbDisponibles' => (int) $ligne['nbDisponibles']];
+        }
+
+        return $catalogue;
+    }
 }

@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Catalogue{% endblock %}
+
+{% block body %}
+    <main class="container py-5">
+        <h1 class="mb-4">Catalogue du materiel</h1>
+
+        <nav class="mb-4" aria-label="Filtrer par categorie">
+            <a href="{{ path('app_catalogue_index') }}"
+               class="btn btn-sm {{ categorieActive is null ? 'btn-primary' : 'btn-outline-primary' }}">Toutes</a>
+            {% for categorie in categories %}
+                <a href="{{ path('app_catalogue_index', {categorie: categorie.id}) }}"
+                   class="btn btn-sm {{ categorieActive == categorie.id ? 'btn-primary' : 'btn-outline-primary' }}">{{ categorie.nom }}</a>
+            {% endfor %}
+        </nav>
+
+        <div class="row g-4">
+        {% for ligne in catalogue %}
+            <div class="col-sm-6 col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h2 class="h5 card-title">{{ ligne.materiel.nom }}</h2>
+                        <p class="card-subtitle text-muted mb-2">{{ ligne.materiel.categorie.nom }}</p>
+                        {% if ligne.materiel.marque %}
+                            <p class="card-text mb-2">{{ ligne.materiel.marque }}{% if ligne.materiel.modele %} - {{ ligne.materiel.modele }}{% endif %}</p>
+                        {% endif %}
+                        {% if ligne.nbDisponibles > 0 %}
+                            <span class="badge text-bg-success">{{ ligne.nbDisponibles }} disponible{{ ligne.nbDisponibles > 1 ? 's' : '' }}</span>
+                        {% else %}
+                            <span class="badge text-bg-secondary">Aucun disponible actuellement</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <p>Aucun materiel dans cette categorie pour le moment.</p>
+        {% endfor %}
+        </div>
+    </main>
+{% endblock %}
