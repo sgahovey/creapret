@@ -17,6 +17,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 #[ORM\Entity(repositoryClass: PretRepository::class)]
 #[ORM\Table(name: 'pret')]
+#[ORM\Index(name: 'idx_pret_dispo', columns: ['id_exemplaire', 'statut', 'date_debut', 'date_fin'])]
+#[ORM\Index(name: 'idx_pret_emprunteur', columns: ['id_emprunteur'])]
 class Pret
 {
     #[ORM\Id]
