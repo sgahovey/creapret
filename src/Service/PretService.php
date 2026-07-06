@@ -116,4 +116,20 @@ final class PretService
 
         $this->em->flush();
     }
+
+    /**
+     * Annulation d'une demande par l'emprunteur (BF-6). Garde metier (defense en profondeur,
+     * en complement du PretVoter cote HTTP) : on n'annule QUE si le pret appartient a
+     * l'utilisateur ET est au statut DEMANDE (l'annulation n'est possible que depuis DEMANDE,
+     * cycle de vie US-3.1). Sinon, aucune action.
+     */
+    public function annuler(Pret $pret, Utilisateur $utilisateur): void
+    {
+        if ($pret->getEmprunteur() !== $utilisateur || StatutPret::DEMANDE !== $pret->getStatut()) {
+            return;
+        }
+
+        $pret->setStatut(StatutPret::ANNULE);
+        $this->em->flush();
+    }
 }
