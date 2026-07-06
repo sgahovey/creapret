@@ -61,4 +61,20 @@ final class PretRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Les prets en cours (statut VALIDE), les plus anciens d'abord. Sert a la liste des retours
+     * a enregistrer cote gestionnaire.
+     *
+     * @return Pret[]
+     */
+    public function findPretsEnCours(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.statut = :valide')
+            ->setParameter('valide', StatutPret::VALIDE->value)
+            ->orderBy('p.dateDebut', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
