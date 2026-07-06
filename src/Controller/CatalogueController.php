@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Dto\DemandePret;
 use App\Entity\Materiel;
+use App\Form\DemandePretType;
 use App\Repository\CategorieRepository;
 use App\Repository\ExemplaireRepository;
 use App\Repository\MaterielRepository;
@@ -58,6 +60,20 @@ final class CatalogueController extends AbstractController
             }
         }
 
+        // Formulaire de demande : propose uniquement si une periode valide est saisie et
+        // qu'il reste au moins un exemplaire libre. Traite par PretController::demander.
+        $formDemande = null;
+        if (null !== $nbSurPeriode && $nbSurPeriode > 0) {
+            // A ce stade, debut/fin sont des DateTimeImmutable valides : nbSurPeriode n'est
+            // calcule que pour une periode syntaxiquement correcte (fin > debut).
+            $demande = new DemandePret();
+            $demande->debut = $debut;
+            $demande->fin = $fin;
+            $formDemande = $this->createForm(DemandePretType::class, $demande, [
+                'action' => $this->generateUrl('app_pret_demander', ['id' => $materiel->getId()]),
+            ])->createView();
+        }
+
         $response = $this->render('catalogue/show.html.twig', [
             'materiel'      => $materiel,
             'nbDisponibles' => $exemplaires->compterDisponibles($materiel),
@@ -65,6 +81,7 @@ final class CatalogueController extends AbstractController
             'fin'           => $fin instanceof \DateTimeImmutable ? $fin->format('Y-m-d') : $finSaisie,
             'nbSurPeriode'  => $nbSurPeriode,
             'erreurPeriode' => $erreurPeriode,
+            'formDemande'   => $formDemande,
         ]);
 
         // Donnee temps reel : jamais mise en cache (ni navigateur ni proxy).
