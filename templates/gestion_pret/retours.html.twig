@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Prets en cours - retours{% endblock %}
+
+{% block body %}
+    <h1 class="h3 mb-4">Prets en cours</h1>
+    <p><a href="{{ path('app_gestion_prets') }}">&larr; Demandes en attente</a></p>
+
+    {% if prets is empty %}
+        <p class="text-muted">Aucun pret en cours.</p>
+    {% else %}
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Emprunteur</th>
+                    <th scope="col">Materiel</th>
+                    <th scope="col">Exemplaire</th>
+                    <th scope="col">Periode</th>
+                    <th scope="col">Retour</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pret in prets %}
+                    <tr>
+                        <td>{{ pret.emprunteur.prenom }} {{ pret.emprunteur.nom }}</td>
+                        <td>{{ pret.exemplaire.materiel.nom }}</td>
+                        <td>{{ pret.exemplaire.numeroInventaire }}</td>
+                        <td>{{ pret.dateDebut|date('d/m/Y') }} au {{ pret.dateFin|date('d/m/Y') }}</td>
+                        <td>
+                            <form method="post" action="{{ path('app_gestion_pret_retour', {id: pret.id}) }}" class="d-flex align-items-center gap-2">
+                                <input type="hidden" name="_token" value="{{ csrf_token('retour' ~ pret.id) }}">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="dommage" value="1" id="dommage-{{ pret.id }}">
+                                    <label class="form-check-label" for="dommage-{{ pret.id }}">Materiel endommage</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-sm">Enregistrer le retour</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

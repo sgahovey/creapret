@@ -82,4 +82,30 @@ final class GestionPretController extends AbstractController
             'form' => $form,
         ]);
     }
+
+    #[Route('/retours', name: 'app_gestion_retours', methods: ['GET'])]
+    public function retours(PretRepository $prets): Response
+    {
+        return $this->render('gestion_pret/retours.html.twig', [
+            'prets' => $prets->findPretsEnCours(),
+        ]);
+    }
+
+    #[Route('/{id}/retour', name: 'app_gestion_pret_retour', methods: ['POST'])]
+    public function retour(Request $request, Pret $pret, PretService $service): Response
+    {
+        if (!$this->isCsrfTokenValid('retour' . $pret->getId(), (string) $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Jeton de securite invalide.');
+
+            return $this->redirectToRoute('app_gestion_retours');
+        }
+
+        $dommage = $request->request->getBoolean('dommage');
+        $service->enregistrerRetour($pret, $dommage);
+        $this->addFlash('success', $dommage
+            ? 'Retour enregistre : exemplaire mis en maintenance.'
+            : 'Retour enregistre : exemplaire disponible.');
+
+        return $this->redirectToRoute('app_gestion_retours');
+    }
 }

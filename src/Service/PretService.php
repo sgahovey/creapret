@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Entity\Pret;
 use App\Entity\Utilisateur;
+use App\Enum\EtatExemplaire;
 use App\Enum\ResultatValidation;
 use App\Enum\StatutPret;
 use App\Repository\PretRepository;
@@ -92,6 +93,27 @@ final class PretService
             ->setValidateur($validateur)
             ->setDateValidation(new \DateTimeImmutable())
             ->setMotifRefus($motif);
+        $this->em->flush();
+    }
+
+    /**
+     * Enregistre le retour d'un pret (RG-3). Le pret passe RETOURNE (horodate) et l'exemplaire
+     * repasse DISPONIBLE par defaut, ou EN_MAINTENANCE si un dommage est signale. On ne retourne
+     * qu'un pret VALIDE (idempotence : un pret deja retourne/refuse/annule est ignore). Pas de
+     * verrou : un retour ne cree aucun conflit de concurrence (contrairement a la validation).
+     */
+    public function enregistrerRetour(Pret $pret, bool $dommage): void
+    {
+        if (StatutPret::VALIDE !== $pret->getStatut()) {
+            return;
+        }
+
+        $pret->setStatut(StatutPret::RETOURNE)
+            ->setDateRetour(new \DateTimeImmutable());
+
+        $exemplaire = $pret->getExemplaire();
+        $exemplaire->setEtat($dommage ? EtatExemplaire::EN_MAINTENANCE : EtatExemplaire::DISPONIBLE);
+
         $this->em->flush();
     }
 }
