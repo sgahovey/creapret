@@ -72,4 +72,41 @@ class ExemplaireRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    /**
+     * Le premier exemplaire d'un materiel LIBRE sur la periode [debut, fin], ou null.
+     *
+     * Meme critere que compterLibresSurPeriode : DISPONIBLE et sans pret VALIDE chevauchant
+     * (NOT EXISTS, dateDebut < :fin AND dateFin > :debut, inegalites strictes). Retourne une
+     * entite (pas un compte) pour fixer l'exemplaire d'une demande (id_exemplaire NOT NULL).
+     * Ordre stable par numero_inventaire pour un choix deterministe.
+     */
+    public function trouverUnLibreSurPeriode(Materiel $materiel, \DateTimeImmutable $debut, \DateTimeImmutable $fin): ?Exemplaire
+    {
+        $sousRequete = $this->getEntityManager()->createQueryBuilder()
+            ->select('1')
+            ->from(Pret::class, 'p')
+            ->where('p.exemplaire = e')
+            ->andWhere('p.statut = :valide')
+            ->andWhere('p.dateDebut < :fin')
+            ->andWhere('p.dateFin > :debut')
+            ->getDQL();
+
+        $resultat = $this->createQueryBuilder('e')
+            ->andWhere('e.materiel = :materiel')
+            ->andWhere('e.etat = :disponible')
+            ->andWhere('NOT EXISTS (' . $sousRequete . ')')
+            ->setParameter('materiel', $materiel)
+            ->setParameter('disponible', EtatExemplaire::DISPONIBLE->value)
+            ->setParameter('valide', StatutPret::VALIDE->value)
+            ->setParameter('debut', $debut)
+            ->setParameter('fin', $fin)
+            ->orderBy('e.numeroInventaire', 'ASC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        // getOneOrNullResult() renvoie mixed : on garantit le type de retour de la methode.
+        return $resultat instanceof Exemplaire ? $resultat : null;
+    }
 }
