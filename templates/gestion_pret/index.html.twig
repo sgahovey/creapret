@@ -4,6 +4,7 @@
 
 {% block body %}
     <h1 class="h3 mb-4">Demandes de pret en attente</h1>
+    <p><a href="{{ path('app_gestion_retours') }}">Prets en cours (retours) &rarr;</a></p>
 
     {% if demandes is empty %}
         <p class="text-muted">Aucune demande en attente.</p>
