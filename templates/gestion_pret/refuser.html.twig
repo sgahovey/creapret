@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Refuser une demande de pret{% endblock %}
+
+{% block body %}
+    <h1 class="h3 mb-4">Refuser une demande de pret</h1>
+
+    <p>
+        Demande de <strong>{{ pret.emprunteur.prenom }} {{ pret.emprunteur.nom }}</strong>
+        pour <strong>{{ pret.exemplaire.materiel.nom }}</strong>
+        (exemplaire {{ pret.exemplaire.numeroInventaire }}),
+        du {{ pret.dateDebut|date('d/m/Y') }} au {{ pret.dateFin|date('d/m/Y') }}.
+    </p>
+
+    {{ form_start(form) }}
+        {{ form_row(form.motif) }}
+        <div class="d-flex gap-2 mt-3">
+            <button type="submit" class="btn btn-danger">Confirmer le refus</button>
+            <a href="{{ path('app_gestion_prets') }}" class="btn btn-outline-secondary">Annuler</a>
+        </div>
+    {{ form_end(form) }}
+{% endblock %}

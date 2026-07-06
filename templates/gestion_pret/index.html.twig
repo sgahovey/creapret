@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Demandes de pret en attente{% endblock %}
+
+{% block body %}
+    <h1 class="h3 mb-4">Demandes de pret en attente</h1>
+
+    {% if demandes is empty %}
+        <p class="text-muted">Aucune demande en attente.</p>
+    {% else %}
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Emprunteur</th>
+                    <th scope="col">Materiel</th>
+                    <th scope="col">Exemplaire</th>
+                    <th scope="col">Periode</th>
+                    <th scope="col">Demande le</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pret in demandes %}
+                    <tr>
+                        <td>{{ pret.emprunteur.prenom }} {{ pret.emprunteur.nom }}</td>
+                        <td>{{ pret.exemplaire.materiel.nom }}</td>
+                        <td>{{ pret.exemplaire.numeroInventaire }}</td>
+                        <td>{{ pret.dateDebut|date('d/m/Y') }} au {{ pret.dateFin|date('d/m/Y') }}</td>
+                        <td>{{ pret.dateDemande|date('d/m/Y H:i') }}</td>
+                        <td class="d-flex gap-2">
+                            <form method="post" action="{{ path('app_gestion_pret_valider', {id: pret.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('valider' ~ pret.id) }}">
+                                <button type="submit" class="btn btn-success btn-sm">Valider</button>
+                            </form>
+                            <a href="{{ path('app_gestion_pret_refuser', {id: pret.id}) }}" class="btn btn-outline-danger btn-sm">Refuser</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
