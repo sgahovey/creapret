@@ -172,4 +172,40 @@ final class CatalogueControllerTest extends WebTestCase
 
         self::assertResponseStatusCodeSame(404);
     }
+
+    public function test_disponibilite_sur_periode_et_entete_no_store(): void
+    {
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $hasher = static::getContainer()->get(UserPasswordHasherInterface::class);
+
+        // Materiel avec 2 exemplaires disponibles.
+        [, $mat] = $this->materielAvecExemplaires($em, 2);
+
+        $client->loginUser($this->emprunteur($em, $hasher));
+        $client->request('GET', '/catalogue/' . $mat->getId() . '?debut=2026-09-10&fin=2026-09-15');
+
+        self::assertResponseIsSuccessful();
+        // En-tete no-store : la disponibilite ne doit jamais etre mise en cache.
+        // Symfony normalise Cache-Control (ajoute private/must-revalidate/max-age=0) :
+        // on verifie la presence de la directive no-store, pas une egalite exacte.
+        self::assertStringContainsString('no-store', (string) $client->getResponse()->headers->get('Cache-Control'));
+        self::assertStringContainsString('2 exemplaire', $this->contenu($client));
+    }
+
+    public function test_periode_invalide_affiche_un_message(): void
+    {
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $hasher = static::getContainer()->get(UserPasswordHasherInterface::class);
+
+        [, $mat] = $this->materielAvecExemplaires($em, 1);
+
+        $client->loginUser($this->emprunteur($em, $hasher));
+        // fin <= debut : periode invalide.
+        $client->request('GET', '/catalogue/' . $mat->getId() . '?debut=2026-09-15&fin=2026-09-10');
+
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString('posterieure', $this->contenu($client));
+    }
 }

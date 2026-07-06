@@ -36,6 +36,35 @@
             {% endif %}
         </dl>
 
+        <section class="mt-4" aria-labelledby="titre-dispo">
+            <h2 id="titre-dispo" class="h5">Disponibilite sur une periode</h2>
+            <form method="get" action="{{ path('app_catalogue_show', {id: materiel.id}) }}" class="row g-2 align-items-end">
+                <div class="col-auto">
+                    <label for="debut" class="form-label">Du</label>
+                    <input type="date" id="debut" name="debut" value="{{ debut }}" class="form-control" required>
+                </div>
+                <div class="col-auto">
+                    <label for="fin" class="form-label">Au</label>
+                    <input type="date" id="fin" name="fin" value="{{ fin }}" class="form-control" required>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-outline-primary">Verifier la disponibilite</button>
+                </div>
+            </form>
+
+            {% if erreurPeriode %}
+                <div class="alert alert-warning mt-3" role="alert">{{ erreurPeriode }}</div>
+            {% elseif nbSurPeriode is not null %}
+                <p class="mt-3">
+                    {% if nbSurPeriode > 0 %}
+                        <span class="badge text-bg-success">{{ nbSurPeriode }} exemplaire{{ nbSurPeriode > 1 ? 's' : '' }} disponible{{ nbSurPeriode > 1 ? 's' : '' }} sur cette periode</span>
+                    {% else %}
+                        <span class="badge text-bg-secondary">Aucun exemplaire disponible sur cette periode</span>
+                    {% endif %}
+                </p>
+            {% endif %}
+        </section>
+
         {# Iteration 3 (CU-04) : le bouton « Demander un pret » prendra place ici,
            conditionne a la disponibilite sur la periode choisie (RG-4). #}
     </main>
