@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Exemplaires{% endblock %}
+
+{% block body %}
+    <main class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Exemplaires</h1>
+            <a href="{{ path('app_exemplaire_new') }}" class="btn btn-primary">Nouvel exemplaire</a>
+        </div>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endfor %}
+
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Numero d'inventaire</th>
+                    <th scope="col">Materiel</th>
+                    <th scope="col">Etat</th>
+                    <th scope="col"><span class="visually-hidden">Actions</span></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for exemplaire in exemplaires %}
+                <tr>
+                    <td>{{ exemplaire.numeroInventaire }}</td>
+                    <td>{{ exemplaire.materiel.nom }}</td>
+                    <td><span class="badge text-bg-{{ exemplaire.etat.couleurBadge }}">{{ exemplaire.etat.libelle }}</span></td>
+                    <td class="text-end">
+                        <a href="{{ path('app_exemplaire_edit', {id: exemplaire.id}) }}" class="btn btn-sm btn-outline-secondary">Modifier</a>
+                        <form method="post" action="{{ path('app_exemplaire_delete', {id: exemplaire.id}) }}" class="d-inline"
+                              onsubmit="return confirm('Supprimer cet exemplaire ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('supprimer_exemplaire_' ~ exemplaire.id) }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4">Aucun exemplaire pour le moment.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ path('app_gestion') }}">Retour a l'espace gestion</a>
+    </main>
+{% endblock %}

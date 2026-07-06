@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier l'exemplaire{% endblock %}
+
+{% block body %}
+    <main class="container py-5" style="max-width: 40rem;">
+        <h1 class="mb-4">Modifier l'exemplaire</h1>
+
+        {{ form_start(form) }}
+            {{ form_row(form.numeroInventaire, {attr: {class: 'form-control'}, label_attr: {class: 'form-label'}}) }}
+            {{ form_row(form.materiel, {attr: {class: 'form-select'}, label_attr: {class: 'form-label'}}) }}
+            {{ form_row(form.etat, {attr: {class: 'form-select'}, label_attr: {class: 'form-label'}}) }}
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+            <a href="{{ path('app_exemplaire_index') }}" class="btn btn-link">Annuler</a>
+        {{ form_end(form) }}
+    </main>
+{% endblock %}
