@@ -98,4 +98,39 @@ final class PretTest extends KernelTestCase
         self::assertStringStartsWith('pret.test.', $relu->getEmprunteur()->getEmail());
         self::assertNull($relu->getValidateur());
     }
+
+    public function test_les_transitions_du_cycle_de_vie(): void
+    {
+        // Transition VALIDATION : DEMANDE -> VALIDE, validateur + date_validation renseignes.
+        $valideur = (new Utilisateur())
+            ->setEmail('pret.test.valideur@cnam-reunion.fr')
+            ->setNom('Gest')->setPrenom('Valideur')
+            ->setRole(Role::GESTIONNAIRE)->setEstActif(true)
+            ->setMotDePasseHash('x');
+        $dateValidation = new \DateTimeImmutable('2026-09-01 09:00:00');
+
+        $pret = new Pret();
+        $pret->setStatut(StatutPret::VALIDE)
+            ->setValidateur($valideur)
+            ->setDateValidation($dateValidation);
+
+        self::assertSame(StatutPret::VALIDE, $pret->getStatut());
+        self::assertSame($valideur, $pret->getValidateur());
+        self::assertSame($dateValidation, $pret->getDateValidation());
+
+        // Transition REFUS : statut REFUSE + motif renseigne.
+        $refuse = (new Pret())
+            ->setStatut(StatutPret::REFUSE)
+            ->setMotifRefus('Exemplaire indisponible sur la periode');
+        self::assertSame(StatutPret::REFUSE, $refuse->getStatut());
+        self::assertSame('Exemplaire indisponible sur la periode', $refuse->getMotifRefus());
+
+        // Transition RETOUR : statut RETOURNE + date_retour renseignee.
+        $dateRetour = new \DateTimeImmutable('2026-09-06 10:00:00');
+        $retour = (new Pret())
+            ->setStatut(StatutPret::RETOURNE)
+            ->setDateRetour($dateRetour);
+        self::assertSame(StatutPret::RETOURNE, $retour->getStatut());
+        self::assertSame($dateRetour, $retour->getDateRetour());
+    }
 }
