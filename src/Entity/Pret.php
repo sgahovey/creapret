@@ -47,6 +47,14 @@ class Pret
     #[ORM\Column(name: 'date_retour', type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $dateRetour = null;
 
+    // Marqueurs d'idempotence des notifications planifiees (US-4.3) : horodates seulement si
+    // l'envoi reussit, pour ne jamais re-notifier (rappel la veille de dateFin ; alerte de retard).
+    #[ORM\Column(name: 'rappel_echeance_envoye_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $rappelEcheanceEnvoyeAt = null;
+
+    #[ORM\Column(name: 'retard_notifie_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $retardNotifieAt = null;
+
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'id_exemplaire', nullable: false, onDelete: 'RESTRICT')]
     private Exemplaire $exemplaire;
@@ -151,6 +159,30 @@ class Pret
     public function setDateRetour(?\DateTimeImmutable $dateRetour): static
     {
         $this->dateRetour = $dateRetour;
+
+        return $this;
+    }
+
+    public function getRappelEcheanceEnvoyeAt(): ?\DateTimeImmutable
+    {
+        return $this->rappelEcheanceEnvoyeAt;
+    }
+
+    public function setRappelEcheanceEnvoyeAt(?\DateTimeImmutable $date): static
+    {
+        $this->rappelEcheanceEnvoyeAt = $date;
+
+        return $this;
+    }
+
+    public function getRetardNotifieAt(): ?\DateTimeImmutable
+    {
+        return $this->retardNotifieAt;
+    }
+
+    public function setRetardNotifieAt(?\DateTimeImmutable $date): static
+    {
+        $this->retardNotifieAt = $date;
 
         return $this;
     }

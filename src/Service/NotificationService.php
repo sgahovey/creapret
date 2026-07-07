@@ -23,7 +23,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  *    utilisateurs hors production.
  *  - Journalisation RGPD : on ne loggue jamais l'adresse en clair, seulement un hash partiel.
  */
-final readonly class NotificationService
+readonly class NotificationService
 {
     public function __construct(
         private MailerInterface $mailer,
@@ -146,6 +146,45 @@ final readonly class NotificationService
             'Retour de pret enregistre',
             'emails/retour.html.twig',
             ['pret' => $pret],
+        );
+    }
+
+    /**
+     * Rappelle a l'emprunteur que son pret arrive a echeance le lendemain (US-4.3).
+     * Email de CONFORT : soumis a l'opt-out emailRappel de l'emprunteur (RGPD art. 6.1.b).
+     *
+     * @return bool true si l'email a ete mis en file, false s'il a ete supprime par la preference
+     */
+    public function notifierRappelEcheance(Pret $pret): bool
+    {
+        $emprunteur = $pret->getEmprunteur();
+        if (!$emprunteur->isEmailRappel()) {
+            // L'emprunteur a desactive les rappels de confort : on n'envoie pas.
+            return false;
+        }
+
+        $this->envoyer(
+            $emprunteur->getEmail(),
+            'Votre pret arrive a echeance demain',
+            'emails/rappel_echeance.html.twig',
+            ['pret' => $pret, 'lien' => $this->genererLienAbsolu('app_pret_mes_prets')],
+        );
+
+        return true;
+    }
+
+    /**
+     * Alerte l'emprunteur que son pret est en retard (US-4.3).
+     * Email NECESSAIRE au service (interet legitime RGPD art. 6.1.f, recuperer le materiel) :
+     * toujours envoye, independamment de la preference emailRappel.
+     */
+    public function notifierRetard(Pret $pret): void
+    {
+        $this->envoyer(
+            $pret->getEmprunteur()->getEmail(),
+            'Votre pret est en retard',
+            'emails/retard.html.twig',
+            ['pret' => $pret, 'lien' => $this->genererLienAbsolu('app_pret_mes_prets')],
         );
     }
 }
