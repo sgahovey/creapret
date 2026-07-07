@@ -154,6 +154,12 @@ jobs:
       - name: Installer les dépendances
         run: composer install --no-scripts --no-interaction --prefer-dist --no-progress
 
+      - name: Autoriser la creation de triggers (log_bin_trust_function_creators)
+        # Le service MySQL de GitHub Actions ne permet pas de passer --log-bin-trust-function-creators
+        # en command. On l'active donc au runtime en root (privilegie) AVANT les migrations : le trigger
+        # d'audit (Version20260707182041) peut alors etre cree par l'utilisateur applicatif (sinon 1419).
+        run: mysql -h127.0.0.1 -P3306 -uroot -proot -e "SET GLOBAL log_bin_trust_function_creators = 1"
+
       - name: Preparer le schema de la base de test
         env:
           APP_ENV: test
