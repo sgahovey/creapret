@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Pret;
+use App\Repository\UtilisateurRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -25,6 +27,7 @@ final readonly class NotificationService
 {
     public function __construct(
         private MailerInterface $mailer,
+        private UtilisateurRepository $utilisateurs,
         private UrlGeneratorInterface $urlGenerator,
         private LoggerInterface $logger,
         #[Autowire('%env(APP_NOTIFICATION_FROM)%')]
@@ -88,5 +91,61 @@ final readonly class NotificationService
     public function genererLienAbsolu(string $route, array $parametres = []): string
     {
         return $this->urlGenerator->generate($route, $parametres, UrlGeneratorInterface::ABSOLUTE_URL);
+    }
+
+    /**
+     * Notifie les gestionnaires qu'une nouvelle demande de pret attend leur validation (US-3.3).
+     * Email de service (toujours envoye). Un email par gestionnaire actif.
+     */
+    public function notifierDemandeCreee(Pret $pret): void
+    {
+        $lien = $this->genererLienAbsolu('app_gestion_prets');
+        foreach ($this->utilisateurs->findGestionnaires() as $gestionnaire) {
+            $this->envoyer(
+                $gestionnaire->getEmail(),
+                'Nouvelle demande de pret a traiter',
+                'emails/demande_creee.html.twig',
+                ['pret' => $pret, 'lien' => $lien],
+            );
+        }
+    }
+
+    /**
+     * Notifie l'emprunteur que son pret est valide (US-3.4). Email de service.
+     */
+    public function notifierValidation(Pret $pret): void
+    {
+        $this->envoyer(
+            $pret->getEmprunteur()->getEmail(),
+            'Votre demande de pret est validee',
+            'emails/validation.html.twig',
+            ['pret' => $pret, 'lien' => $this->genererLienAbsolu('app_pret_mes_prets')],
+        );
+    }
+
+    /**
+     * Notifie l'emprunteur que son pret est refuse, avec le motif (US-3.4). Email de service.
+     */
+    public function notifierRefus(Pret $pret): void
+    {
+        $this->envoyer(
+            $pret->getEmprunteur()->getEmail(),
+            'Votre demande de pret a ete refusee',
+            'emails/refus.html.twig',
+            ['pret' => $pret, 'lien' => $this->genererLienAbsolu('app_pret_mes_prets')],
+        );
+    }
+
+    /**
+     * Notifie l'emprunteur que le retour de son pret est enregistre (US-3.5). Email de service.
+     */
+    public function notifierRetour(Pret $pret): void
+    {
+        $this->envoyer(
+            $pret->getEmprunteur()->getEmail(),
+            'Retour de pret enregistre',
+            'emails/retour.html.twig',
+            ['pret' => $pret],
+        );
     }
 }

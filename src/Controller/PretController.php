@@ -12,6 +12,7 @@ use App\Form\DemandePretType;
 use App\Repository\ExemplaireRepository;
 use App\Repository\PretRepository;
 use App\Security\Voter\PretVoter;
+use App\Service\NotificationService;
 use App\Service\PretService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,7 +34,7 @@ final class PretController extends AbstractController
      */
     #[Route('/pret/demander/{id}', name: 'app_pret_demander', methods: ['POST'])]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
-    public function demander(Request $request, Materiel $materiel, ExemplaireRepository $exemplaires, EntityManagerInterface $em): Response
+    public function demander(Request $request, Materiel $materiel, ExemplaireRepository $exemplaires, EntityManagerInterface $em, NotificationService $notifications): Response
     {
         $demande = new DemandePret();
         $form = $this->createForm(DemandePretType::class, $demande, [
@@ -72,6 +73,9 @@ final class PretController extends AbstractController
 
         $em->persist($pret);
         $em->flush();
+
+        // Notifier les gestionnaires (apres persistance : on ne notifie qu'un fait acquis).
+        $notifications->notifierDemandeCreee($pret);
 
         $this->addFlash('success', 'Votre demande de pret a ete enregistree.');
 
