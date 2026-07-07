@@ -16,7 +16,11 @@
 
 ###> symfony/asset-mapper ###
 /public/assets/
-/assets/vendor/
+# Contenu de assets/vendor ignore (importmap le regenere via importmap:install),
+# MAIS on versionne les bundles vendorises a la main hors importmap (ex. FullCalendar,
+# bundle global §10 non regenerable). Motif avec /* pour autoriser les exceptions !.
+/assets/vendor/*
+!/assets/vendor/fullcalendar/
 ###< symfony/asset-mapper ###
 
 ###> friendsofphp/php-cs-fixer ###
