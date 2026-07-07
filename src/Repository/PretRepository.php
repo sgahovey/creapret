@@ -135,4 +135,28 @@ class PretRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Prets VALIDE dont la periode chevauche la fenetre [debut, fin] demandee par le calendrier.
+     * Chevauchement par inegalites strictes (RG-4) : le pret commence avant la fin de la fenetre
+     * ET se termine apres son debut. Jointures explicites pour eviter le N+1 a la serialisation.
+     *
+     * @return Pret[]
+     */
+    public function findPourCalendrier(\DateTimeImmutable $debut, \DateTimeImmutable $fin): array
+    {
+        return $this->createQueryBuilder('p')
+            ->addSelect('e', 'm')
+            ->join('p.exemplaire', 'e')
+            ->join('e.materiel', 'm')
+            ->andWhere('p.statut = :statut')
+            ->andWhere('p.dateDebut < :fin')
+            ->andWhere('p.dateFin > :debut')
+            ->setParameter('statut', StatutPret::VALIDE->value)
+            ->setParameter('debut', $debut)
+            ->setParameter('fin', $fin)
+            ->orderBy('p.dateDebut', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
