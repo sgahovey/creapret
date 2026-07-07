@@ -1,3 +1,13 @@
+/* Styles applicatifs CreaPret. Bootstrap fournit la base ; on surcharge ici avec parcimonie. */
+
+:root {
+    --creapret-primaire: #0f6e56;
+}
+
 body {
-    background-color: skyblue;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+main {
+    min-height: 70vh;
 }

@@ -1,0 +1,71 @@
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#0f6e56;">
+    <div class="container">
+        <a class="navbar-brand fw-semibold" href="{{ path('app_home') }}">
+            <i class="bi bi-box-seam me-1"></i>CreaPret
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarPrincipal" aria-controls="navbarPrincipal"
+                aria-expanded="false" aria-label="Ouvrir la navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarPrincipal">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                {% if is_granted('ROLE_GESTIONNAIRE') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_gestion_prets') }}">
+                            <i class="bi bi-inbox me-1"></i>Demandes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_gestion_retours') }}">
+                            <i class="bi bi-arrow-return-left me-1"></i>Retours
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_gestion_calendrier') }}">
+                            <i class="bi bi-calendar3 me-1"></i>Calendrier
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_catalogue_index') }}">
+                            <i class="bi bi-grid me-1"></i>Catalogue
+                        </a>
+                    </li>
+                {% elseif is_granted('ROLE_EMPRUNTEUR') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_catalogue_index') }}">
+                            <i class="bi bi-grid me-1"></i>Catalogue
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_pret_mes_prets') }}">
+                            <i class="bi bi-bag me-1"></i>Mes prets
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+
+            <ul class="navbar-nav">
+                {% if app.user %}
+                    <li class="nav-item d-flex align-items-center text-white-50 me-3">
+                        <span><i class="bi bi-person-circle me-1"></i>Bonjour {{ app.user.prenom }}</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_logout') }}">
+                            <i class="bi bi-box-arrow-right me-1"></i>Deconnexion
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_login') }}">Se connecter</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_inscription') }}">S'inscrire</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
