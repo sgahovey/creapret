@@ -109,4 +109,12 @@ class ExemplaireRepository extends ServiceEntityRepository
         // getOneOrNullResult() renvoie mixed : on garantit le type de retour de la methode.
         return $resultat instanceof Exemplaire ? $resultat : null;
     }
+
+    /** Nombre total d'exemplaires du parc. */
+    public function countTotal(): int
+    {
+        return (int) $this->createQueryBuilder('e')
+            ->select('COUNT(e.id)')
+            ->getQuery()->getSingleScalarResult();
+    }
 }

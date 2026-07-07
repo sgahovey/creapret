@@ -97,7 +97,7 @@ final class GestionPretControllerTest extends WebTestCase
         $client->loginUser($this->utilisateur($em, $hasher, Role::GESTIONNAIRE, 'gest'));
         $client->request('GET', '/gestion/prets');
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Demandes de pret en attente');
+        self::assertSelectorTextContains('h1', 'Demandes de prêt en attente');
     }
 
     public function test_valider_une_demande_la_passe_en_valide(): void

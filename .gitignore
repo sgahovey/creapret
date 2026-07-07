@@ -23,6 +23,7 @@
 # Manifeste AssetMapper edite a la main (bundles vendorises hors reseau) : doit etre versionne.
 !/assets/vendor/installed.php
 !/assets/vendor/fullcalendar/
+!/assets/vendor/chartjs/
 !/assets/vendor/bootstrap/
 /assets/vendor/bootstrap/*
 !/assets/vendor/bootstrap/bootstrap.min.css
