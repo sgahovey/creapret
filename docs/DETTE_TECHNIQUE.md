@@ -45,3 +45,19 @@ les laisser implicites).
   via le manifeste. `public/assets/` est git-ignoré, donc aucun impact sur le dépôt.
 - **Résolution** : purge avant compilation (`rm -rf public/assets && bin/console asset-map:compile`),
   à intégrer au processus de build de déploiement (US-6.2).
+
+## DT-4 — Activation du prerequis trigger au runtime en CI
+
+- **Statut** : Ouverte (contournement assume).
+- **Constat** : le service MySQL de GitHub Actions (`services: mysql`) n'accepte pas de champ
+  `command:`, contrairement au `docker-compose.yml` de developpement. Impossible d'y passer
+  `--log-bin-trust-function-creators=1` au demarrage. La migration du trigger echouait donc en CI
+  (erreur 1419).
+- **Impact** : sans correctif, tout le pipeline echoue des qu'une migration cree un trigger ou une
+  procedure.
+- **Resolution appliquee** : une etape du job `phpunit` execute `SET GLOBAL
+  log_bin_trust_function_creators = 1` (en root) juste avant les migrations. Les migrations et les
+  tests restent joues sous l'utilisateur applicatif de moindre privilege (fidele production), le
+  privilege n'etant eleve que pour l'activation de la variable globale.
+- **Amelioration possible** : si une image MySQL personnalisee ou un service configurable est adopte
+  en CI, integrer le flag au demarrage plutot qu'au runtime.
