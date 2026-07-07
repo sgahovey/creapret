@@ -94,4 +94,45 @@ final class PretRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Prets VALIDE non retournes dont la date de fin tombe dans la plage donnee (la veille, calculee
+     * par l'appelant) et pour lesquels le rappel d'echeance n'a pas encore ete envoye (idempotence).
+     *
+     * @return Pret[]
+     */
+    public function findPourRappelEcheance(\DateTimeImmutable $debut, \DateTimeImmutable $fin): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.statut = :statut')
+            ->andWhere('p.dateRetour IS NULL')
+            ->andWhere('p.dateFin BETWEEN :debut AND :fin')
+            ->andWhere('p.rappelEcheanceEnvoyeAt IS NULL')
+            ->setParameter('statut', StatutPret::VALIDE->value)
+            ->setParameter('debut', $debut)
+            ->setParameter('fin', $fin)
+            ->orderBy('p.dateFin', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Prets VALIDE non retournes dont la date de fin est deja depassee et pour lesquels l'alerte de
+     * retard n'a pas encore ete envoyee (idempotence).
+     *
+     * @return Pret[]
+     */
+    public function findEnRetard(\DateTimeImmutable $maintenant): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.statut = :statut')
+            ->andWhere('p.dateRetour IS NULL')
+            ->andWhere('p.dateFin < :maintenant')
+            ->andWhere('p.retardNotifieAt IS NULL')
+            ->setParameter('statut', StatutPret::VALIDE->value)
+            ->setParameter('maintenant', $maintenant)
+            ->orderBy('p.dateFin', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
