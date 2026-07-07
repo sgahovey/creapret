@@ -21,6 +21,11 @@
 # bundle global §10 non regenerable). Motif avec /* pour autoriser les exceptions !.
 /assets/vendor/*
 !/assets/vendor/fullcalendar/
+!/assets/vendor/bootstrap/
+/assets/vendor/bootstrap/*
+!/assets/vendor/bootstrap/bootstrap.min.css
+!/assets/vendor/bootstrap-icons/
+!/assets/vendor/inter/
 ###< symfony/asset-mapper ###
 
 ###> friendsofphp/php-cs-fixer ###
