@@ -146,4 +146,34 @@ final class EnvoiRappelsCommandTest extends TestCase
         $this->tester->assertCommandIsSuccessful();
         self::assertStringContainsString('0 rappel(s) envoye(s)', $this->sortieNormalisee());
     }
+
+    public function test_resilience_un_echec_de_rappel_est_compte_sans_bloquer(): void
+    {
+        $ok = $this->pretMock(1);
+        $ko = $this->pretMock(2);
+        $this->prets->expects(self::once())->method('findPourRappelEcheance')->willReturn([$ok, $ko]);
+        $this->prets->expects(self::once())->method('findEnRetard')->willReturn([]);
+
+        // Le 2e rappel leve une exception ; le 1er passe (preference active).
+        $this->notifications->expects(self::exactly(2))->method('notifierRappelEcheance')->willReturnCallback(
+            function (Pret $pret): bool {
+                if (2 === $pret->getId()) {
+                    throw new \RuntimeException('SMTP indisponible');
+                }
+
+                return true;
+            },
+        );
+        $this->notifications->expects(self::never())->method('notifierRetard');
+        $ok->expects(self::once())->method('setRappelEcheanceEnvoyeAt');
+        $ko->expects(self::never())->method('setRappelEcheanceEnvoyeAt');
+        $this->logger->expects(self::once())->method('error');
+        $this->em->expects(self::once())->method('flush');
+
+        $this->tester->execute([]);
+        $this->tester->assertCommandIsSuccessful();
+        $sortie = $this->sortieNormalisee();
+        self::assertStringContainsString('1 rappel(s) envoye(s)', $sortie);
+        self::assertStringContainsString('1 erreur(s)', $sortie);
+    }
 }
