@@ -159,4 +159,73 @@ class PretRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /** Nombre de prets actuellement en cours (VALIDE, non retournes). */
+    public function countPretsEnCours(): int
+    {
+        return (int) $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->andWhere('p.statut = :statut')
+            ->andWhere('p.dateRetour IS NULL')
+            ->setParameter('statut', StatutPret::VALIDE->value)
+            ->getQuery()->getSingleScalarResult();
+    }
+
+    /** Nombre de demandes en attente de traitement (DEMANDE). */
+    public function countDemandesEnAttente(): int
+    {
+        return (int) $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->andWhere('p.statut = :statut')
+            ->setParameter('statut', StatutPret::DEMANDE->value)
+            ->getQuery()->getSingleScalarResult();
+    }
+
+    /** Nombre de prets en retard (VALIDE non retournes dont la date de fin est depassee). */
+    public function countPretsEnRetard(\DateTimeImmutable $maintenant): int
+    {
+        return (int) $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->andWhere('p.statut = :statut')
+            ->andWhere('p.dateRetour IS NULL')
+            ->andWhere('p.dateFin < :maintenant')
+            ->setParameter('statut', StatutPret::VALIDE->value)
+            ->setParameter('maintenant', $maintenant)
+            ->getQuery()->getSingleScalarResult();
+    }
+
+    /** Nombre d'exemplaires distincts actuellement engages par un pret VALIDE actif. */
+    public function countExemplairesEngages(): int
+    {
+        return (int) $this->createQueryBuilder('p')
+            ->select('COUNT(DISTINCT p.exemplaire)')
+            ->andWhere('p.statut = :statut')
+            ->andWhere('p.dateRetour IS NULL')
+            ->setParameter('statut', StatutPret::VALIDE->value)
+            ->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Top des materiels les plus empruntes (tous statuts confondus hors annules/refuses).
+     *
+     * @return list<array{materiel: string, total: int}>
+     */
+    public function topMaterielsEmpruntes(int $limite = 5): array
+    {
+        $resultats = $this->createQueryBuilder('p')
+            ->select('m.nom AS materiel', 'COUNT(p.id) AS total')
+            ->join('p.exemplaire', 'e')
+            ->join('e.materiel', 'm')
+            ->andWhere('p.statut NOT IN (:exclus)')
+            ->setParameter('exclus', [StatutPret::ANNULE->value, StatutPret::REFUSE->value])
+            ->groupBy('m.id')
+            ->orderBy('total', 'DESC')
+            ->setMaxResults($limite)
+            ->getQuery()->getResult();
+
+        return array_map(
+            static fn (array $r): array => ['materiel' => (string) $r['materiel'], 'total' => (int) $r['total']],
+            $resultats,
+        );
+    }
 }
