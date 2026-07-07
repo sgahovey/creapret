@@ -7,3 +7,6 @@ import './stimulus_bootstrap.js';
  */
 
 console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
+
+// Bootstrap JS self-hoste via importmap : active le data-api (collapse navbar, dropdowns).
+import 'bootstrap';
