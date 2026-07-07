@@ -118,4 +118,10 @@ final class GestionPretController extends AbstractController
 
         return $this->redirectToRoute('app_gestion_retours');
     }
+
+    #[Route('/calendrier', name: 'app_gestion_calendrier', methods: ['GET'])]
+    public function calendrier(): Response
+    {
+        return $this->render('gestion_pret/calendrier.html.twig');
+    }
 }
