@@ -1,5 +1,0 @@
-framework:
-    messenger:
-        transports:
-            # En test, les emails partent de maniere synchrone (captures par MailerAssertionsTrait).
-            async: 'sync://'

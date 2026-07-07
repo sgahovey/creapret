@@ -11,6 +11,7 @@ use App\Enum\ResultatValidation;
 use App\Enum\StatutPret;
 use App\Form\RefusPretType;
 use App\Repository\PretRepository;
+use App\Service\NotificationService;
 use App\Service\PretService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +32,7 @@ final class GestionPretController extends AbstractController
     }
 
     #[Route('/{id}/valider', name: 'app_gestion_pret_valider', methods: ['POST'])]
-    public function valider(Request $request, Pret $pret, PretService $service): Response
+    public function valider(Request $request, Pret $pret, PretService $service, NotificationService $notifications): Response
     {
         if (!$this->isCsrfTokenValid('valider' . $pret->getId(), (string) $request->request->get('_token'))) {
             $this->addFlash('danger', 'Jeton de securite invalide.');
@@ -49,11 +50,18 @@ final class GestionPretController extends AbstractController
             ResultatValidation::DEJA_TRAITE => $this->addFlash('info', 'Cette demande a deja ete traitee.'),
         };
 
+        // Notifier apres commit du service (fait persiste). CONFLIT => le pret est REFUSE (motif pose).
+        if (ResultatValidation::VALIDE === $resultat) {
+            $notifications->notifierValidation($pret);
+        } elseif (ResultatValidation::CONFLIT === $resultat) {
+            $notifications->notifierRefus($pret);
+        }
+
         return $this->redirectToRoute('app_gestion_prets');
     }
 
     #[Route('/{id}/refuser', name: 'app_gestion_pret_refuser', methods: ['GET', 'POST'])]
-    public function refuser(Request $request, Pret $pret, PretService $service): Response
+    public function refuser(Request $request, Pret $pret, PretService $service, NotificationService $notifications): Response
     {
         // On ne refuse qu'une demande encore en attente.
         if (StatutPret::DEMANDE !== $pret->getStatut()) {
@@ -72,6 +80,7 @@ final class GestionPretController extends AbstractController
             \assert(null !== $refus->motif);
 
             $service->refuser($pret, $validateur, $refus->motif);
+            $notifications->notifierRefus($pret);
             $this->addFlash('success', 'Demande refusee.');
 
             return $this->redirectToRoute('app_gestion_prets');
@@ -92,7 +101,7 @@ final class GestionPretController extends AbstractController
     }
 
     #[Route('/{id}/retour', name: 'app_gestion_pret_retour', methods: ['POST'])]
-    public function retour(Request $request, Pret $pret, PretService $service): Response
+    public function retour(Request $request, Pret $pret, PretService $service, NotificationService $notifications): Response
     {
         if (!$this->isCsrfTokenValid('retour' . $pret->getId(), (string) $request->request->get('_token'))) {
             $this->addFlash('danger', 'Jeton de securite invalide.');
@@ -102,6 +111,7 @@ final class GestionPretController extends AbstractController
 
         $dommage = $request->request->getBoolean('dommage');
         $service->enregistrerRetour($pret, $dommage);
+        $notifications->notifierRetour($pret);
         $this->addFlash('success', $dommage
             ? 'Retour enregistre : exemplaire mis en maintenance.'
             : 'Retour enregistre : exemplaire disponible.');

@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Tests\Service;
 
+use App\Entity\Utilisateur;
+use App\Repository\UtilisateurRepository;
 use App\Service\NotificationService;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Test\MailerAssertionsTrait;
@@ -25,8 +28,12 @@ final class NotificationServiceTest extends KernelTestCase
     {
         $c = static::getContainer();
 
+        /** @var UtilisateurRepository $utilisateurs */
+        $utilisateurs = $c->get(EntityManagerInterface::class)->getRepository(Utilisateur::class);
+
         return new NotificationService(
             $c->get(MailerInterface::class),
+            $utilisateurs,
             $c->get(UrlGeneratorInterface::class),
             $c->get(LoggerInterface::class),
             'noreply@creapret.local',
@@ -43,7 +50,7 @@ final class NotificationServiceTest extends KernelTestCase
             'contenu' => 'Ceci est un message de test.',
         ]);
 
-        self::assertEmailCount(1);
+        self::assertQueuedEmailCount(1);
         $email = self::getMailerMessage(0);
         self::assertInstanceOf(Email::class, $email);
         self::assertSame('Bienvenue', $email->getSubject());
