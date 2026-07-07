@@ -23,7 +23,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  *    utilisateurs hors production.
  *  - Journalisation RGPD : on ne loggue jamais l'adresse en clair, seulement un hash partiel.
  */
-final readonly class NotificationService
+readonly class NotificationService
 {
     public function __construct(
         private MailerInterface $mailer,
