@@ -47,6 +47,11 @@ security:
     access_control:
         - { path: ^/connexion, roles: PUBLIC_ACCESS }
         - { path: ^/inscription, roles: PUBLIC_ACCESS }
+        # Pages legales publiques (US-5.4) : accessibles sans authentification. Placees ici
+        # pour l'intention explicite et la defense en profondeur (aucun attrape-tout ^/ global).
+        - { path: ^/mentions-legales, roles: PUBLIC_ACCESS }
+        - { path: ^/confidentialite, roles: PUBLIC_ACCESS }
+        - { path: ^/accessibilite, roles: PUBLIC_ACCESS }
         # Zone de gestion cloisonnee : toute la branche /gestion (et /gestion/*)
         # exige ROLE_GESTIONNAIRE (donc aussi ROLE_SUPER_ADMIN par hierarchie).
         - { path: ^/admin, roles: ROLE_SUPER_ADMIN }
