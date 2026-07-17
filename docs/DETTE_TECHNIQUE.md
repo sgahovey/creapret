@@ -61,3 +61,16 @@ les laisser implicites).
   privilege n'etant eleve que pour l'activation de la variable globale.
 - **Amelioration possible** : si une image MySQL personnalisee ou un service configurable est adopte
   en CI, integrer le flag au demarrage plutot qu'au runtime.
+
+## DT-5 — make:migration menace les tables non mappees en entite
+
+- **Statut** : Resolue (schema_filter configure).
+- **Constat** : les tables alimentees hors ORM (historique_utilisateur, creee par la migration trigger
+  US-5.2, et messenger_messages du transport Doctrine) ne sont pas mappees en entite. `make:migration`
+  les voit comme orphelines et genere un DROP TABLE, ce qui detruirait la table d'audit et son trigger.
+- **Impact** : toute generation de migration apres l'ajout d'une nouvelle entite proposait de
+  supprimer historique_utilisateur (constate lors d'US-5.3).
+- **Resolution** : ajout d'un schema_filter dans doctrine.yaml
+  ('~^(?!historique_utilisateur|messenger_messages)~') pour que l'outil de diff ignore ces tables.
+  Toute nouvelle table non-ORM devra etre ajoutee a ce filtre. A reevaluer si l'audit est un jour
+  mappe en entite en lecture seule (cf. DT-2).
