@@ -1,5 +1,8 @@
 doctrine:
     dbal:
+        # Ignore les tables non mappees en entite (trigger d'audit US-5.2, transport Messenger)
+        # pour que make:migration ne propose pas de les supprimer.
+        schema_filter: '~^(?!historique_utilisateur|messenger_messages)~'
         url: '%env(resolve:DATABASE_URL)%'
 
         # IMPORTANT: You MUST configure your server version,

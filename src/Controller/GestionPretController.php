@@ -9,10 +9,13 @@ use App\Entity\Pret;
 use App\Entity\Utilisateur;
 use App\Enum\ResultatValidation;
 use App\Enum\StatutPret;
+use App\Enum\TypeActionJournal;
 use App\Form\RefusPretType;
 use App\Repository\PretRepository;
+use App\Service\JournalAdminService;
 use App\Service\NotificationService;
 use App\Service\PretService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +35,7 @@ final class GestionPretController extends AbstractController
     }
 
     #[Route('/{id}/valider', name: 'app_gestion_pret_valider', methods: ['POST'])]
-    public function valider(Request $request, Pret $pret, PretService $service, NotificationService $notifications): Response
+    public function valider(Request $request, Pret $pret, PretService $service, NotificationService $notifications, JournalAdminService $journal, EntityManagerInterface $em): Response
     {
         if (!$this->isCsrfTokenValid('valider' . $pret->getId(), (string) $request->request->get('_token'))) {
             $this->addFlash('danger', 'Jeton de securite invalide.');
@@ -53,6 +56,9 @@ final class GestionPretController extends AbstractController
         // Notifier apres commit du service (fait persiste). CONFLIT => le pret est REFUSE (motif pose).
         if (ResultatValidation::VALIDE === $resultat) {
             $notifications->notifierValidation($pret);
+            // Journalisation de la decision (le CONFLIT est un refus systeme, non attribue au gestionnaire).
+            $journal->enregistrer(TypeActionJournal::PRET_VALIDATION, $validateur, $pret->getEmprunteur());
+            $em->flush();
         } elseif (ResultatValidation::CONFLIT === $resultat) {
             $notifications->notifierRefus($pret);
         }
@@ -61,7 +67,7 @@ final class GestionPretController extends AbstractController
     }
 
     #[Route('/{id}/refuser', name: 'app_gestion_pret_refuser', methods: ['GET', 'POST'])]
-    public function refuser(Request $request, Pret $pret, PretService $service, NotificationService $notifications): Response
+    public function refuser(Request $request, Pret $pret, PretService $service, NotificationService $notifications, JournalAdminService $journal, EntityManagerInterface $em): Response
     {
         // On ne refuse qu'une demande encore en attente.
         if (StatutPret::DEMANDE !== $pret->getStatut()) {
@@ -81,6 +87,8 @@ final class GestionPretController extends AbstractController
 
             $service->refuser($pret, $validateur, $refus->motif);
             $notifications->notifierRefus($pret);
+            $journal->enregistrer(TypeActionJournal::PRET_REFUS, $validateur, $pret->getEmprunteur(), $refus->motif);
+            $em->flush();
             $this->addFlash('success', 'Demande refusee.');
 
             return $this->redirectToRoute('app_gestion_prets');
@@ -101,7 +109,7 @@ final class GestionPretController extends AbstractController
     }
 
     #[Route('/{id}/retour', name: 'app_gestion_pret_retour', methods: ['POST'])]
-    public function retour(Request $request, Pret $pret, PretService $service, NotificationService $notifications): Response
+    public function retour(Request $request, Pret $pret, PretService $service, NotificationService $notifications, JournalAdminService $journal, EntityManagerInterface $em): Response
     {
         if (!$this->isCsrfTokenValid('retour' . $pret->getId(), (string) $request->request->get('_token'))) {
             $this->addFlash('danger', 'Jeton de securite invalide.');
@@ -109,9 +117,14 @@ final class GestionPretController extends AbstractController
             return $this->redirectToRoute('app_gestion_retours');
         }
 
+        $gestionnaire = $this->getUser();
+        \assert($gestionnaire instanceof Utilisateur);
+
         $dommage = $request->request->getBoolean('dommage');
         $service->enregistrerRetour($pret, $dommage);
         $notifications->notifierRetour($pret);
+        $journal->enregistrer(TypeActionJournal::PRET_RETOUR, $gestionnaire, $pret->getEmprunteur(), $dommage ? 'Retour avec dommage' : null);
+        $em->flush();
         $this->addFlash('success', $dommage
             ? 'Retour enregistre : exemplaire mis en maintenance.'
             : 'Retour enregistre : exemplaire disponible.');
