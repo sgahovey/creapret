@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accessibilité{% endblock %}
+
+{% block body %}
+<div class="container py-4" style="max-width: 820px;">
+
+    <h1 class="h3 mb-4"><i class="bi bi-universal-access me-2" aria-hidden="true"></i>Déclaration d'accessibilité (RGAA)</h1>
+
+    <div class="alert alert-info" role="note">
+        CréaPrêt est un <strong>démonstrateur pédagogique</strong> (projet du titre Concepteur
+        Développeur d'Applications) fonctionnant avec des <strong>données fictives</strong>.
+        L'accessibilité a été prise en compte dès la conception, dans la limite de ce cadre.
+    </div>
+
+    <h2 class="h5 mt-4 mb-2">État de conformité</h2>
+    <p>
+        CréaPrêt <strong>n'a pas fait l'objet d'un audit RGAA formel</strong> portant sur les
+        106 critères du référentiel. Une démarche d'accessibilité a été appliquée pendant le
+        développement et fait l'objet d'une auto-évaluation ; <strong>la conformité au RGAA n'est
+        pas formellement établie</strong> à ce stade. L'application est donc déclarée en conformité
+        partielle, documentée ci-dessous en toute transparence.
+    </p>
+
+    <h2 class="h5 mt-4 mb-2">Démarche mise en œuvre</h2>
+    <ul>
+        <li>
+            <strong>Langue de la page</strong> déclarée (<code>&lt;html lang="fr"&gt;</code>), pour
+            une restitution correcte par les lecteurs d'écran.
+        </li>
+        <li>
+            <strong>Lien d'évitement</strong> (« Aller au contenu principal ») en début de page,
+            visible à la prise de focus au clavier.
+        </li>
+        <li>
+            <strong>Repères de structure (landmarks)</strong> : en-tête (<code>role="banner"</code>),
+            contenu principal (<code>&lt;main role="main"&gt;</code>) et pied de page
+            (<code>role="contentinfo"</code>), pour faciliter la navigation par zones.
+        </li>
+        <li>
+            <strong>HTML sémantique</strong> : un seul <code>&lt;h1&gt;</code> par page, sections en
+            <code>&lt;h2&gt;</code>, listes, et formulaires dont chaque champ est associé à un libellé.
+        </li>
+        <li>
+            <strong>Équivalents accessibles du calendrier</strong> : la vue calendrier des prêts
+            propose un <strong>tableau alternatif</strong> équivalent à la grille et une
+            <strong>région live</strong> (<code>aria-live</code>) annonçant les changements, en plus
+            d'une légende textuelle.
+        </li>
+        <li>
+            <strong>Mise en page responsive</strong> (Bootstrap 5), adaptée aux différentes tailles
+            d'écran, avec une balise <code>viewport</code>.
+        </li>
+    </ul>
+
+    <h2 class="h5 mt-4 mb-2">Points connus restant à améliorer</h2>
+    <ul>
+        <li>absence d'un audit RGAA formel des 106 critères (seule une auto-évaluation a été menée) ;</li>
+        <li>vérification systématique des contrastes de couleurs à compléter ;</li>
+        <li>tests avec lecteurs d'écran à approfondir.</li>
+    </ul>
+
+    <h2 class="h5 mt-4 mb-2">Technologies utilisées</h2>
+    <p>
+        Cette accessibilité s'appuie sur HTML, CSS, JavaScript (via Stimulus et Turbo) et Bootstrap 5.
+    </p>
+
+    <h2 class="h5 mt-4 mb-2">Retour d'information et contact</h2>
+    <p>
+        Si vous rencontrez un défaut d'accessibilité vous empêchant d'accéder à un contenu ou à une
+        fonctionnalité, vous pouvez nous le signaler à
+        <a href="mailto:contact@creapret.re">contact@creapret.re</a>. Nous nous efforcerons de
+        corriger le problème.
+    </p>
+
+</div>
+{% endblock %}
