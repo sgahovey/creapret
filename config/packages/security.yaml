@@ -49,6 +49,7 @@ security:
         - { path: ^/inscription, roles: PUBLIC_ACCESS }
         # Zone de gestion cloisonnee : toute la branche /gestion (et /gestion/*)
         # exige ROLE_GESTIONNAIRE (donc aussi ROLE_SUPER_ADMIN par hierarchie).
+        - { path: ^/admin, roles: ROLE_SUPER_ADMIN }
         - { path: ^/gestion, roles: ROLE_GESTIONNAIRE }
         # Catalogue emprunteur : reserve a tout utilisateur connecte (lecture seule).
         - { path: ^/catalogue, roles: IS_AUTHENTICATED_FULLY }

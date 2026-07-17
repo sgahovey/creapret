@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Journal d\'administration{% endblock %}
+
+{% block body %}
+<div class="container my-4">
+    <h1 class="mb-4">Journal d\'administration</h1>
+
+    <form method="get" action="{{ path('app_admin_journal') }}" class="row g-2 align-items-end mb-3">
+        <div class="col-auto">
+            <label for="type" class="form-label">Filtrer par action</label>
+            <select name="type" id="type" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">Toutes les actions</option>
+                {% for typeAction in typesDisponibles %}
+                    <option value="{{ typeAction.value }}"{{ typeSelectionne == typeAction ? ' selected' : '' }}>
+                        {{ typeAction.libelle }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-auto">
+            <noscript><button type="submit" class="btn btn-sm btn-secondary">Filtrer</button></noscript>
+        </div>
+    </form>
+
+    <p class="text-muted small">{{ total }} entree(s) au total.</p>
+
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <caption class="visually-hidden">Journal des actions d\'administration, de la plus recente a la plus ancienne</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Acteur</th>
+                    <th scope="col">Action</th>
+                    <th scope="col">Cible</th>
+                    <th scope="col">Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entree in entrees %}
+                    <tr>
+                        <td>{{ entree.dateAction|date('d/m/Y H\\hi', 'Indian/Reunion') }}</td>
+                        <td>{{ entree.acteurLibelle }}</td>
+                        <td><span class="badge text-bg-light">{{ entree.typeAction.libelle }}</span></td>
+                        <td>{{ entree.cibleLibelle ?? '—' }}</td>
+                        <td>{{ entree.details ?? '—' }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">Aucune entree.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if nbPages > 1 %}
+        {% set parametresFiltre = typeSelectionne ? {type: typeSelectionne.value} : {} %}
+        <nav aria-label="Pagination du journal">
+            <ul class="pagination">
+                <li class="page-item{{ page <= 1 ? ' disabled' : '' }}">
+                    <a class="page-link" href="{{ path('app_admin_journal', parametresFiltre|merge({page: page - 1})) }}">Precedent</a>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">Page {{ page }} / {{ nbPages }}</span>
+                </li>
+                <li class="page-item{{ page >= nbPages ? ' disabled' : '' }}">
+                    <a class="page-link" href="{{ path('app_admin_journal', parametresFiltre|merge({page: page + 1})) }}">Suivant</a>
+                </li>
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+{% endblock %}

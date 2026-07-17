@@ -14,10 +14,17 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 {% if is_granted('ROLE_GESTIONNAIRE') %}
                     <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_gestion_tableau_de_bord') }}">
-                                <i class="bi bi-speedometer2 me-1"></i>Tableau de bord
+                        <a class="nav-link" href="{{ path('app_gestion_tableau_de_bord') }}">
+                            <i class="bi bi-speedometer2 me-1"></i>Tableau de bord
+                        </a>
+                    </li>
+                    {% if is_granted('ROLE_SUPER_ADMIN') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_admin_journal') }}">
+                                <i class="bi bi-journal-text me-1"></i>Journal
                             </a>
                         </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('app_gestion_prets') }}">
                             <i class="bi bi-inbox me-1"></i>Demandes
