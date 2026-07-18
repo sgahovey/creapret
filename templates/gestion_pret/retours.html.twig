@@ -36,7 +36,7 @@
                                     <td>{{ pret.emprunteur.prenom }} {{ pret.emprunteur.nom }}</td>
                                     <td>{{ pret.exemplaire.materiel.nom }}</td>
                                     <td>{{ pret.exemplaire.numeroInventaire }}</td>
-                                    <td>{{ pret.dateDebut|date('d/m/Y') }} au {{ pret.dateFin|date('d/m/Y') }}</td>
+                                    <td>{{ pret.dateDebut|date('d/m/Y') }} au {{ pret.dateFin|date('d/m/Y') }}{% if pret.estEnRetard(maintenant) %} <span class="badge text-bg-danger ms-2">{{ pret.joursDeRetard(maintenant) }} jour(s) de retard</span>{% endif %}</td>
                                     <td>
                                         <form method="post" action="{{ path('app_gestion_pret_retour', {id: pret.id}) }}" class="d-flex align-items-center gap-2">
                                             <input type="hidden" name="_token" value="{{ csrf_token('retour' ~ pret.id) }}">

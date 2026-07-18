@@ -187,6 +187,32 @@ class Pret
         return $this;
     }
 
+    /**
+     * Indique si le pret est en retard, selon la MEME regle que le comptage du tableau de bord
+     * (PretRepository::countPretsEnRetard) : pret VALIDE, non encore rendu (dateRetour null) et
+     * dont l'echeance (dateFin) est depassee. Le champ retardNotifieAt n'intervient pas ici : il
+     * ne sert qu'a l'idempotence des notifications, pas a la definition metier du retard.
+     */
+    public function estEnRetard(\DateTimeImmutable $maintenant): bool
+    {
+        return StatutPret::VALIDE === $this->statut
+            && null === $this->dateRetour
+            && $this->dateFin < $maintenant;
+    }
+
+    /**
+     * Nombre de jours entiers ecoules depuis l'echeance (dateFin), selon la regle de estEnRetard().
+     * Retourne 0 si le pret n'est pas en retard.
+     */
+    public function joursDeRetard(\DateTimeImmutable $maintenant): int
+    {
+        if (!$this->estEnRetard($maintenant)) {
+            return 0;
+        }
+
+        return (int) $this->dateFin->diff($maintenant)->days;
+    }
+
     public function getExemplaire(): Exemplaire
     {
         return $this->exemplaire;
