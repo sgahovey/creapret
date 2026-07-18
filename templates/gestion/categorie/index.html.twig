@@ -9,11 +9,6 @@
             <a href="{{ path('app_categorie_new') }}" class="btn btn-primary">Nouvelle catégorie</a>
         </div>
 
-        {% for label, messages in app.flashes %}
-            {% for message in messages %}
-                <div class="alert alert-{{ label }}" role="alert">{{ message }}</div>
-            {% endfor %}
-        {% endfor %}
 
         <table class="table table-striped align-middle">
             <thead>

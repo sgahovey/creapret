@@ -10,6 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -39,14 +40,22 @@ final class InscriptionType extends AbstractType
                 'label' => 'Nom',
                 'attr'  => ['autocomplete' => 'family-name'],
             ])
-            ->add('plainPassword', PasswordType::class, [
-                'label'       => 'Mot de passe',
-                'mapped'      => false,
-                'attr'        => ['autocomplete' => 'new-password'],
-                'help'        => 'Au moins 12 caractères, avec majuscule, minuscule, chiffre et caractère spécial.',
-                'constraints' => [
-                    new NotBlank(message: 'Veuillez saisir un mot de passe.'),
-                    new MotDePasseFort(),
+            ->add('plainPassword', RepeatedType::class, [
+                'type'            => PasswordType::class,
+                'mapped'          => false,
+                'invalid_message' => 'Les mots de passe ne correspondent pas.',
+                'first_options'   => [
+                    'label'       => 'Mot de passe',
+                    'attr'        => ['autocomplete' => 'new-password', 'data-afficher-mot-de-passe-target' => 'champ'],
+                    'help'        => 'Au moins 12 caractères, avec majuscule, minuscule, chiffre et caractère spécial.',
+                    'constraints' => [
+                        new NotBlank(message: 'Veuillez saisir un mot de passe.'),
+                        new MotDePasseFort(),
+                    ],
+                ],
+                'second_options' => [
+                    'label' => 'Confirmer le mot de passe',
+                    'attr'  => ['autocomplete' => 'new-password', 'data-afficher-mot-de-passe-target' => 'champ'],
                 ],
             ])
             ->add('accepteCgu', CheckboxType::class, [

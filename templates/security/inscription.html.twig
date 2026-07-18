@@ -1,41 +1,32 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Inscription{% endblock %}
+{% block title %}Créer un compte{% endblock %}
+
+{% form_theme formulaire 'bootstrap_5_layout.html.twig' 'form/champ_mot_de_passe.html.twig' %}
+
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+{% block flash_messages %}{% endblock %}
 
 {% block body %}
-    <div class="container py-5" style="max-width: 32rem;">
-        <h1 class="mb-4">Créer un compte</h1>
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-logo"><i class="bi bi-box-seam" aria-hidden="true"></i></div>
+        <h1 class="auth-title h4">Créer un compte</h1>
+        <p class="auth-subtitle">Rejoignez CréaPrêt pour emprunter du matériel.</p>
 
-        {{ form_start(formulaire, {'attr': {'novalidate': 'novalidate'}}) }}
-            <div class="mb-3">
-                {{ form_label(formulaire.email, null, {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(formulaire.email, {'attr': {'class': 'form-control'}}) }}
-                {{ form_errors(formulaire.email) }}
-            </div>
-            <div class="mb-3">
-                {{ form_label(formulaire.prenom, null, {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(formulaire.prenom, {'attr': {'class': 'form-control'}}) }}
-                {{ form_errors(formulaire.prenom) }}
-            </div>
-            <div class="mb-3">
-                {{ form_label(formulaire.nom, null, {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(formulaire.nom, {'attr': {'class': 'form-control'}}) }}
-                {{ form_errors(formulaire.nom) }}
-            </div>
-            <div class="mb-3">
-                {{ form_label(formulaire.plainPassword, null, {'label_attr': {'class': 'form-label'}}) }}
-                {{ form_widget(formulaire.plainPassword, {'attr': {'class': 'form-control'}}) }}
-                {% if formulaire.plainPassword.vars.help %}
-                    <div class="form-text">{{ formulaire.plainPassword.vars.help }}</div>
-                {% endif %}
-                {{ form_errors(formulaire.plainPassword) }}
-            </div>
-            <div class="mb-3 form-check">
-                {{ form_widget(formulaire.accepteCgu, {'attr': {'class': 'form-check-input'}}) }}
-                {{ form_label(formulaire.accepteCgu, null, {'label_attr': {'class': 'form-check-label'}}) }}
-                {{ form_errors(formulaire.accepteCgu) }}
-            </div>
-            <button type="submit" class="btn btn-primary">Créer mon compte</button>
+        {% include '_partials/flash_messages.html.twig' %}
+
+        {{ form_start(formulaire) }}
+            {{ form_row(formulaire.prenom) }}
+            {{ form_row(formulaire.nom) }}
+            {{ form_row(formulaire.email) }}
+            {{ form_row(formulaire.plainPassword) }}
+            {{ form_row(formulaire.accepteCgu) }}
+            <button type="submit" class="btn btn-primary w-100 mt-2">Créer mon compte</button>
         {{ form_end(formulaire) }}
+
+        <p class="auth-footer">Déjà un compte ? <a href="{{ path('app_login') }}">Se connecter</a></p>
     </div>
+</div>
 {% endblock %}

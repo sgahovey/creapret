@@ -2,14 +2,21 @@
 
 {% block title %}Connexion{% endblock %}
 
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+{% block flash_messages %}{% endblock %}
+
 {% block body %}
-    <div class="container py-5" style="max-width: 28rem;">
-        <h1 class="mb-4">Connexion</h1>
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-logo"><i class="bi bi-box-seam" aria-hidden="true"></i></div>
+        <h1 class="auth-title h4">Connexion</h1>
+        <p class="auth-subtitle">Accedez a votre espace CréaPrêt.</p>
+
+        {% include '_partials/flash_messages.html.twig' %}
 
         {% if erreur %}
-            <div class="alert alert-danger" role="alert">
-                Identifiants incorrects.
-            </div>
+            <div class="alert alert-danger" role="alert">Identifiants invalides.</div>
         {% endif %}
 
         <form method="post" action="{{ path('app_login') }}">
@@ -17,21 +24,28 @@
 
             <div class="mb-3">
                 <label for="inputEmail" class="form-label">Adresse e-mail</label>
-                <input type="email" id="inputEmail" name="email" value="{{ dernierEmail }}"
+                <input type="email" name="email" id="inputEmail" value="{{ dernierEmail }}"
                        class="form-control" autocomplete="email" required autofocus>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3" data-controller="afficher-mot-de-passe">
                 <label for="inputPassword" class="form-label">Mot de passe</label>
-                <input type="password" id="inputPassword" name="password"
-                       class="form-control" autocomplete="current-password" required>
+                <div class="input-group">
+                    <input type="password" name="password" id="inputPassword"
+                           class="form-control" autocomplete="current-password" required
+                           data-afficher-mot-de-passe-target="champ">
+                    <button class="btn btn-outline-secondary" type="button"
+                            data-action="afficher-mot-de-passe#basculer"
+                            aria-label="Afficher ou masquer le mot de passe">
+                        <i class="bi bi-eye" data-afficher-mot-de-passe-target="icone" aria-hidden="true"></i>
+                    </button>
+                </div>
             </div>
 
-            <button type="submit" class="btn btn-primary">Se connecter</button>
+            <button type="submit" class="btn btn-primary w-100">Se connecter</button>
         </form>
 
-        <p class="mt-3">
-            Pas encore de compte ? <a href="{{ path('app_inscription') }}">Créer un compte</a>
-        </p>
+        <p class="auth-footer">Pas encore de compte ? <a href="{{ path('app_inscription') }}">Créer un compte</a></p>
     </div>
+</div>
 {% endblock %}
