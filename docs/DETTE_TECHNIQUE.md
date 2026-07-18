@@ -86,3 +86,31 @@ les laisser implicites).
 - **Resolution** : re-accentuation ciblee, lot par lot (edition chaine exacte par fichier, jamais de
   regex de substitution ; les segments Twig, attributs et valeurs backed d'enum sont preserves), avec
   resynchronisation des assertions de tests couplees dans le meme lot.
+
+
+## DT-7 — Casse des valeurs backed de TypeActionJournal
+
+- **Statut** : Ouverte (ecart de style assume).
+- **Constat** : l'enumeration TypeActionJournal utilise des valeurs backed en MAJUSCULES
+  (PRET_VALIDATION, COMPTE_CREATION...) persistees dans journal_admin.type_action, alors que les
+  autres enumerations du projet (Role, StatutPret, EtatExemplaire) utilisent des valeurs en
+  minuscules. Les COMPTE_* (US-6.2) ont ete alignes sur les PRET_* (US-5.3) pour la coherence
+  INTERNE de l'enum, au prix de l'incoherence avec les autres enums.
+- **Impact** : purement stylistique ; aucun defaut fonctionnel (les valeurs sont un contrat DB opaque,
+  jamais affichees — l'affichage passe par libelle()).
+- **Resolution ecartee** : aligner TypeActionJournal sur la convention minuscule imposerait une
+  migration de donnees sur la colonne journal_admin.type_action (UPDATE des lignes deja ecrites) pour
+  un gain purement cosmetique. Ecart assume ; le contrat DB reste stable.
+
+
+## DT-8 — Mot de passe des comptes crees par un administrateur
+
+- **Statut** : Ouverte (limite assumee).
+- **Constat** : lors de la creation d'un compte par le super-administrateur (US-6.2), le mot de passe
+  initial est saisi par l'administrateur puis transmis a l'utilisateur hors application (oral, courriel
+  manuel...). Il n'existe ni obligation de changement a la premiere connexion, ni reinitialisation en
+  autonomie par l'utilisateur.
+- **Impact** : un secret transite hors du systeme et peut rester inchange ; pas de defaut bloquant pour
+  le demonstrateur, mais ecart avec une gestion d'identite complete.
+- **Resolution differee** : levee des qu'une reinitialisation de mot de passe par courriel (lien a usage
+  unique) sera disponible ; le changement force a la premiere connexion pourra s'y greffer.
