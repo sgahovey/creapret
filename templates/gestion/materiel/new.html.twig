@@ -2,19 +2,35 @@
 
 {% block title %}Nouveau matériel{% endblock %}
 
-{% block body %}
-    <div class="container py-5" style="max-width: 40rem;">
-        <h1 class="mb-4">Nouveau matériel</h1>
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
 
-        {{ form_start(form) }}
-            {{ form_row(form.nom, {attr: {class: 'form-control'}, label_attr: {class: 'form-label'}}) }}
-            {{ form_row(form.categorie, {attr: {class: 'form-select'}, label_attr: {class: 'form-label'}}) }}
-            {{ form_row(form.description, {attr: {class: 'form-control'}, label_attr: {class: 'form-label'}}) }}
-            {{ form_row(form.marque, {attr: {class: 'form-control'}, label_attr: {class: 'form-label'}}) }}
-            {{ form_row(form.modele, {attr: {class: 'form-control'}, label_attr: {class: 'form-label'}}) }}
-            {{ form_row(form.reference, {attr: {class: 'form-control'}, label_attr: {class: 'form-label'}}) }}
-            <button type="submit" class="btn btn-primary">Enregistrer</button>
-            <a href="{{ path('app_materiel_index') }}" class="btn btn-link">Annuler</a>
-        {{ form_end(form) }}
+{% block body %}
+    <div class="container py-5">
+        <div class="page-header">
+            <div>
+                <h1 class="page-header__titre h3">Nouveau matériel</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="cp-card">
+                    <div class="cp-card__corps">
+                        {{ form_start(form) }}
+                            {{ form_row(form.nom) }}
+                            {{ form_row(form.categorie) }}
+                            {{ form_row(form.description) }}
+                            {{ form_row(form.marque) }}
+                            {{ form_row(form.modele) }}
+                            {{ form_row(form.reference) }}
+                            <div class="d-flex gap-2 mt-3">
+                                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                <a href="{{ path('app_materiel_index') }}" class="btn btn-link">Annuler</a>
+                            </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
