@@ -55,6 +55,10 @@ flowchart TB
 Vue **normalisée** (notation UML de déploiement), cette fois avec les **composants nommés** : nœuds,
 artefacts et relations orientées. Source versionnée : [`deploiement-uml.puml`](deploiement-uml.puml).
 
+![Diagramme de déploiement (réalisation) aux normes UML : le poste de l'utilisateur, et le serveur hôte contenant Caddy (point d'entrée unique), l'environnement de préproduction, l'environnement de production, la base MySQL et la supervision Uptime Kuma ; composants nommés.](deploiement-realisation.png)
+
+*Image rendue depuis la source normalisée [`deploiement-uml.puml`](deploiement-uml.puml) versionnée à côté. Régénération : `plantuml docs/realisation-technique/deploiement-uml.puml`.*
+
 ```plantuml
 @startuml deploiement-realisation
 ' =====================================================================

@@ -32,6 +32,10 @@ la **source normalisée** versionnée à côté : [`analyse-fonctionnelle.puml`]
 Elle n'est **pas reproduite ici**, afin de ne pas exposer, dans un document de conception, la notation
 propre à un outil de rendu.
 
+![Diagramme de cas d'utilisation de CréaPrêt : les quatre acteurs cumulatifs (Visiteur, Emprunteur, Gestionnaire, Super-administrateur), les dix objectifs métier et les trois cas transverses (notifier la personne concernée, tracer l'action, mettre en maintenance) reliés par des relations d'inclusion et d'extension.](analyse-fonctionnelle.png)
+
+*Image rendue depuis la source normalisée [`analyse-fonctionnelle.puml`](analyse-fonctionnelle.puml) versionnée à côté. Régénération : `plantuml docs/conception/analyse-fonctionnelle.puml`.*
+
 **Structure représentée :**
 
 - **Quatre acteurs**, en **généralisation cumulative** : Visiteur ◁ Emprunteur ◁ Gestionnaire ◁

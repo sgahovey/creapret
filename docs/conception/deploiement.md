@@ -76,6 +76,10 @@ Toutes les désignations restent **génériques**. La source normalisée, prête
 à côté** : [`deploiement-uml.puml`](deploiement-uml.puml) ; elle n'est **pas reproduite ici**, afin de
 ne pas exposer, dans un document de conception, la notation propre à un outil de rendu.
 
+![Diagramme de déploiement (conception) aux normes UML : le poste de l'utilisateur, et une machine hébergeante unique contenant le point d'entrée unique, l'environnement de validation, l'environnement de service, l'espace de données et le dispositif de surveillance ; désignations génériques.](deploiement-conception.png)
+
+*Image rendue depuis la source normalisée [`deploiement-uml.puml`](deploiement-uml.puml) versionnée à côté. Régénération : `plantuml docs/conception/deploiement-uml.puml`.*
+
 **Structure représentée** (nœuds, artefacts, relations) :
 
 - **Poste de l'utilisateur** *(nœud)* — contient l'artefact *client de navigation*.
