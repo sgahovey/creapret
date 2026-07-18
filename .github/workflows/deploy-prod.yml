@@ -1,11 +1,13 @@
 name: Deploiement prod
 
-# Construit puis deploie en prod. Declenchable manuellement, et automatiquement
-# sur push de la branche adaptee.
+# Construit puis deploie en PRODUCTION.
+#
+# Declenchement MANUEL UNIQUEMENT (workflow_dispatch) : une mise en ligne de production doit
+# resulter d'une DECISION EXPLICITE, jamais d'un simple merge vers main -- un correctif mineur
+# integre ne doit pas partir en ligne automatiquement. L'approbation requise par l'environnement
+# protege (environment: production) reste en place en complement.
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
 
 # Concurrence : jamais deux deploiements prod simultanes ; on n'interrompt pas un
 # deploiement en cours (migration potentielle) -> le suivant est mis en file.
