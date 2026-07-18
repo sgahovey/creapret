@@ -20,6 +20,16 @@ Les concepts et leurs associations, avec cardinalités, **sans aucune considéra
 - Le **Journal d'administration** et l'**Historique de compte** enregistrent des faits ; le premier
   est **autonome** (aucune association), le second est rattaché au compte qu'il trace.
 
+Le schéma conceptuel est présenté dans **deux notations équivalentes** — la notation entité-association (verbes et cardinalités), puis la **notation normalisée** (UML) du même modèle :
+
+![Schéma conceptuel du modèle de données en notation entité-association : les entités Catégorie, Matériel, Exemplaire, Prêt, Utilisateur et Journal d'administration, reliées par des associations nommées par un verbe (classe, décline, porte, emprunte, valide) avec leurs cardinalités.](mcd.png)
+
+*Image produite depuis l'**outil de modélisation** ; fichier source [`mcd.loo`](mcd.loo) versionné dans ce même répertoire — pour **retrouver et modifier le modèle** sans refaire la rétro-conception. Ce modèle a été obtenu par **rétro-conception** du script de création [`script-creation-bdd.sql`](script-creation-bdd.sql) versionné ici : origine **vérifiable et reproductible**.*
+
+![Le même modèle conceptuel dans la notation normalisée UML : les classes du domaine (Catégorie, Matériel, Exemplaire, Prêt, Utilisateur, Journal d'administration), leurs attributs et leurs associations avec cardinalités.](modele-donnees-uml.png)
+
+*Image produite depuis l'**outil de modélisation** ; fichier source [`mcd.loo`](mcd.loo) versionné dans ce même répertoire — pour **retrouver et modifier le modèle** sans refaire la rétro-conception. Ce modèle a été obtenu par **rétro-conception** du script de création [`script-creation-bdd.sql`](script-creation-bdd.sql) versionné ici : origine **vérifiable et reproductible**.*
+
 ## Niveau 2 — Schéma logique
 
 Clés primaires **soulignées**, clés étrangères préfixées `#`. L'association **Prêt**, porteuse
@@ -36,6 +46,12 @@ d'attributs propres (dates, statut), est **résolue en une relation à part enti
   cible_libelle, details) — *aucune clé étrangère*
 - **historique_utilisateur**(<u>id</u>, #utilisateur_id, champ_modifie, ancienne_valeur,
   nouvelle_valeur, date_modification)
+
+Le schéma logique correspondant, associations **résolues en clés étrangères** :
+
+![Schéma logique relationnel : les tables categorie, materiel, exemplaire, pret, utilisateur, journal_admin et historique_utilisateur, avec leurs clés primaires et les clés étrangères qui résolvent les associations.](mld.png)
+
+*Image produite depuis l'**outil de modélisation** ; fichier source [`mcd.loo`](mcd.loo) versionné dans ce même répertoire — pour **retrouver et modifier le modèle** sans refaire la rétro-conception. Ce modèle a été obtenu par **rétro-conception** du script de création [`script-creation-bdd.sql`](script-creation-bdd.sql) versionné ici : origine **vérifiable et reproductible**.*
 
 ## Niveau 3 — Schéma physique *(exception SGBD : MySQL 8)*
 
@@ -77,6 +93,8 @@ sens métier.
 | pret → emprunteur | **RESTRICT** | Un compte ayant emprunté n'est pas effaçable tel quel : la responsabilité reste traçable. |
 | pret → validateur | **SET NULL** | La suppression d'un gestionnaire **ne détruit pas** les prêts qu'il a validés ; le lien se **dénoue** simplement. |
 | historique_utilisateur → utilisateur | **CASCADE** | L'audit *d'un* compte disparaît **avec** ce compte : c'est son historique propre. |
+
+**Le journal d'administration, délibérément hors de ce jeu de contraintes.** La table `journal_admin` n'entretient **aucune association** : ses références à l'**acteur** et à la **cible** de chaque action (`acteur_id`/`acteur_libelle`, `cible_id`/`cible_libelle`) sont des **valeurs figées**, recopiées au moment de l'écriture, et **non des clés étrangères**. Une entrée reste ainsi **lisible et complète** même si le compte concerné change de rôle, est renommé, désactivé ou **supprimé**. Ce choix **protège la valeur de preuve** de la trace : une trace d'*accountability* doit témoigner de ce qui était vrai **à l'instant de l'action** ; une clé étrangère, elle, suivrait les évolutions ultérieures du compte (ou ferait disparaître la ligne par cascade) et **altérerait ce témoignage**. Le journal est donc **append-only** et autonome par conception.
 
 ## Contraintes d'unicité
 
