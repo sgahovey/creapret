@@ -7,13 +7,15 @@ set -euo pipefail
 # l'ENVIRONNEMENT du conteneur `db` (MYSQL_ROOT_PASSWORD), jamais passe en argument.
 #
 # Usage PROD (defauts)      : ./scripts/backup-db.sh
-# Base de preproduction     : DB_NAME=creapret_preprod ./scripts/backup-db.sh
-# Usage DEV                 : COMPOSE_FILE=docker-compose.yml ENV_FILE= DB_NAME=creapret ./scripts/backup-db.sh
+# Base cible en ARGUMENT    : ./scripts/backup-db.sh creapret_preprod
+# ... ou par VARIABLE       : DB_NAME=creapret_preprod ./scripts/backup-db.sh
+# Usage DEV                 : COMPOSE_FILE=docker-compose.yml ENV_FILE= ./scripts/backup-db.sh creapret
 
 COMPOSE_FILE=${COMPOSE_FILE:-compose.prod.yml}
 ENV_FILE=${ENV_FILE:-.env.deploy.local}
 DB_SERVICE=${DB_SERVICE:-db}
-DB_NAME=${DB_NAME:-creapret_prod}
+# Base cible : 1er ARGUMENT en priorite, sinon variable DB_NAME, sinon defaut prod.
+DB_NAME=${1:-${DB_NAME:-creapret_prod}}
 BACKUP_DIR=${BACKUP_DIR:-$HOME/backups/creapret}
 RETENTION_DAYS=${RETENTION_DAYS:-14}
 
