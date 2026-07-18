@@ -1,0 +1,9 @@
+%% Schema de realisation -- Traitements automatiques (composants nommes).
+flowchart TB
+    CRON["Planificateur (crontab, heures UTC)"]
+    R1["app:envoyer-rappels (rappels + retards)"]
+    R2["app:audit:purger (purge RGPD)"]
+    R3["scripts/backup-db.sh (sauvegarde)"]
+    PUSH["Appel 'push' sur succes -> creapret-supervision"]
+    CRON --> R1 & R2 & R3
+    R1 & R2 & R3 -->|"&& sur succes"| PUSH

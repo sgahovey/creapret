@@ -1,0 +1,15 @@
+%% Schema de conception -- Surveillance (aucun composant nomme).
+%% Trois natures de defaillance surveillees ; chemin d'une alerte vers l'exploitant.
+flowchart LR
+    subgraph SURV["Ce qui est surveille"]
+        V["Services visibles de l'exterieur"]
+        I["Traitements internes<br/>(invisibles de l'exterieur)"]
+        A["Taches attendues a echeance<br/>(une absence)"]
+    end
+    OBS["Observateur permanent"]
+    AL["Alerte"]
+    EX["Exploitant<br/>(la ou il regarde)"]
+    V --> OBS
+    I --> OBS
+    A -. "signal attendu ; son absence alarme" .-> OBS
+    OBS -->|"defaillance detectee"| AL --> EX

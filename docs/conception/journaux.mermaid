@@ -1,0 +1,9 @@
+%% Schema de conception -- Consultation des journaux (aucun composant nomme).
+flowchart LR
+    EX["Exploitant"]
+    ACCES["Acces protege (authentification)"]
+    VUE["Vue des traces -- CETTE application uniquement"]
+    TR["Traces recentes des composants"]
+    AUTRE["Traces de l'autre application"]
+    EX --> ACCES --> VUE --> TR
+    VUE -. "ne voit pas" .-x AUTRE

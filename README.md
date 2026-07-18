@@ -96,6 +96,8 @@ Gate sur le code nouveau).
 
 | Document | Contenu |
 |---|---|
+| [`docs/conception/`](docs/conception/) | **Conception** (deux niveaux) — le besoin et les choix, sans jargon technique. |
+| [`docs/realisation-technique/`](docs/realisation-technique/) | **Réalisation** (deux niveaux) — ce qui a été fait, noms réels. |
 | [`docs/runbook-deploiement.md`](docs/runbook-deploiement.md) | Procédures d'exploitation : déployer, dépanner, sauvegarder, restaurer. |
 | [`docs/architecture-deploiement.md`](docs/architecture-deploiement.md) | Le *pourquoi* de l'infrastructure (proxy partagé, réseaux, données). |
 | [`docs/plan-de-tests.md`](docs/plan-de-tests.md) | Stratégie, cartographie chiffrée, traçabilité et jeux d'essai. |

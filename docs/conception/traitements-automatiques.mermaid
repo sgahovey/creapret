@@ -1,0 +1,10 @@
+%% Schema de conception -- Cycle d'un traitement automatique (aucun composant nomme).
+flowchart LR
+    DECL["Declenchement a l'heure prevue"]
+    EXEC["Execution du traitement"]
+    OK{"Reussite ?"}
+    CONF["Confirmation emise"]
+    ABS["Aucune confirmation<br/>-> alerte (voir surveillance)"]
+    DECL --> EXEC --> OK
+    OK -->|"oui"| CONF
+    OK -->|"non / rien"| ABS

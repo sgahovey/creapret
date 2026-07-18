@@ -1,0 +1,17 @@
+%% Schema de realisation -- Surveillance (composants nommes).
+flowchart LR
+    subgraph KUMA["creapret-supervision (Uptime Kuma)"]
+        S1["Sonde HTTP prod (200)"]
+        S2["Sonde HTTP preprod (401)"]
+        S3["Sonde interne app prod"]
+        S4["Battement rappels"]
+        S5["Battement purge"]
+        S6["Battement sauvegarde"]
+        S7["Etat conteneur worker preprod"]
+        S8["Etat conteneur worker prod"]
+    end
+    NOTIF["Canal de notification (courriel / webhook)"]
+    EXPLOIT["Exploitant"]
+    CRONS["Taches planifiees -> appel 'push' sur succes"]
+    CRONS --> S4 & S5 & S6
+    KUMA -->|"defaillance / battement manquant"| NOTIF --> EXPLOIT

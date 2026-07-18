@@ -1,0 +1,9 @@
+%% Schema de realisation -- Consultation des journaux (composants nommes).
+flowchart LR
+    EX["Exploitant"]
+    PROXY["Proxy (basic_auth)"]
+    DOZZLE["creapret-journaux (Dozzle)<br/>filtre : projet creapret_prod"]
+    SOCK["Socket Docker (lecture seule)"]
+    CONT["Conteneurs CreaPret uniquement"]
+    EX -->|"HTTPS + authentification"| PROXY --> DOZZLE
+    DOZZLE -->|"lit via"| SOCK --> CONT

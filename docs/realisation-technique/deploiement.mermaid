@@ -1,0 +1,18 @@
+%% Schema de realisation -- Deploiement (composants nommes).
+flowchart TB
+    U["Navigateur"]
+    CADDY["Caddy (pile CreaSlot) -- reverse-proxy<br/>TLS, en-tetes, basic_auth"]
+    subgraph CP["Pile CreaPret (projet creapret_prod)"]
+        APRE["creapret-app-preprod"]
+        APRO["creapret-app-prod"]
+        WPRE["creapret-worker-preprod"]
+        WPRO["creapret-worker-prod"]
+        DB[("MySQL -- creapret_preprod / creapret_prod")]
+    end
+    U -->|"HTTPS"| CADDY
+    CADDY -->|"preprod.domaine (basic_auth)"| APRE
+    CADDY -->|"prod.domaine (public)"| APRO
+    APRE --- DB
+    APRO --- DB
+    WPRE --- DB
+    WPRO --- DB

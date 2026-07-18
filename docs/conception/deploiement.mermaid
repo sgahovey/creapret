@@ -1,0 +1,16 @@
+%% Schema de conception -- Deploiement (aucun composant nomme).
+%% Deux environnements derriere une porte d'entree commune ; donnees separees.
+flowchart TB
+    U["Utilisateurs et testeurs"]
+    PORTE["Porte d'entree unique<br/>(partagee avec l'autre application du serveur)"]
+    subgraph APP["Notre application"]
+        ESSAI["Environnement d'essai<br/>(acces restreint)"]
+        OUVERT["Environnement ouvert au public"]
+        DE["Donnees d'essai"]
+        DO["Donnees du public"]
+    end
+    U --> PORTE
+    PORTE -->|"acces restreint"| ESSAI
+    PORTE -->|"acces public"| OUVERT
+    ESSAI --- DE
+    OUVERT --- DO
