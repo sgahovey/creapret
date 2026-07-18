@@ -40,7 +40,7 @@ final class CategorieController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($categorie);
             $em->flush();
-            $this->addFlash('success', 'Categorie creee.');
+            $this->addFlash('success', 'Catégorie créée.');
 
             return $this->redirectToRoute('app_categorie_index');
         }
@@ -58,7 +58,7 @@ final class CategorieController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
-            $this->addFlash('success', 'Categorie modifiee.');
+            $this->addFlash('success', 'Catégorie modifiée.');
 
             return $this->redirectToRoute('app_categorie_index');
         }
@@ -73,7 +73,7 @@ final class CategorieController extends AbstractController
     public function delete(Request $request, Categorie $categorie, EntityManagerInterface $em): Response
     {
         if (!$this->isCsrfTokenValid('supprimer_categorie_' . $categorie->getId(), (string) $request->request->get('_token'))) {
-            $this->addFlash('danger', 'Jeton de securite invalide.');
+            $this->addFlash('danger', 'Jeton de sécurité invalide.');
 
             return $this->redirectToRoute('app_categorie_index');
         }
@@ -81,14 +81,14 @@ final class CategorieController extends AbstractController
         // Garde FK RESTRICT (DC-10) : refus si des materiels sont rattaches.
         // Verification prealable -> message clair, pas d'exception 500.
         if (\count($categorie->getMateriels()) > 0) {
-            $this->addFlash('danger', 'Suppression impossible : des materiels sont rattaches a cette categorie.');
+            $this->addFlash('danger', 'Suppression impossible : des matériels sont rattachés à cette catégorie.');
 
             return $this->redirectToRoute('app_categorie_index');
         }
 
         $em->remove($categorie);
         $em->flush();
-        $this->addFlash('success', 'Categorie supprimee.');
+        $this->addFlash('success', 'Catégorie supprimée.');
 
         return $this->redirectToRoute('app_categorie_index');
     }

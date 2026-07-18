@@ -196,7 +196,7 @@ final class NotificationsPretTest extends WebTestCase
 
         $client->loginUser($emprunteur);
         $client->request('GET', '/catalogue/' . $materielId . '?debut=2026-09-10&fin=2026-09-15');
-        $client->submitForm('Demander un pret', [
+        $client->submitForm('Demander un prêt', [
             'demande_pret[debut]' => '2026-09-10',
             'demande_pret[fin]'   => '2026-09-15',
         ]);

@@ -40,7 +40,7 @@ final class MaterielController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($materiel);
             $em->flush();
-            $this->addFlash('success', 'Materiel cree.');
+            $this->addFlash('success', 'Matériel créé.');
 
             return $this->redirectToRoute('app_materiel_index');
         }
@@ -58,7 +58,7 @@ final class MaterielController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
-            $this->addFlash('success', 'Materiel modifie.');
+            $this->addFlash('success', 'Matériel modifié.');
 
             return $this->redirectToRoute('app_materiel_index');
         }
@@ -73,21 +73,21 @@ final class MaterielController extends AbstractController
     public function delete(Request $request, Materiel $materiel, EntityManagerInterface $em): Response
     {
         if (!$this->isCsrfTokenValid('supprimer_materiel_' . $materiel->getId(), (string) $request->request->get('_token'))) {
-            $this->addFlash('danger', 'Jeton de securite invalide.');
+            $this->addFlash('danger', 'Jeton de sécurité invalide.');
 
             return $this->redirectToRoute('app_materiel_index');
         }
 
         // Garde FK RESTRICT (DC-10) : refus si des exemplaires sont rattaches.
         if (\count($materiel->getExemplaires()) > 0) {
-            $this->addFlash('danger', 'Suppression impossible : des exemplaires sont rattaches a ce materiel.');
+            $this->addFlash('danger', 'Suppression impossible : des exemplaires sont rattachés à ce matériel.');
 
             return $this->redirectToRoute('app_materiel_index');
         }
 
         $em->remove($materiel);
         $em->flush();
-        $this->addFlash('success', 'Materiel supprime.');
+        $this->addFlash('success', 'Matériel supprimé.');
 
         return $this->redirectToRoute('app_materiel_index');
     }

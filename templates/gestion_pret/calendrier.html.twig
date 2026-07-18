@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Calendrier d'occupation du materiel{% endblock %}
+{% block title %}Calendrier d'occupation du matériel{% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
@@ -14,12 +14,12 @@
      data-controller="calendrier"
      data-calendrier-url-value="{{ path('api_calendrier_prets') }}">
 
-    <h1>Calendrier d'occupation du materiel</h1>
-    <p class="text-muted">Vue des prets en cours. Cliquez sur un evenement pour les details.</p>
+    <h1>Calendrier d'occupation du matériel</h1>
+    <p class="text-muted">Vue des prêts en cours. Cliquez sur un événement pour les détails.</p>
 
     {# Legende TEXTE : l'information n'est jamais portee par la seule couleur (RGAA 3.1). #}
     <div class="mb-3">
-        <span class="badge" style="background-color:#0f6e56;">Pret valide</span>
+        <span class="badge" style="background-color:#0f6e56;">Prêt validé</span>
     </div>
 
     {# Region live : annonces de chargement pour les lecteurs d'ecran (RGAA 7.x). #}
@@ -32,11 +32,11 @@
     <details class="mt-4">
         <summary>Version tableau (accessible)</summary>
         <table class="table table-striped mt-2">
-            <caption>Liste des prets affiches sur le calendrier</caption>
+            <caption>Liste des prêts affichés sur le calendrier</caption>
             <thead>
                 <tr>
-                    <th scope="col">Materiel</th>
-                    <th scope="col">Debut</th>
+                    <th scope="col">Matériel</th>
+                    <th scope="col">Début</th>
                     <th scope="col">Fin</th>
                     <th scope="col">Statut</th>
                 </tr>

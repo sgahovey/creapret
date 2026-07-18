@@ -1,16 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Etat du parc{% endblock %}
+{% block title %}État du parc{% endblock %}
 
 {% block body %}
-    <main class="container py-5">
-        <h1 class="mb-4">Etat du parc</h1>
-        <p class="lead">Nombre d'exemplaires par etat, pour chaque materiel du catalogue.</p>
+    <div class="container py-5">
+        <h1 class="mb-4">État du parc</h1>
+        <p class="lead">Nombre d'exemplaires par état, pour chaque matériel du catalogue.</p>
 
         <table class="table table-striped align-middle">
             <thead>
                 <tr>
-                    <th scope="col">Materiel</th>
+                    <th scope="col">Matériel</th>
                     {% for etat in etats %}
                         <th scope="col" class="text-center">{{ etat.libelle }}</th>
                     {% endfor %}
@@ -34,11 +34,11 @@
                     <td class="text-center fw-semibold">{{ ligne.total }}</td>
                 </tr>
             {% else %}
-                <tr><td colspan="{{ etats|length + 2 }}">Aucun materiel pour le moment.</td></tr>
+                <tr><td colspan="{{ etats|length + 2 }}">Aucun matériel pour le moment.</td></tr>
             {% endfor %}
             </tbody>
         </table>
 
-        <a href="{{ path('app_gestion') }}">Retour a l'espace gestion</a>
-    </main>
+        <a href="{{ path('app_gestion') }}">Retour à l'espace gestion</a>
+    </div>
 {% endblock %}

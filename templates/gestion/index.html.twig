@@ -3,26 +3,26 @@
 {% block title %}Espace gestion{% endblock %}
 
 {% block body %}
-    <main class="container py-5">
+    <div class="container py-5">
         <h1 class="mb-4">Espace gestion</h1>
-        <p class="lead">Bienvenue dans l'espace de gestion du parc de materiel.</p>
+        <p class="lead">Bienvenue dans l'espace de gestion du parc de matériel.</p>
 
         <div class="row g-4 mt-2">
             <div class="col-md-6">
                 <div class="card h-100">
                     <div class="card-body">
-                        <h2 class="h5 card-title">Categories</h2>
-                        <p class="card-text">Gerer les categories du catalogue (informatique, audiovisuel, mesure...).</p>
-                        <a href="{{ path('app_categorie_index') }}" class="btn btn-primary">Gerer les categories</a>
+                        <h2 class="h5 card-title">Catégories</h2>
+                        <p class="card-text">Gérer les catégories du catalogue (informatique, audiovisuel, mesure...).</p>
+                        <a href="{{ path('app_categorie_index') }}" class="btn btn-primary">Gérer les catégories</a>
                     </div>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="card h-100">
                     <div class="card-body">
-                        <h2 class="h5 card-title">Materiels</h2>
-                        <p class="card-text">Gerer les materiels du catalogue et leur rattachement aux categories.</p>
-                        <a href="{{ path('app_materiel_index') }}" class="btn btn-primary">Gerer les materiels</a>
+                        <h2 class="h5 card-title">Matériels</h2>
+                        <p class="card-text">Gérer les matériels du catalogue et leur rattachement aux catégories.</p>
+                        <a href="{{ path('app_materiel_index') }}" class="btn btn-primary">Gérer les matériels</a>
                     </div>
                 </div>
             </div>
@@ -30,20 +30,20 @@
                 <div class="card h-100">
                     <div class="card-body">
                         <h2 class="h5 card-title">Exemplaires</h2>
-                        <p class="card-text">Gerer les exemplaires physiques et leur etat (disponible, maintenance, hors service...).</p>
-                        <a href="{{ path('app_exemplaire_index') }}" class="btn btn-primary">Gerer les exemplaires</a>
+                        <p class="card-text">Gérer les exemplaires physiques et leur état (disponible, maintenance, hors service...).</p>
+                        <a href="{{ path('app_exemplaire_index') }}" class="btn btn-primary">Gérer les exemplaires</a>
                     </div>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="card h-100">
                     <div class="card-body">
-                        <h2 class="h5 card-title">Etat du parc</h2>
-                        <p class="card-text">Consulter le nombre d'exemplaires par etat, pour chaque materiel.</p>
-                        <a href="{{ path('app_parc_index') }}" class="btn btn-primary">Voir l'etat du parc</a>
+                        <h2 class="h5 card-title">État du parc</h2>
+                        <p class="card-text">Consulter le nombre d'exemplaires par état, pour chaque matériel.</p>
+                        <a href="{{ path('app_parc_index') }}" class="btn btn-primary">Voir l'état du parc</a>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 {% endblock %}

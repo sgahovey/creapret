@@ -72,7 +72,7 @@ final class MaterielControllerTest extends WebTestCase
         $client->request('GET', '/gestion/materiel');
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Materiels');
+        self::assertSelectorTextContains('h1', 'Matériels');
     }
 
     public function test_creation_valide_avec_categorie(): void

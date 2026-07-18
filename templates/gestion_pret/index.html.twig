@@ -4,7 +4,7 @@
 
 {% block body %}
     <h1 class="h3 mb-4">Demandes de prêt en attente</h1>
-    <p><a href="{{ path('app_gestion_retours') }}">Prets en cours (retours) &rarr;</a></p>
+    <p><a href="{{ path('app_gestion_retours') }}">Prêts en cours (retours) &rarr;</a></p>
 
     {% if demandes is empty %}
         <p class="text-muted">Aucune demande en attente.</p>
@@ -13,9 +13,9 @@
             <thead>
                 <tr>
                     <th scope="col">Emprunteur</th>
-                    <th scope="col">Materiel</th>
+                    <th scope="col">Matériel</th>
                     <th scope="col">Exemplaire</th>
-                    <th scope="col">Periode</th>
+                    <th scope="col">Période</th>
                     <th scope="col">Demande le</th>
                     <th scope="col">Actions</th>
                 </tr>

@@ -58,6 +58,6 @@ final class ParcControllerTest extends WebTestCase
         $client->request('GET', '/gestion/parc');
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Etat du parc');
+        self::assertSelectorTextContains('h1', 'État du parc');
     }
 }

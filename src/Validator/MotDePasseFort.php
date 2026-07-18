@@ -15,9 +15,9 @@ final class MotDePasseFort extends Constraint
 {
     public int $longueurMin = 12;
 
-    public string $messageTropCourt = 'Le mot de passe doit contenir au moins {{ min }} caracteres.';
+    public string $messageTropCourt = 'Le mot de passe doit contenir au moins {{ min }} caractères.';
     public string $messageMinuscule = 'Le mot de passe doit contenir au moins une lettre minuscule.';
     public string $messageMajuscule = 'Le mot de passe doit contenir au moins une lettre majuscule.';
     public string $messageChiffre = 'Le mot de passe doit contenir au moins un chiffre.';
-    public string $messageSpecial = 'Le mot de passe doit contenir au moins un caractere special.';
+    public string $messageSpecial = 'Le mot de passe doit contenir au moins un caractère spécial.';
 }

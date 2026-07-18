@@ -87,7 +87,7 @@ final class MesPretsControllerTest extends WebTestCase
         $client->loginUser($moi);
         $client->request('GET', '/pret/mes-prets');
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Mes prets');
+        self::assertSelectorTextContains('h1', 'Mes prêts');
     }
 
     public function test_annuler_ma_demande(): void

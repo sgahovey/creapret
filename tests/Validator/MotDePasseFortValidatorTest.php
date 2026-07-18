@@ -27,7 +27,7 @@ final class MotDePasseFortValidatorTest extends ConstraintValidatorTestCase
     public function test_trop_court_est_rejete(): void
     {
         $this->validator->validate('Ab1!', new MotDePasseFort());
-        $this->buildViolation('Le mot de passe doit contenir au moins {{ min }} caracteres.')
+        $this->buildViolation('Le mot de passe doit contenir au moins {{ min }} caractères.')
             ->setParameter('{{ min }}', '12')
             ->assertRaised();
     }
@@ -49,7 +49,7 @@ final class MotDePasseFortValidatorTest extends ConstraintValidatorTestCase
     public function test_sans_caractere_special_est_rejete(): void
     {
         $this->validator->validate('Motdepasse12', new MotDePasseFort());
-        $this->buildViolation('Le mot de passe doit contenir au moins un caractere special.')
+        $this->buildViolation('Le mot de passe doit contenir au moins un caractère spécial.')
             ->assertRaised();
     }
 

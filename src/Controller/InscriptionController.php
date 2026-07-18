@@ -41,7 +41,7 @@ final class InscriptionController extends AbstractController
             $em->persist($utilisateur);
             $em->flush();
 
-            $this->addFlash('success', 'Votre compte a ete cree. Vous pouvez desormais vous connecter.');
+            $this->addFlash('success', 'Votre compte a été créé. Vous pouvez désormais vous connecter.');
 
             return $this->redirectToRoute('app_home');
         }

@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'exemplaire')]
 #[ORM\UniqueConstraint(name: 'uniq_exemplaire_numero', columns: ['numero_inventaire'])]
 #[ORM\Index(name: 'idx_exemplaire_materiel_etat', columns: ['id_materiel', 'etat'])]
-#[UniqueEntity(fields: ['numeroInventaire'], message: 'Ce numero d\'inventaire est deja utilise.')]
+#[UniqueEntity(fields: ['numeroInventaire'], message: 'Ce numéro d\'inventaire est déjà utilisé.')]
 class Exemplaire
 {
     #[ORM\Id]

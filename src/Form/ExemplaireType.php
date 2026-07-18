@@ -24,19 +24,19 @@ final class ExemplaireType extends AbstractType
     {
         $builder
             ->add('numeroInventaire', TextType::class, [
-                'label' => 'Numero d\'inventaire',
+                'label' => 'Numéro d\'inventaire',
                 'attr'  => ['maxlength' => 50],
             ])
             ->add('materiel', EntityType::class, [
                 'class'         => Materiel::class,
                 'choice_label'  => 'nom',
-                'placeholder'   => 'Choisir un materiel',
-                'label'         => 'Materiel',
+                'placeholder'   => 'Choisir un matériel',
+                'label'         => 'Matériel',
                 'query_builder' => static fn (EntityRepository $r) => $r->createQueryBuilder('m')->orderBy('m.nom', 'ASC'),
             ])
             ->add('etat', EnumType::class, [
                 'class' => EtatExemplaire::class,
-                'label' => 'Etat',
+                'label' => 'État',
                 // PRETE exclu : cet etat resulte d'un pret valide (iteration 3),
                 // il n'est pas choisi manuellement par le gestionnaire.
                 'choices' => array_filter(

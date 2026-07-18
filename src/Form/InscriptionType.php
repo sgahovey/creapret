@@ -32,7 +32,7 @@ final class InscriptionType extends AbstractType
                 'attr'  => ['autocomplete' => 'email'],
             ])
             ->add('prenom', TextType::class, [
-                'label' => 'Prenom',
+                'label' => 'Prénom',
                 'attr'  => ['autocomplete' => 'given-name'],
             ])
             ->add('nom', TextType::class, [
@@ -43,17 +43,17 @@ final class InscriptionType extends AbstractType
                 'label'       => 'Mot de passe',
                 'mapped'      => false,
                 'attr'        => ['autocomplete' => 'new-password'],
-                'help'        => 'Au moins 12 caracteres, avec majuscule, minuscule, chiffre et caractere special.',
+                'help'        => 'Au moins 12 caractères, avec majuscule, minuscule, chiffre et caractère spécial.',
                 'constraints' => [
                     new NotBlank(message: 'Veuillez saisir un mot de passe.'),
                     new MotDePasseFort(),
                 ],
             ])
             ->add('accepteCgu', CheckboxType::class, [
-                'label'       => 'J\'accepte les conditions generales d\'utilisation.',
+                'label'       => 'J\'accepte les conditions générales d\'utilisation.',
                 'mapped'      => false,
                 'constraints' => [
-                    new IsTrue(message: 'Vous devez accepter les conditions generales d\'utilisation.'),
+                    new IsTrue(message: 'Vous devez accepter les conditions générales d\'utilisation.'),
                 ],
             ]);
     }

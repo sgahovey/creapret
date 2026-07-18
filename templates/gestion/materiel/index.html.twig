@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Materiels{% endblock %}
+{% block title %}Matériels{% endblock %}
 
 {% block body %}
-    <main class="container py-5">
+    <div class="container py-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Materiels</h1>
-            <a href="{{ path('app_materiel_new') }}" class="btn btn-primary">Nouveau materiel</a>
+            <h1>Matériels</h1>
+            <a href="{{ path('app_materiel_new') }}" class="btn btn-primary">Nouveau matériel</a>
         </div>
 
         {% for label, messages in app.flashes %}
@@ -19,7 +19,7 @@
             <thead>
                 <tr>
                     <th scope="col">Nom</th>
-                    <th scope="col">Categorie</th>
+                    <th scope="col">Catégorie</th>
                     <th scope="col">Marque</th>
                     <th scope="col">Exemplaires</th>
                     <th scope="col"><span class="visually-hidden">Actions</span></th>
@@ -35,18 +35,18 @@
                     <td class="text-end">
                         <a href="{{ path('app_materiel_edit', {id: materiel.id}) }}" class="btn btn-sm btn-outline-secondary">Modifier</a>
                         <form method="post" action="{{ path('app_materiel_delete', {id: materiel.id}) }}" class="d-inline"
-                              onsubmit="return confirm('Supprimer ce materiel ?');">
+                              onsubmit="return confirm('Supprimer ce matériel ?');">
                             <input type="hidden" name="_token" value="{{ csrf_token('supprimer_materiel_' ~ materiel.id) }}">
                             <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
                         </form>
                     </td>
                 </tr>
             {% else %}
-                <tr><td colspan="5">Aucun materiel pour le moment.</td></tr>
+                <tr><td colspan="5">Aucun matériel pour le moment.</td></tr>
             {% endfor %}
             </tbody>
         </table>
 
-        <a href="{{ path('app_gestion') }}">Retour a l'espace gestion</a>
-    </main>
+        <a href="{{ path('app_gestion') }}">Retour à l'espace gestion</a>
+    </div>
 {% endblock %}

@@ -1,19 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes prets{% endblock %}
+{% block title %}Mes prêts{% endblock %}
 
 {% block body %}
-    <h1 class="h3 mb-4">Mes prets</h1>
+    <h1 class="h3 mb-4">Mes prêts</h1>
 
     {% if prets is empty %}
-        <p class="text-muted">Vous n'avez aucun pret pour le moment.</p>
+        <p class="text-muted">Vous n'avez aucun prêt pour le moment.</p>
     {% else %}
         <table class="table table-striped align-middle">
             <thead>
                 <tr>
-                    <th scope="col">Materiel</th>
+                    <th scope="col">Matériel</th>
                     <th scope="col">Exemplaire</th>
-                    <th scope="col">Periode</th>
+                    <th scope="col">Période</th>
                     <th scope="col">Statut</th>
                     <th scope="col">Demande le</th>
                     <th scope="col">Actions</th>

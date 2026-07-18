@@ -206,6 +206,6 @@ final class CatalogueControllerTest extends WebTestCase
         $client->request('GET', '/catalogue/' . $mat->getId() . '?debut=2026-09-15&fin=2026-09-10');
 
         self::assertResponseIsSuccessful();
-        self::assertStringContainsString('posterieure', $this->contenu($client));
+        self::assertStringContainsString('postérieure', $this->contenu($client));
     }
 }

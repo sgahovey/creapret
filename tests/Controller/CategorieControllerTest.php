@@ -60,7 +60,7 @@ final class CategorieControllerTest extends WebTestCase
         $client->request('GET', '/gestion/categorie');
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Categories');
+        self::assertSelectorTextContains('h1', 'Catégories');
     }
 
     public function test_creation_valide(): void

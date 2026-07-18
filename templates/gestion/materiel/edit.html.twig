@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier le materiel{% endblock %}
+{% block title %}Modifier le matériel{% endblock %}
 
 {% block body %}
-    <main class="container py-5" style="max-width: 40rem;">
-        <h1 class="mb-4">Modifier le materiel</h1>
+    <div class="container py-5" style="max-width: 40rem;">
+        <h1 class="mb-4">Modifier le matériel</h1>
 
         {{ form_start(form) }}
             {{ form_row(form.nom, {attr: {class: 'form-control'}, label_attr: {class: 'form-label'}}) }}
@@ -16,5 +16,5 @@
             <button type="submit" class="btn btn-primary">Enregistrer</button>
             <a href="{{ path('app_materiel_index') }}" class="btn btn-link">Annuler</a>
         {{ form_end(form) }}
-    </main>
+    </div>
 {% endblock %}

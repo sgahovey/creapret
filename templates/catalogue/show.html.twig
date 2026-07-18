@@ -3,7 +3,7 @@
 {% block title %}{{ materiel.nom }}{% endblock %}
 
 {% block body %}
-    <main class="container py-5" style="max-width: 48rem;">
+    <div class="container py-5" style="max-width: 48rem;">
         <nav aria-label="fil d'ariane" class="mb-3">
             <a href="{{ path('app_catalogue_index') }}">&larr; Retour au catalogue</a>
         </nav>
@@ -27,17 +27,17 @@
                 <dd class="col-sm-9">{{ materiel.marque }}</dd>
             {% endif %}
             {% if materiel.modele %}
-                <dt class="col-sm-3">Modele</dt>
+                <dt class="col-sm-3">Modèle</dt>
                 <dd class="col-sm-9">{{ materiel.modele }}</dd>
             {% endif %}
             {% if materiel.reference %}
-                <dt class="col-sm-3">Reference</dt>
+                <dt class="col-sm-3">Référence</dt>
                 <dd class="col-sm-9">{{ materiel.reference }}</dd>
             {% endif %}
         </dl>
 
         <section class="mt-4" aria-labelledby="titre-dispo">
-            <h2 id="titre-dispo" class="h5">Disponibilite sur une periode</h2>
+            <h2 id="titre-dispo" class="h5">Disponibilité sur une période</h2>
             <form method="get" action="{{ path('app_catalogue_show', {id: materiel.id}) }}" class="row g-2 align-items-end">
                 <div class="col-auto">
                     <label for="debut" class="form-label">Du</label>
@@ -48,7 +48,7 @@
                     <input type="date" id="fin" name="fin" value="{{ fin }}" class="form-control" required>
                 </div>
                 <div class="col-auto">
-                    <button type="submit" class="btn btn-outline-primary">Verifier la disponibilite</button>
+                    <button type="submit" class="btn btn-outline-primary">Vérifier la disponibilité</button>
                 </div>
             </form>
 
@@ -57,19 +57,19 @@
             {% elseif nbSurPeriode is not null %}
                 <p class="mt-3">
                     {% if nbSurPeriode > 0 %}
-                        <span class="badge text-bg-success">{{ nbSurPeriode }} exemplaire{{ nbSurPeriode > 1 ? 's' : '' }} disponible{{ nbSurPeriode > 1 ? 's' : '' }} sur cette periode</span>
+                        <span class="badge text-bg-success">{{ nbSurPeriode }} exemplaire{{ nbSurPeriode > 1 ? 's' : '' }} disponible{{ nbSurPeriode > 1 ? 's' : '' }} sur cette période</span>
                     {% else %}
-                        <span class="badge text-bg-secondary">Aucun exemplaire disponible sur cette periode</span>
+                        <span class="badge text-bg-secondary">Aucun exemplaire disponible sur cette période</span>
                     {% endif %}
                 </p>
             {% endif %}
 
             {% if formDemande is defined and formDemande is not null %}
                 <div class="mt-3 border-top pt-3">
-                    <h3 class="h6">Demander un pret sur cette periode</h3>
+                    <h3 class="h6">Demander un prêt sur cette période</h3>
                     {{ form_start(formDemande) }}
                     {{ form_widget(formDemande) }}
-                    <button type="submit" class="btn btn-primary mt-2">Demander un pret</button>
+                    <button type="submit" class="btn btn-primary mt-2">Demander un prêt</button>
                     {{ form_end(formDemande) }}
                 </div>
             {% endif %}
@@ -77,5 +77,5 @@
 
         {# Iteration 3 (CU-04) : le bouton « Demander un pret » prendra place ici,
            conditionne a la disponibilite sur la periode choisie (RG-4). #}
-    </main>
+    </div>
 {% endblock %}

@@ -109,7 +109,7 @@ final class PretControllerTest extends WebTestCase
         $client->request('GET', '/catalogue/' . $mat->getId() . '?debut=' . $debut . '&fin=' . $fin);
         self::assertResponseIsSuccessful();
 
-        $client->submitForm('Demander un pret');
+        $client->submitForm('Demander un prêt');
         self::assertResponseRedirects('/catalogue/' . $mat->getId());
 
         $prets = $this->repo($client)->findBy(['exemplaire' => $ex->getId()]);
@@ -136,7 +136,7 @@ final class PretControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
 
         // La cause testee : la contrainte GreaterThanOrEqual(today) du DTO refuse la periode passee.
-        $client->submitForm('Demander un pret');
+        $client->submitForm('Demander un prêt');
         self::assertResponseRedirects('/catalogue/' . $mat->getId());
 
         self::assertCount(0, $this->repo($client)->findBy(['exemplaire' => $ex->getId()]));
@@ -170,7 +170,7 @@ final class PretControllerTest extends WebTestCase
 
         // Soumission du formulaire : le controleur reverifie RG-4 (trouverUnLibreSurPeriode -> null)
         // et refuse. C'est la defense en profondeur contre la course affichage/soumission.
-        $client->submitForm('Demander un pret');
+        $client->submitForm('Demander un prêt');
         self::assertResponseRedirects('/catalogue/' . $mat->getId());
 
         $em->clear();
