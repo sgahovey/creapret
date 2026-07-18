@@ -208,4 +208,20 @@ final class CatalogueControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertStringContainsString('postérieure', $this->contenu($client));
     }
+
+    public function test_dates_malformees_affichent_une_erreur(): void
+    {
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $hasher = static::getContainer()->get(UserPasswordHasherInterface::class);
+
+        [, $mat] = $this->materielAvecExemplaires($em, 1);
+
+        $client->loginUser($this->emprunteur($em, $hasher));
+        // Format non reconnu par createFromFormat('Y-m-d', ...) : message d'erreur de format.
+        $client->request('GET', '/catalogue/' . $mat->getId() . '?debut=invalide&fin=invalide');
+
+        self::assertResponseIsSuccessful();
+        self::assertStringContainsString('Dates invalides', $this->contenu($client));
+    }
 }

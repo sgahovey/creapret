@@ -155,4 +155,53 @@ final class GestionPretControllerTest extends WebTestCase
         $this->purger(static::getContainer()->get(EntityManagerInterface::class));
         parent::tearDown();
     }
+
+    public function test_validation_avec_jeton_invalide_est_rejetee(): void
+    {
+        $client = static::createClient();
+        $em = $this->em($client);
+        $hasher = $client->getContainer()->get(UserPasswordHasherInterface::class);
+        $this->purger($em);
+
+        $emprunteur = $this->utilisateur($em, $hasher, Role::EMPRUNTEUR, 'emp');
+        $pret = $this->demande($em, $emprunteur, '2026-09-10 00:00:00', '2026-09-15 00:00:00');
+        $idPret = $pret->getId();
+
+        $client->loginUser($this->utilisateur($em, $hasher, Role::GESTIONNAIRE, 'gest'));
+        // Jeton CSRF invalide : la validation est refusee, le pret reste en attente.
+        $client->request('POST', '/gestion/prets/' . $idPret . '/valider', ['_token' => 'faux']);
+
+        self::assertResponseRedirects('/gestion/prets');
+        $em->clear();
+        $relu = $client->getContainer()->get(PretRepository::class)->find($idPret);
+        self::assertNotNull($relu);
+        self::assertSame(StatutPret::DEMANDE, $relu->getStatut());
+    }
+
+    public function test_retour_avec_jeton_invalide_est_rejete(): void
+    {
+        $client = static::createClient();
+        $em = $this->em($client);
+        $hasher = $client->getContainer()->get(UserPasswordHasherInterface::class);
+        $this->purger($em);
+
+        $emprunteur = $this->utilisateur($em, $hasher, Role::EMPRUNTEUR, 'emp');
+        $pret = $this->demande($em, $emprunteur, '2026-09-10 00:00:00', '2026-09-15 00:00:00');
+        $idPret = $pret->getId();
+
+        $client->loginUser($this->utilisateur($em, $hasher, Role::GESTIONNAIRE, 'gest'));
+        // Valider d'abord (jeton valide via le formulaire) pour passer le pret en cours.
+        $client->request('GET', '/gestion/prets');
+        $client->submitForm('Valider');
+        self::assertResponseRedirects('/gestion/prets');
+
+        // Puis tenter le retour avec un jeton CSRF invalide : refuse, le pret reste VALIDE.
+        $client->request('POST', '/gestion/prets/' . $idPret . '/retour', ['_token' => 'faux']);
+
+        self::assertResponseRedirects('/gestion/prets/retours');
+        $em->clear();
+        $relu = $client->getContainer()->get(PretRepository::class)->find($idPret);
+        self::assertNotNull($relu);
+        self::assertSame(StatutPret::VALIDE, $relu->getStatut());
+    }
 }

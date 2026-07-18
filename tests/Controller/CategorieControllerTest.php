@@ -167,4 +167,24 @@ final class CategorieControllerTest extends WebTestCase
         $em->clear();
         self::assertNotNull($em->getRepository(Categorie::class)->find($id));
     }
+
+    public function test_suppression_avec_jeton_invalide_est_rejetee(): void
+    {
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $hasher = static::getContainer()->get(UserPasswordHasherInterface::class);
+
+        $c = (new Categorie())->setNom(self::MARQUEUR . '-csrf');
+        $em->persist($c);
+        $em->flush();
+        $id = $c->getId();
+
+        $client->loginUser($this->gestionnaire($em, $hasher));
+        // Jeton CSRF invalide : la suppression est refusee, la categorie subsiste.
+        $client->request('POST', '/gestion/categorie/' . $id . '/supprimer', ['_token' => 'faux']);
+
+        self::assertResponseRedirects('/gestion/categorie');
+        $em->clear();
+        self::assertNotNull($em->getRepository(Categorie::class)->find($id));
+    }
 }

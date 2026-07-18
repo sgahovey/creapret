@@ -187,4 +187,25 @@ final class MaterielControllerTest extends WebTestCase
         $em->clear();
         self::assertNotNull($em->getRepository(Materiel::class)->find($id));
     }
+
+    public function test_suppression_avec_jeton_invalide_est_rejetee(): void
+    {
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $hasher = static::getContainer()->get(UserPasswordHasherInterface::class);
+
+        $cat = $this->categorie($em);
+        $m = (new Materiel())->setNom(self::MARQUEUR . '-csrf')->setCategorie($cat);
+        $em->persist($m);
+        $em->flush();
+        $id = $m->getId();
+
+        $client->loginUser($this->gestionnaire($em, $hasher));
+        // Jeton CSRF invalide : la suppression est refusee, le materiel subsiste.
+        $client->request('POST', '/gestion/materiel/' . $id . '/supprimer', ['_token' => 'faux']);
+
+        self::assertResponseRedirects('/gestion/materiel');
+        $em->clear();
+        self::assertNotNull($em->getRepository(Materiel::class)->find($id));
+    }
 }
