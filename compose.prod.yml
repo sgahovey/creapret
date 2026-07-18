@@ -80,29 +80,37 @@ services:
     networks:
       - creapret-interne
 
-  app-preprod:
+  # NB : les noms des services applicatifs ci-dessous doivent rester UNIQUES A L'ECHELLE DU
+  # SERVEUR : plusieurs applications partagent le reseau du proxy (external), ou chaque conteneur
+  # est joignable par son nom de service. Un nom deja pris par une autre pile (ex. « app-preprod »
+  # de CreaSlot) creerait une collision DNS -> d'ou le prefixe « creapret- ». Les workers ne sont
+  # pas sur le reseau partage, mais sont renommes par coherence.
+  creapret-app-preprod:
     <<: *app-base
     image: ghcr.io/sgahovey/creapret:${PREPROD_IMAGE_TAG:-latest}
     environment: *preprod-app-env
     volumes:
       - assets_preprod:/srv-assets
+    # Reseau interne (acces base) + reseau du proxy. Joignable par Caddy sous le NOM DE SERVICE,
+    # desormais unique : creapret-app-preprod:9000.
     networks:
-      - creapret-interne   # acces base
-      - proxy              # servi par Caddy (php_fastcgi)
+      - creapret-interne
+      - proxy
 
-  app-prod:
+  creapret-app-prod:
     <<: *app-base
     image: ghcr.io/sgahovey/creapret:${PROD_IMAGE_TAG:-latest}
     environment: *prod-app-env
     volumes:
       - assets_prod:/srv-assets
+    # Reseau interne + reseau du proxy. Joignable par Caddy sous creapret-app-prod:9000 (nom unique).
     networks:
       - creapret-interne
       - proxy
 
   # Workers Messenger : sans eux, AUCUN courriel ne part (confirmation de pret, rappel d'echeance,
   # alerte de retard passent par le transport async). Uniquement sur le reseau interne (pas de HTTP).
-  worker-preprod:
+  creapret-worker-preprod:
     <<: *app-base
     image: ghcr.io/sgahovey/creapret:${PREPROD_IMAGE_TAG:-latest}
     command: ["php", "bin/console", "messenger:consume", "async", "-v", "--time-limit=3600", "--memory-limit=128M"]
@@ -110,7 +118,7 @@ services:
     networks:
       - creapret-interne
 
-  worker-prod:
+  creapret-worker-prod:
     <<: *app-base
     image: ghcr.io/sgahovey/creapret:${PROD_IMAGE_TAG:-latest}
     command: ["php", "bin/console", "messenger:consume", "async", "-v", "--time-limit=3600", "--memory-limit=128M"]

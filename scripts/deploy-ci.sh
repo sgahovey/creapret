@@ -33,8 +33,8 @@ if [ "$ENV" = "preprod" ]; then
 else
   export PROD_IMAGE_TAG="$TAG"
 fi
-APP="app-$ENV"
-WORKER="worker-$ENV"
+APP="creapret-app-$ENV"
+WORKER="creapret-worker-$ENV"
 
 echo ">>> Deploiement $ENV @ $TAG"
 
