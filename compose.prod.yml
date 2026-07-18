@@ -142,6 +142,28 @@ services:
       - creapret-interne   # sonder les conteneurs applicatifs par leur nom (creapret-app-*)
       - proxy              # etre expose par le proxy Caddy
 
+  # Consultation des journaux (Dozzle) DEDIEE a CreaPret. Nom de service unique a l'echelle du
+  # serveur (le reseau du proxy etant partage) : creapret-journaux.
+  creapret-journaux:
+    image: amir20/dozzle:latest
+    restart: unless-stopped
+    logging: *default-logging
+    environment:
+      # Filtre (syntaxe de filtre Docker) : n'expose QUE les conteneurs de CETTE application,
+      # identifies par l'etiquette de projet Compose (name: creapret_prod). L'autre application
+      # hebergee (projet creaslot_prod) n'apparait donc pas dans Dozzle.
+      DOZZLE_FILTER: "label=com.docker.compose.project=creapret_prod"
+    volumes:
+      # Socket Docker en LECTURE SEULE : il donne acces au demon, donc au SERVEUR ENTIER. Le
+      # montage :ro limite la portee (consultation seule, aucun controle) ; l'acces au service
+      # reste protege par authentification au niveau du proxy Caddy.
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    # Aucun port publie : joint UNIQUEMENT via le proxy Caddy.
+    # Reseau du proxy UNIQUEMENT : Dozzle lit les journaux via le socket Docker, il n'a pas besoin
+    # du reseau interne pour joindre les conteneurs.
+    networks:
+      - proxy
+
 volumes:
   mysql_data_prod:
   # Assets compiles de chaque env (peuples par l'entrypoint des app-*), destines a etre montes en
