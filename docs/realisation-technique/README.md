@@ -16,3 +16,6 @@ la réalisation en donne la **mise en œuvre** concrète.
 | Consultation des journaux | [`journaux.md`](journaux.md) | [`../conception/journaux.md`](../conception/journaux.md) |
 | Traitements automatiques | [`traitements-automatiques.md`](traitements-automatiques.md) | [`../conception/traitements-automatiques.md`](../conception/traitements-automatiques.md) |
 | Gestion des versions | [`versionnement.md`](versionnement.md) | [`../conception/versionnement.md`](../conception/versionnement.md) |
+| Modèle métier (classes) | `../../src/Entity/` · `../../src/Enum/` | [`../conception/diagramme-classes.md`](../conception/diagramme-classes.md) |
+| Modèle de données | `../../migrations/` | [`../conception/modele-donnees.md`](../conception/modele-donnees.md) |
+| Architecture en couches | `../../src/` (Controller · Service · Repository · Entity) | [`../conception/architecture-couches.md`](../conception/architecture-couches.md) |

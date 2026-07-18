@@ -18,3 +18,8 @@ réels et les commandes. La conception énonce l'**exigence** ; la réalisation 
 | Consultation des traces d'activité | [`journaux.md`](journaux.md) |
 | Traitements automatiques | [`traitements-automatiques.md`](traitements-automatiques.md) |
 | Gestion des versions et déploiement | [`versionnement.md`](versionnement.md) |
+| Modèle métier — diagramme de classes | [`diagramme-classes.md`](diagramme-classes.md) |
+| Modèle de données (3 niveaux) | [`modele-donnees.md`](modele-donnees.md) |
+| Architecture en couches | [`architecture-couches.md`](architecture-couches.md) |
+
+> Les trois derniers documents (classes, données, couches) sont des **artefacts de modélisation** : leur pendant en réalisation est **le code lui-même** (`../../src/`, `../../migrations/`).

@@ -1,0 +1,14 @@
+%% Schema de conception -- circulation d'une requete a travers les couches.
+%% Trait plein = passage nominal ; pointille = branche (refus, invalide, differe).
+flowchart TB
+    R["Requête entrante"] --> AC["Contrôle d'accès<br/>(habilitations)"]
+    AC -->|autorisé| CTRL["Couche de présentation<br/>(contrôleur + vue)"]
+    CTRL --> VAL["Validation des entrées<br/>(contraintes déclaratives)"]
+    VAL -->|valide| SRV["Couche de traitement métier<br/>(règles, transaction, verrou)"]
+    SRV --> REPO["Couche d'accès aux données<br/>(dépôts)"]
+    REPO --> DB[("Base de données")]
+    SRV -. "événement" .-> ASYNC(["Traitement différé<br/>(notification)"])
+    SRV --> CTRL
+    CTRL --> RESP["Réponse"]
+    VAL -.->|invalide| RESP
+    AC -.->|refusé| RESP
