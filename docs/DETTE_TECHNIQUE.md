@@ -114,3 +114,17 @@ les laisser implicites).
   le demonstrateur, mais ecart avec une gestion d'identite complete.
 - **Resolution differee** : levee des qu'une reinitialisation de mot de passe par courriel (lien a usage
   unique) sera disponible ; le changement force a la premiere connexion pourra s'y greffer.
+
+
+## DT-9 — style-src conserve 'unsafe-inline' dans la CSP
+
+- **Statut** : Ouverte (compromis assume).
+- **Constat** : la Content-Security-Policy (US-6.3) impose un script-src strict (nonce, sans
+  'unsafe-inline'), mais conserve `style-src 'self' 'unsafe-inline'`. De nombreux gabarits portent des
+  attributs `style=` inline (pages legales, conteneur de graphe, badge du calendrier, en-tete/pied,
+  gabarits d'e-mail) qui ne peuvent porter ni nonce ni hash.
+- **Impact** : la protection XSS via styles inline reste theorique et faible ; le vecteur principal
+  (script) est, lui, verrouille par le nonce.
+- **Resolution ecartee** : eliminer 'unsafe-inline' sur style-src supposerait de reecrire de nombreux
+  gabarits (extraction de tous les style= vers app.css) pour un gain faible. Compromis assume, a revoir
+  si les styles inline disparaissent d'eux-memes.

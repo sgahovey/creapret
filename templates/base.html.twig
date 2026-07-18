@@ -13,7 +13,7 @@
         {% endblock %}
 
         {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
+            {% block importmap %}{{ importmap('app', { nonce: csp_nonce() }) }}{% endblock %}
         {% endblock %}
 
         {% set frankenphpHotReload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
@@ -24,6 +24,9 @@
         {% endif %}
     </head>
     <body>
+        {% if app_environment_label is defined and app_environment_label != 'prod' and app_environment_label != '' %}
+            <div class="bandeau-environnement" role="status">{{ app_environment_label|upper }}</div>
+        {% endif %}
         <a href="#contenu" class="visually-hidden-focusable position-absolute top-0 start-0 m-2 btn btn-light">Aller au contenu principal</a>
         {% block header %}{% include '_partials/header.html.twig' %}{% endblock %}
         <main id="contenu" role="main">
