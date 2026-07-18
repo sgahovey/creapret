@@ -1,0 +1,40 @@
+%% Architecture de deploiement CreaPret -- proxy partage avec l'autre application (CreaSlot).
+%% Source de docs/architecture-deploiement.md (section 2).
+flowchart TB
+    NAV["Navigateur"]
+
+    subgraph CS["Pile CreaSlot (autre application) -- proprietaire du proxy"]
+        CADDY["Caddy -- reverse-proxy unique<br/>TLS 80/443, en-tetes, basic_auth<br/>+ 4 blocs de site CreaPret"]
+    end
+
+    subgraph CP["Pile CreaPret -- projet creapret_prod"]
+        direction TB
+        subgraph EXPO["Exposes (rejoignent le reseau du proxy)"]
+            APREPROD["creapret-app-preprod:9000"]
+            APROD["creapret-app-prod:9000"]
+            SUP["creapret-supervision:3001<br/>(Uptime Kuma)"]
+            JOU["creapret-journaux:8080<br/>(Dozzle)"]
+        end
+        subgraph INT["Reseau interne creapret-interne (non expose)"]
+            WPREPROD["creapret-worker-preprod"]
+            WPROD["creapret-worker-prod"]
+            DB[("MySQL 8 -- db<br/>creapret_preprod<br/>creapret_prod")]
+        end
+    end
+
+    NAV -->|"HTTPS 443"| CADDY
+    CADDY -->|"prod.domaine (public)"| APROD
+    CADDY -->|"preprod.domaine (basic_auth)"| APREPROD
+    CADDY -->|"supervision.domaine (basic_auth)"| SUP
+    CADDY -->|"journaux.domaine (basic_auth)"| JOU
+
+    APREPROD --- DB
+    APROD --- DB
+    WPREPROD --- DB
+    WPROD --- DB
+
+    SUP -.->|"socket Docker :ro (etat conteneurs)"| CP
+    JOU -.->|"socket Docker :ro (journaux)"| CP
+
+    %% Reseaux : les app-* et la supervision sont sur creapret-interne ET sur le reseau du proxy ;
+    %% les workers et la base sont sur creapret-interne SEUL ; journaux sur le reseau du proxy seul.
