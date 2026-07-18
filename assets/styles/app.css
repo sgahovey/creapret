@@ -173,3 +173,50 @@ main {
     color: var(--creapret-bordure);
     margin-bottom: var(--creapret-espace-md);
 }
+
+/* ------------------------------------------------------------------ *
+ * Harmonisation FullCalendar (US calendrier) : le widget est recolore
+ * via les custom properties officielles --fc-* (FullCalendar v6), sans
+ * !important ni surcharge fragile. Portee : .cp-calendrier (classe posee
+ * sur le conteneur data-controller="calendrier").
+ * ------------------------------------------------------------------ */
+.cp-calendrier {
+    --fc-button-bg-color: var(--creapret-primaire);
+    --fc-button-border-color: var(--creapret-primaire);
+    --fc-button-hover-bg-color: var(--creapret-primaire-fonce);
+    --fc-button-hover-border-color: var(--creapret-primaire-fonce);
+    --fc-button-active-bg-color: var(--creapret-primaire-fonce);
+    --fc-button-active-border-color: var(--creapret-primaire-fonce);
+    --fc-today-bg-color: var(--creapret-primaire-clair);
+    --fc-border-color: var(--creapret-bordure);
+    --fc-event-bg-color: var(--creapret-primaire);
+    --fc-event-border-color: var(--creapret-primaire);
+    --fc-page-bg-color: #fff;
+}
+
+/* Enveloppe visuelle du calendrier (carte discrete, sans effet de survol). */
+.cp-calendrier .fc {
+    background: #fff;
+    border: 1px solid var(--creapret-bordure);
+    border-radius: var(--creapret-radius-lg);
+    padding: var(--creapret-espace-md);
+}
+
+/* Numeros de jour : liens bleus soulignes par defaut -> texte neutre. */
+.cp-calendrier .fc .fc-daygrid-day-number {
+    color: var(--creapret-texte);
+    text-decoration: none;
+}
+
+/* En-tetes de colonnes (jours de la semaine). */
+.cp-calendrier .fc .fc-col-header-cell-cushion {
+    color: var(--creapret-texte-doux);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* Pastilles d'evenements. */
+.cp-calendrier .fc-event {
+    border-radius: var(--creapret-radius-sm);
+    font-size: 0.8rem;
+}
