@@ -25,13 +25,14 @@ enum Role: string
         };
     }
 
-    /** Classe de badge Bootstrap 5 (contraste RGAA). */
+    /** Couleur de badge Bootstrap 5 (nue, a prefixer par text-bg- a l'affichage ; contrat commun
+     * avec StatutPret::couleurBadge et EtatExemplaire::couleurBadge). */
     public function couleurBadge(): string
     {
         return match ($this) {
-            self::EMPRUNTEUR   => 'text-bg-secondary',
-            self::GESTIONNAIRE => 'text-bg-primary',
-            self::SUPER_ADMIN  => 'text-bg-danger',
+            self::EMPRUNTEUR   => 'secondary',
+            self::GESTIONNAIRE => 'primary',
+            self::SUPER_ADMIN  => 'danger',
         };
     }
 }

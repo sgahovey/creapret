@@ -24,6 +24,6 @@ final class RoleTest extends TestCase
     public function test_libelle_et_badge(): void
     {
         self::assertSame('Super-administrateur', Role::SUPER_ADMIN->libelle());
-        self::assertStringStartsWith('text-bg-', Role::GESTIONNAIRE->couleurBadge());
+        self::assertSame('primary', Role::GESTIONNAIRE->couleurBadge());
     }
 }
