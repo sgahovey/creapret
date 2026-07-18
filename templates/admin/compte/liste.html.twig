@@ -58,7 +58,7 @@
                                         <a href="{{ path('app_admin_compte_modifier', {id: compte.id}) }}" class="btn btn-sm btn-outline-secondary">Modifier</a>
                                         {% if is_granted(attributActivation, compte) %}
                                             <form method="post" action="{{ path('app_admin_compte_activation', {id: compte.id}) }}" class="d-inline"
-                                                  onsubmit="return confirm('{{ compte.estActif ? 'Désactiver' : 'Réactiver' }} ce compte ?');">
+                                                  data-controller="confirmer" data-action="submit->confirmer#demander" data-confirmer-message-value="{{ compte.estActif ? 'Désactiver' : 'Réactiver' }} ce compte ?">
                                                 <input type="hidden" name="_token" value="{{ csrf_token('activation' ~ compte.id) }}">
                                                 <button type="submit" class="btn btn-sm {{ compte.estActif ? 'btn-outline-danger' : 'btn-outline-success' }}">{{ compte.estActif ? 'Désactiver' : 'Réactiver' }}</button>
                                             </form>

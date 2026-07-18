@@ -32,7 +32,7 @@
                             <td class="text-end">
                                 <a href="{{ path('app_categorie_edit', {id: categorie.id}) }}" class="btn btn-sm btn-outline-secondary">Modifier</a>
                                 <form method="post" action="{{ path('app_categorie_delete', {id: categorie.id}) }}" class="d-inline"
-                                      onsubmit="return confirm('Supprimer cette catégorie ?');">
+                                      data-controller="confirmer" data-action="submit->confirmer#demander" data-confirmer-message-value="Supprimer cette catégorie ?">
                                     <input type="hidden" name="_token" value="{{ csrf_token('supprimer_categorie_' ~ categorie.id) }}">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
                                 </form>

@@ -13,10 +13,10 @@
 
         <div class="cp-card">
             <div class="cp-card__corps">
-                <form method="get" action="{{ path('app_admin_journal') }}" class="row g-2 align-items-end">
+                <form method="get" action="{{ path('app_admin_journal') }}" class="row g-2 align-items-end" data-controller="auto-soumettre">
                     <div class="col-auto">
                         <label for="type" class="form-label">Filtrer par action</label>
-                        <select name="type" id="type" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <select name="type" id="type" class="form-select form-select-sm" data-action="change->auto-soumettre#soumettre">
                             <option value="">Toutes les actions</option>
                             {% for typeAction in typesDisponibles %}
                                 <option value="{{ typeAction.value }}"{{ typeSelectionne == typeAction ? ' selected' : '' }}>
@@ -26,7 +26,7 @@
                         </select>
                     </div>
                     <div class="col-auto">
-                        <noscript><button type="submit" class="btn btn-sm btn-secondary">Filtrer</button></noscript>
+                        <button type="submit" class="btn btn-sm btn-secondary" data-auto-soumettre-target="bouton">Filtrer</button>
                     </div>
                 </form>
                 <p class="text-muted small mt-2 mb-0">{{ total }} entrée(s) au total.</p>

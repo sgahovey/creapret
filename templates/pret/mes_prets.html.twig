@@ -42,7 +42,7 @@
                                     <td>
                                         {% if is_granted(constant('App\\Security\\Voter\\PretVoter::ANNULER'), pret) %}
                                             <form method="post" action="{{ path('app_pret_annuler', {id: pret.id}) }}"
-                                                  onsubmit="return confirm('Annuler cette demande ?');">
+                                                  data-controller="confirmer" data-action="submit->confirmer#demander" data-confirmer-message-value="Annuler cette demande ?">
                                                 <input type="hidden" name="_token" value="{{ csrf_token('annuler' ~ pret.id) }}">
                                                 <button type="submit" class="btn btn-outline-danger btn-sm">Annuler</button>
                                             </form>
