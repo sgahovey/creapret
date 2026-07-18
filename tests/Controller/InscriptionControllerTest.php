@@ -34,11 +34,12 @@ final class InscriptionControllerTest extends WebTestCase
 
         $client->request('GET', '/inscription');
         $client->submitForm('Créer mon compte', [
-            'inscription[email]'         => 'emprunteur@cnam-reunion.fr',
-            'inscription[prenom]'        => 'Marie',
-            'inscription[nom]'           => 'Payet',
-            'inscription[plainPassword]' => 'Motdepasse1!',
-            'inscription[accepteCgu]'    => true,
+            'inscription[email]'                 => 'emprunteur@cnam-reunion.fr',
+            'inscription[prenom]'                => 'Marie',
+            'inscription[nom]'                   => 'Payet',
+            'inscription[plainPassword][first]'  => 'Motdepasse1!',
+            'inscription[plainPassword][second]' => 'Motdepasse1!',
+            'inscription[accepteCgu]'            => true,
         ]);
 
         self::assertResponseRedirects();
@@ -63,11 +64,12 @@ final class InscriptionControllerTest extends WebTestCase
 
         $client->request('GET', '/inscription');
         $client->submitForm('Créer mon compte', [
-            'inscription[email]'         => 'faible@cnam-reunion.fr',
-            'inscription[prenom]'        => 'Jean',
-            'inscription[nom]'           => 'Hoarau',
-            'inscription[plainPassword]' => 'faible',
-            'inscription[accepteCgu]'    => true,
+            'inscription[email]'                 => 'faible@cnam-reunion.fr',
+            'inscription[prenom]'                => 'Jean',
+            'inscription[nom]'                   => 'Hoarau',
+            'inscription[plainPassword][first]'  => 'faible',
+            'inscription[plainPassword][second]' => 'faible',
+            'inscription[accepteCgu]'            => true,
         ]);
 
         self::assertResponseIsUnprocessable();
@@ -83,11 +85,12 @@ final class InscriptionControllerTest extends WebTestCase
 
         $client->request('GET', '/inscription');
         $client->submitForm('Créer mon compte', [
-            'inscription[email]'         => 'sanscgu@cnam-reunion.fr',
-            'inscription[prenom]'        => 'Luc',
-            'inscription[nom]'           => 'Grondin',
-            'inscription[plainPassword]' => 'Motdepasse1!',
-            'inscription[accepteCgu]'    => false,
+            'inscription[email]'                 => 'sanscgu@cnam-reunion.fr',
+            'inscription[prenom]'                => 'Luc',
+            'inscription[nom]'                   => 'Grondin',
+            'inscription[plainPassword][first]'  => 'Motdepasse1!',
+            'inscription[plainPassword][second]' => 'Motdepasse1!',
+            'inscription[accepteCgu]'            => false,
         ]);
 
         self::assertResponseIsUnprocessable();
@@ -111,15 +114,38 @@ final class InscriptionControllerTest extends WebTestCase
 
         $client->request('GET', '/inscription');
         $client->submitForm('Créer mon compte', [
-            'inscription[email]'         => 'doublon@cnam-reunion.fr',
-            'inscription[prenom]'        => 'Deux',
-            'inscription[nom]'           => 'Test',
-            'inscription[plainPassword]' => 'Motdepasse1!',
-            'inscription[accepteCgu]'    => true,
+            'inscription[email]'                 => 'doublon@cnam-reunion.fr',
+            'inscription[prenom]'                => 'Deux',
+            'inscription[nom]'                   => 'Test',
+            'inscription[plainPassword][first]'  => 'Motdepasse1!',
+            'inscription[plainPassword][second]' => 'Motdepasse1!',
+            'inscription[accepteCgu]'            => true,
         ]);
 
         self::assertResponseIsUnprocessable();
         $repo = static::getContainer()->get(UtilisateurRepository::class);
         self::assertCount(1, $repo->findBy(['email' => 'doublon@cnam-reunion.fr']));
+    }
+
+    public function test_mots_de_passe_non_correspondants_est_rejete(): void
+    {
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $this->purgerUtilisateurs($em);
+
+        $client->request('GET', '/inscription');
+        $client->submitForm('Créer mon compte', [
+            'inscription[email]'                 => 'mismatch@cnam-reunion.fr',
+            'inscription[prenom]'                => 'Nina',
+            'inscription[nom]'                   => 'Robert',
+            'inscription[plainPassword][first]'  => 'Motdepasse1!',
+            'inscription[plainPassword][second]' => 'Motdepasse2!',
+            'inscription[accepteCgu]'            => true,
+        ]);
+
+        // RepeatedType : first != second -> formulaire invalide (invalid_message), compte non cree.
+        self::assertResponseIsUnprocessable();
+        $repo = static::getContainer()->get(UtilisateurRepository::class);
+        self::assertNull($repo->findOneBy(['email' => 'mismatch@cnam-reunion.fr']));
     }
 }
