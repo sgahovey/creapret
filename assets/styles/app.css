@@ -1,0 +1,234 @@
+/* Styles applicatifs CreaPret. Bootstrap fournit la base ; on surcharge ici avec parcimonie. */
+
+:root {
+    --creapret-primaire: #0f6e56;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+main {
+    min-height: 70vh;
+}
+
+
+/* ===== Authentification (cartes centrees) ===== */
+.auth-wrapper {
+    min-height: calc(100vh - 12rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 26rem;
+    background: #fff;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+}
+
+.auth-logo {
+    color: var(--creapret-primaire, #0f6e56);
+    font-size: 2.5rem;
+    text-align: center;
+}
+
+.auth-title {
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.auth-subtitle {
+    text-align: center;
+    color: #6c757d;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+}
+
+.auth-footer {
+    text-align: center;
+    font-size: 0.9rem;
+    margin-top: 1.5rem;
+}
+
+/* ===================================================================
+   Design-system CreaPret : tokens, remap Bootstrap, composants
+   =================================================================== */
+
+:root {
+    /* Palette verte (primaire + variantes) */
+    --creapret-primaire: #0f6e56;
+    --creapret-primaire-fonce: #0b5442;
+    --creapret-primaire-clair: #e6f2ef;
+    --creapret-primaire-survol: #0d5f4a;
+
+    /* Neutres */
+    --creapret-texte: #1f2933;
+    --creapret-texte-doux: #6b7280;
+    --creapret-bordure: #e5e7eb;
+    --creapret-fond: #f8faf9;
+
+    /* Echelle d'espacement (4 -> 48 px) */
+    --creapret-espace-xs: 0.25rem;
+    --creapret-espace-sm: 0.5rem;
+    --creapret-espace-md: 1rem;
+    --creapret-espace-lg: 1.5rem;
+    --creapret-espace-xl: 2rem;
+    --creapret-espace-xxl: 3rem;
+
+    /* Rayons */
+    --creapret-radius-sm: 0.375rem;
+    --creapret-radius-md: 0.5rem;
+    --creapret-radius-lg: 0.75rem;
+
+    /* Ombres */
+    --creapret-ombre-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --creapret-ombre-md: 0 2px 8px rgba(0, 0, 0, 0.06);
+    --creapret-ombre-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+    /* Remap Bootstrap vers les tokens verts (coherence globale) */
+    --bs-primary: #0f6e56;
+    --bs-primary-rgb: 15, 110, 86;
+    --bs-link-color: #0f6e56;
+    --bs-link-hover-color: #0d5f4a;
+    --bs-border-radius: var(--creapret-radius-md);
+    --bs-body-color: var(--creapret-texte);
+}
+
+/* Boutons primaires alignes sur le vert (au cas ou Bootstrap ne prend pas la variable) */
+.btn-primary {
+    --bs-btn-bg: var(--creapret-primaire);
+    --bs-btn-border-color: var(--creapret-primaire);
+    --bs-btn-hover-bg: var(--creapret-primaire-survol);
+    --bs-btn-hover-border-color: var(--creapret-primaire-survol);
+    --bs-btn-active-bg: var(--creapret-primaire-fonce);
+    --bs-btn-active-border-color: var(--creapret-primaire-fonce);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--creapret-primaire);
+    --bs-btn-border-color: var(--creapret-primaire);
+    --bs-btn-hover-bg: var(--creapret-primaire);
+    --bs-btn-hover-border-color: var(--creapret-primaire);
+    --bs-btn-active-bg: var(--creapret-primaire-fonce);
+}
+
+/* En-tete de page uniforme */
+.page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--creapret-espace-md);
+    margin-bottom: var(--creapret-espace-lg);
+    padding-bottom: var(--creapret-espace-md);
+    border-bottom: 1px solid var(--creapret-bordure);
+}
+
+.page-header__titre {
+    margin: 0;
+    font-weight: 600;
+    color: var(--creapret-texte);
+}
+
+.page-header__soustitre {
+    color: var(--creapret-texte-doux);
+    font-size: 0.95rem;
+    margin: 0.15rem 0 0;
+}
+
+/* Carte CreaPret (hover discret) */
+.cp-card {
+    background: #fff;
+    border: 1px solid var(--creapret-bordure);
+    border-radius: var(--creapret-radius-lg);
+    box-shadow: var(--creapret-ombre-sm);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+    height: 100%;
+}
+
+.cp-card:hover {
+    box-shadow: var(--creapret-ombre-md);
+    transform: translateY(-2px);
+}
+
+.cp-card__corps {
+    padding: var(--creapret-espace-lg);
+}
+
+/* Etat vide (aucune donnee) */
+.empty-state {
+    text-align: center;
+    padding: var(--creapret-espace-xxl) var(--creapret-espace-lg);
+    color: var(--creapret-texte-doux);
+}
+
+.empty-state__icone {
+    font-size: 2.5rem;
+    color: var(--creapret-bordure);
+    margin-bottom: var(--creapret-espace-md);
+}
+
+/* ------------------------------------------------------------------ *
+ * Harmonisation FullCalendar (US calendrier) : le widget est recolore
+ * via les custom properties officielles --fc-* (FullCalendar v6), sans
+ * !important ni surcharge fragile. Portee : .cp-calendrier (classe posee
+ * sur le conteneur data-controller="calendrier").
+ * ------------------------------------------------------------------ */
+.cp-calendrier {
+    --fc-button-bg-color: var(--creapret-primaire);
+    --fc-button-border-color: var(--creapret-primaire);
+    --fc-button-hover-bg-color: var(--creapret-primaire-fonce);
+    --fc-button-hover-border-color: var(--creapret-primaire-fonce);
+    --fc-button-active-bg-color: var(--creapret-primaire-fonce);
+    --fc-button-active-border-color: var(--creapret-primaire-fonce);
+    --fc-today-bg-color: var(--creapret-primaire-clair);
+    --fc-border-color: var(--creapret-bordure);
+    --fc-event-bg-color: var(--creapret-primaire);
+    --fc-event-border-color: var(--creapret-primaire);
+    --fc-page-bg-color: #fff;
+}
+
+/* Enveloppe visuelle du calendrier (carte discrete, sans effet de survol). */
+.cp-calendrier .fc {
+    background: #fff;
+    border: 1px solid var(--creapret-bordure);
+    border-radius: var(--creapret-radius-lg);
+    padding: var(--creapret-espace-md);
+}
+
+/* Numeros de jour : liens bleus soulignes par defaut -> texte neutre. */
+.cp-calendrier .fc .fc-daygrid-day-number {
+    color: var(--creapret-texte);
+    text-decoration: none;
+}
+
+/* En-tetes de colonnes (jours de la semaine). */
+.cp-calendrier .fc .fc-col-header-cell-cushion {
+    color: var(--creapret-texte-doux);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* Pastilles d'evenements. */
+.cp-calendrier .fc-event {
+    border-radius: var(--creapret-radius-sm);
+    font-size: 0.8rem;
+}
+
+/* Bandeau de differenciation d'environnement (preprod...) : pilote par la variable Twig
+ * bandeau_environnement (US-6.3). Contraste eleve, aucun style inline. */
+.bandeau-environnement {
+    background: var(--creapret-primaire-fonce);
+    color: #fff;
+    text-align: center;
+    padding: 0.375rem 1rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.03em;
+}

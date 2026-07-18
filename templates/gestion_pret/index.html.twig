@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Demandes de prêt en attente{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="page-header">
+            <div>
+                <h1 class="page-header__titre h3">Demandes de prêt en attente</h1>
+                <p class="page-header__soustitre">Validez ou refusez les demandes de prêt des emprunteurs.</p>
+            </div>
+            <a href="{{ path('app_gestion_retours') }}" class="btn btn-outline-primary"><i class="bi bi-arrow-return-left me-1" aria-hidden="true"></i>Prêts en cours (retours)</a>
+        </div>
+
+        {% if demandes is empty %}
+            <div class="empty-state">
+                <i class="bi bi-inbox empty-state__icone" aria-hidden="true"></i>
+                <p>Aucune demande en attente.</p>
+            </div>
+        {% else %}
+            <div class="cp-card">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">Emprunteur</th>
+                                <th scope="col">Matériel</th>
+                                <th scope="col">Exemplaire</th>
+                                <th scope="col">Période</th>
+                                <th scope="col">Demande le</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pret in demandes %}
+                                <tr>
+                                    <td>{{ pret.emprunteur.prenom }} {{ pret.emprunteur.nom }}</td>
+                                    <td>{{ pret.exemplaire.materiel.nom }}</td>
+                                    <td>{{ pret.exemplaire.numeroInventaire }}</td>
+                                    <td>{{ pret.dateDebut|date('d/m/Y') }} au {{ pret.dateFin|date('d/m/Y') }}</td>
+                                    <td>{{ pret.dateDemande|date('d/m/Y H:i') }}</td>
+                                    <td class="d-flex gap-2">
+                                        <form method="post" action="{{ path('app_gestion_pret_valider', {id: pret.id}) }}">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('valider' ~ pret.id) }}">
+                                            <button type="submit" class="btn btn-success btn-sm">Valider</button>
+                                        </form>
+                                        <a href="{{ path('app_gestion_pret_refuser', {id: pret.id}) }}" class="btn btn-outline-danger btn-sm">Refuser</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

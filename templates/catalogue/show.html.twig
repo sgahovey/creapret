@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ materiel.nom }}{% endblock %}
+
+{% block body %}
+    <div class="container py-5" style="max-width: 48rem;">
+        <nav aria-label="fil d'ariane" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('app_catalogue_index') }}">Catalogue</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ materiel.nom }}</li>
+            </ol>
+        </nav>
+
+        <div class="page-header">
+            <div>
+                <h1 class="page-header__titre h3">{{ materiel.nom }}</h1>
+                <p class="page-header__soustitre">{{ materiel.categorie.nom }}{% if materiel.marque %} · {{ materiel.marque }}{% endif %}</p>
+            </div>
+            <div>
+                {% if nbDisponibles > 0 %}
+                    <span class="badge text-bg-success">{{ nbDisponibles }} exemplaire{{ nbDisponibles > 1 ? 's' : '' }} disponible{{ nbDisponibles > 1 ? 's' : '' }} actuellement</span>
+                {% else %}
+                    <span class="badge text-bg-secondary">Aucun exemplaire disponible actuellement</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="cp-card">
+            <div class="cp-card__corps">
+                <dl class="row mb-0">
+                    {% if materiel.description %}
+                        <dt class="col-sm-3">Description</dt>
+                        <dd class="col-sm-9">{{ materiel.description }}</dd>
+                    {% endif %}
+                    {% if materiel.marque %}
+                        <dt class="col-sm-3">Marque</dt>
+                        <dd class="col-sm-9">{{ materiel.marque }}</dd>
+                    {% endif %}
+                    {% if materiel.modele %}
+                        <dt class="col-sm-3">Modèle</dt>
+                        <dd class="col-sm-9">{{ materiel.modele }}</dd>
+                    {% endif %}
+                    {% if materiel.reference %}
+                        <dt class="col-sm-3">Référence</dt>
+                        <dd class="col-sm-9">{{ materiel.reference }}</dd>
+                    {% endif %}
+                </dl>
+            </div>
+        </div>
+
+        <section class="mt-4" aria-labelledby="titre-dispo">
+            <h2 id="titre-dispo" class="h5">Disponibilité sur une période</h2>
+            <div class="cp-card">
+                <div class="cp-card__corps">
+                    <form method="get" action="{{ path('app_catalogue_show', {id: materiel.id}) }}" class="row g-2 align-items-end">
+                        <div class="col-auto">
+                            <label for="debut" class="form-label">Du</label>
+                            <input type="date" id="debut" name="debut" value="{{ debut }}" class="form-control" required>
+                        </div>
+                        <div class="col-auto">
+                            <label for="fin" class="form-label">Au</label>
+                            <input type="date" id="fin" name="fin" value="{{ fin }}" class="form-control" required>
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-outline-primary">Vérifier la disponibilité</button>
+                        </div>
+                    </form>
+
+                    {% if erreurPeriode %}
+                        <div class="alert alert-warning mt-3" role="alert">{{ erreurPeriode }}</div>
+                    {% elseif nbSurPeriode is not null %}
+                        <p class="mt-3 mb-0">
+                            {% if nbSurPeriode > 0 %}
+                                <span class="badge text-bg-success">{{ nbSurPeriode }} exemplaire{{ nbSurPeriode > 1 ? 's' : '' }} disponible{{ nbSurPeriode > 1 ? 's' : '' }} sur cette période</span>
+                            {% else %}
+                                <span class="badge text-bg-secondary">Aucun exemplaire disponible sur cette période</span>
+                            {% endif %}
+                        </p>
+                    {% endif %}
+
+                    {% if formDemande is defined and formDemande is not null %}
+                        <div class="mt-3 border-top pt-3">
+                            <h3 class="h6">Demander un prêt sur cette période</h3>
+                            {{ form_start(formDemande) }}
+                            {{ form_widget(formDemande) }}
+                            <button type="submit" class="btn btn-primary mt-2">Demander un prêt</button>
+                            {{ form_end(formDemande) }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}

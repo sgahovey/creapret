@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvel exemplaire{% endblock %}
+
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="page-header">
+            <div>
+                <h1 class="page-header__titre h3">Nouvel exemplaire</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="cp-card">
+                    <div class="cp-card__corps">
+                        {{ form_start(form) }}
+                            {{ form_row(form.numeroInventaire) }}
+                            {{ form_row(form.materiel) }}
+                            {{ form_row(form.etat) }}
+                            <div class="d-flex gap-2 mt-3">
+                                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                <a href="{{ path('app_exemplaire_index') }}" class="btn btn-link">Annuler</a>
+                            </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

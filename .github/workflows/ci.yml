@@ -1,0 +1,185 @@
+# ---------------------------------------------------------------------------
+# CI CréaPrêt — Intégration continue qualité (US-0.3)
+# Trois portes qualité indépendantes :
+#   - cs-fixer : style PER/@Symfony ;
+#   - phpstan  : analyse statique niveau 8 ;
+#   - phpunit  : suite de tests.
+# Base de données, couverture et SonarCloud seront réintroduits ultérieurement
+# (migrations + fixtures + tests en itération 1 ; Quality Gate Sonar en étape dédiée).
+# ---------------------------------------------------------------------------
+name: CI
+
+on:
+  push:
+    branches: [develop, preprod, main]
+  pull_request:
+    branches: [develop, preprod, main]
+
+# Annule un run en cours si un nouveau commit arrive sur la même réf (économie CI).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Style de code — PHP-CS-Fixer (aucune base)
+  # ---------------------------------------------------------------------------
+  cs-fixer:
+    name: Style (PHP-CS-Fixer)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurer PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_mysql, intl, zip, ctype, iconv
+          tools: composer:v2
+          coverage: none
+
+      - name: Répertoire de cache Composer
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache des dépendances Composer
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - name: Installer les dépendances
+        run: composer install --no-scripts --no-interaction --prefer-dist --no-progress
+
+      - name: Vérifier le style (dry-run)
+        run: vendor/bin/php-cs-fixer fix --dry-run --diff --verbose
+
+  # ---------------------------------------------------------------------------
+  # Analyse statique — PHPStan niveau 8 (aucune base vivante)
+  # ---------------------------------------------------------------------------
+  phpstan:
+    name: Analyse statique (PHPStan)
+    runs-on: ubuntu-latest
+    env:
+      # DATABASE_URL bidon : le kernel doit booter pour fournir le conteneur compilé
+      # et l'EntityManager (objectManagerLoader). Aucune connexion n'est ouverte —
+      # PHPStan ne lit que les métadonnées de mapping.
+      DATABASE_URL: "mysql://u:p@127.0.0.1:3306/app?serverVersion=8.0"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurer PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_mysql, intl, zip, ctype, iconv
+          tools: composer:v2
+          coverage: none
+
+      - name: Répertoire de cache Composer
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache des dépendances Composer
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - name: Installer les dépendances
+        run: composer install --no-scripts --no-interaction --prefer-dist --no-progress
+
+      - name: Compiler le conteneur (env dev)
+        # Génère var/cache/dev/App_KernelDevDebugContainer.xml, requis par
+        # containerXmlPath dans phpstan.dist.neon.
+        run: php bin/console cache:warmup
+
+      - name: Analyser (niveau 8, via la config)
+        run: vendor/bin/phpstan analyse --no-progress
+
+  # ---------------------------------------------------------------------------
+  # Tests — PHPUnit + couverture (pcov) puis analyse SonarCloud
+  # Génère coverage.xml (clover) consommé par Sonar (sonar.php.coverage.reportPaths).
+  # DB (migrations + fixtures) reviendra en itération 1.
+  # ---------------------------------------------------------------------------
+  phpunit:
+    name: Tests (PHPUnit + couverture)
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: creapret_test
+          MYSQL_USER: creapret
+          MYSQL_PASSWORD: creapret
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    env:
+      # Base logique 'creapret' : Doctrine ajoute le suffixe _test (config/packages/doctrine.yaml when@test)
+      # -> la base physique ciblee est creapret_test, creee par le service MySQL ci-dessus.
+      DATABASE_URL: "mysql://creapret:creapret@127.0.0.1:3306/creapret?serverVersion=8.0&charset=utf8mb4"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Historique complet requis par SonarCloud pour le blame git (sinon « shallow clone »).
+          fetch-depth: 0
+
+      - name: Configurer PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_mysql, intl, zip, ctype, iconv, sodium
+          tools: composer:v2
+          coverage: pcov
+
+      - name: Répertoire de cache Composer
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache des dépendances Composer
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - name: Installer les dépendances
+        run: composer install --no-scripts --no-interaction --prefer-dist --no-progress
+
+      - name: Autoriser la creation de triggers (log_bin_trust_function_creators)
+        # Le service MySQL de GitHub Actions ne permet pas de passer --log-bin-trust-function-creators
+        # en command. On l'active donc au runtime en root (privilegie) AVANT les migrations : le trigger
+        # d'audit (Version20260707182041) peut alors etre cree par l'utilisateur applicatif (sinon 1419).
+        run: mysql -h127.0.0.1 -P3306 -uroot -proot -e "SET GLOBAL log_bin_trust_function_creators = 1"
+
+      - name: Preparer le schema de la base de test
+        env:
+          APP_ENV: test
+        run: |
+          php bin/console doctrine:database:create --if-not-exists --no-interaction
+          php bin/console doctrine:migrations:migrate --no-interaction
+
+      - name: Installer les assets de l'importmap (requis pour le rendu des WebTests)
+        env:
+          APP_ENV: test
+        run: php bin/console importmap:install
+
+      - name: Lancer la suite avec couverture
+        # PCOV actif via setup-php. Génère coverage.xml (clover) consommé par SonarCloud
+        # (sonar.php.coverage.reportPaths). failOnDeprecation/Notice/Warning reste actif.
+        env:
+          APP_ENV: test
+        run: php bin/phpunit --coverage-clover=coverage.xml
+
+      - name: Analyse SonarCloud
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

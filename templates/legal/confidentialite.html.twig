@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique de confidentialité{% endblock %}
+
+{% block body %}
+<div class="container py-4" style="max-width: 820px;">
+
+    <h1 class="h3 mb-4"><i class="bi bi-shield-lock me-2" aria-hidden="true"></i>Politique de confidentialité</h1>
+
+    <div class="alert alert-info" role="note">
+        CréaPrêt est un <strong>démonstrateur pédagogique</strong> (projet du titre Concepteur
+        Développeur d'Applications) fonctionnant avec des <strong>données fictives</strong>. La
+        présente politique décrit les traitements réellement mis en œuvre par l'application. En cas
+        d'exploitation réelle au profit du Cnam La Réunion, ce dernier deviendrait le responsable de
+        traitement et cette politique serait actualisée.
+    </div>
+
+    <h2 class="h5 mt-4 mb-2">Responsable du traitement</h2>
+    <p>
+        À ce stade de démonstration, les traitements sont mis en œuvre par l'auteur du projet
+        (cf. <a href="{{ path('app_mentions_legales') }}">mentions légales</a>). Pour toute question
+        relative à vos données : <a href="mailto:contact@creapret.re">contact@creapret.re</a>.
+    </p>
+
+    <h2 class="h5 mt-4 mb-2">Données collectées</h2>
+    <p>L'application traite uniquement les données nécessaires à son fonctionnement :</p>
+    <ul>
+        <li>
+            <strong>Compte utilisateur</strong> : adresse e-mail, mot de passe (stocké
+            <strong>haché avec argon2id</strong>, jamais en clair), nom, prénom, rôle
+            (emprunteur, gestionnaire ou super-administrateur), statut actif/inactif, préférence de
+            rappel par e-mail, date de création du compte et date de recueil du consentement.
+        </li>
+        <li>
+            <strong>Prêts de matériel</strong> : catégories, matériels et exemplaires (numéro
+            d'inventaire, état), et prêts (dates de début et de fin, statut, motif de refus éventuel,
+            dates de demande, de validation et de retour), rattachés à l'emprunteur et au
+            gestionnaire validateur.
+        </li>
+        <li>
+            <strong>Traces d'audit</strong> : le journal d'administration (décisions de validation,
+            de refus et de retour des prêts) et l'historique des comptes (modifications de rôle ou
+            d'activation), à des fins de sécurité et de traçabilité.
+        </li>
+    </ul>
+
+    <h2 class="h5 mt-4 mb-2">Minimisation des données</h2>
+    <p>
+        Seules les données strictement nécessaires sont collectées. En particulier, l'application
+        <strong>ne collecte ni numéro de téléphone ni adresse postale</strong>. Aucune donnée
+        sensible au sens du RGPD, aucun profilage ni collecte à des fins publicitaires ne sont
+        réalisés.
+    </p>
+
+    <h2 class="h5 mt-4 mb-2">Finalités</h2>
+    <ul>
+        <li>la gestion des prêts de matériel (demande, validation, retour) ;</li>
+        <li>la gestion des comptes utilisateurs et l'authentification ;</li>
+        <li>l'envoi de notifications et de rappels par e-mail (échéance, retard) ;</li>
+        <li>la traçabilité des décisions et des actions sensibles (sécurité).</li>
+    </ul>
+
+    <h2 class="h5 mt-4 mb-2">Base légale</h2>
+    <p>
+        Les traitements reposent sur l'exécution du service de prêt et sur l'intérêt légitime de
+        l'organisation à gérer ses comptes et à sécuriser l'application. L'envoi des e-mails de
+        rappel repose sur le <strong>consentement</strong> recueilli à l'inscription (dont la date
+        est conservée) et matérialisé par une préférence désactivable.
+    </p>
+
+    <h2 class="h5 mt-4 mb-2">Durée de conservation</h2>
+    <p>
+        Les traces d'audit — journal d'administration et historique des comptes — sont
+        <strong>purgées automatiquement au-delà de 365 jours</strong> (limitation de la conservation,
+        art. 5.1.e du RGPD), au moyen d'une commande de purge planifiée. Les comptes et les prêts
+        sont conservés le temps de l'usage du service.
+    </p>
+
+    <h2 class="h5 mt-4 mb-2">Sécurité</h2>
+    <ul>
+        <li>hachage des mots de passe avec <strong>argon2id</strong> (jamais stockés en clair) ;</li>
+        <li>contrôle d'accès par rôles, appliqué à chaque action sensible ;</li>
+        <li>journal d'audit des décisions et des modifications de comptes (accountability) ;</li>
+        <li>limitation des tentatives de connexion (anti-force brute).</li>
+    </ul>
+
+    <h2 class="h5 mt-4 mb-2">Vos droits</h2>
+    <p>
+        Conformément aux articles 15 à 22 du RGPD, vous disposez des droits d'accès, de
+        rectification, d'effacement, d'opposition et de portabilité de vos données. Pour exercer ces
+        droits, écrivez à <a href="mailto:contact@creapret.re">contact@creapret.re</a>. Vous disposez
+        également du droit d'introduire une réclamation auprès de la CNIL
+        (<span class="text-nowrap">www.cnil.fr</span>).
+    </p>
+
+    <h2 class="h5 mt-4 mb-2">Cookies</h2>
+    <p>
+        L'application utilise uniquement un cookie de session strictement nécessaire à
+        l'authentification. Aucun cookie publicitaire ni traceur tiers n'est déposé.
+    </p>
+
+</div>
+{% endblock %}

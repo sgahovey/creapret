@@ -1,0 +1,47 @@
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+/.phpunit.cache/
+###< phpunit/phpunit ###
+
+###> symfony/asset-mapper ###
+/public/assets/
+# Contenu de assets/vendor ignore (importmap le regenere via importmap:install),
+# MAIS on versionne les bundles vendorises a la main hors importmap (ex. FullCalendar,
+# bundle global §10 non regenerable). Motif avec /* pour autoriser les exceptions !.
+/assets/vendor/*
+# Manifeste AssetMapper edite a la main (bundles vendorises hors reseau) : doit etre versionne.
+!/assets/vendor/installed.php
+!/assets/vendor/fullcalendar/
+!/assets/vendor/chartjs/
+!/assets/vendor/bootstrap/
+/assets/vendor/bootstrap/*
+!/assets/vendor/bootstrap/bootstrap.min.css
+!/assets/vendor/bootstrap/bootstrap.index.js
+!/assets/vendor/bootstrap-icons/
+!/assets/vendor/inter/
+!/assets/vendor/@popperjs/
+###< symfony/asset-mapper ###
+
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###
+
+###> creapret — artefacts de tests/CI ###
+/coverage.xml
+###< creapret ###
+
+###> creapret - config de reference generee ###
+/config/reference.php
+###< creapret ###

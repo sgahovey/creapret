@@ -1,0 +1,13 @@
+{% extends 'emails/_layout.html.twig' %}
+
+{% block titre %}{{ titre }}{% endblock %}
+
+{% block contenu %}
+    {{ contenu|nl2br }}
+
+    {% if lien_url is defined and lien_texte is defined %}
+        <div style="margin-top:24px;">
+            <a href="{{ lien_url }}" style="display:inline-block; background-color:#0f6e56; color:#ffffff; text-decoration:none; padding:12px 24px; border-radius:6px; font-weight:bold;">{{ lien_texte }}</a>
+        </div>
+    {% endif %}
+{% endblock %}

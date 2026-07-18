@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Espace gestion{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="page-header">
+            <div>
+                <h1 class="page-header__titre h3">Espace gestion</h1>
+                <p class="page-header__soustitre">Gérez le catalogue, le parc et les prêts.</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-sm-6 col-lg-3">
+                <a href="{{ path('app_categorie_index') }}" class="cp-card text-decoration-none text-reset d-block h-100">
+                    <div class="cp-card__corps text-center">
+                        <i class="bi bi-tags fs-1 text-primary" aria-hidden="true"></i>
+                        <h2 class="h5 mt-3">Catégories</h2>
+                        <p class="text-muted small mb-0">Gérer les catégories du catalogue (informatique, audiovisuel, mesure...).</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <a href="{{ path('app_materiel_index') }}" class="cp-card text-decoration-none text-reset d-block h-100">
+                    <div class="cp-card__corps text-center">
+                        <i class="bi bi-box-seam fs-1 text-primary" aria-hidden="true"></i>
+                        <h2 class="h5 mt-3">Matériels</h2>
+                        <p class="text-muted small mb-0">Gérer les matériels du catalogue et leur rattachement aux catégories.</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <a href="{{ path('app_exemplaire_index') }}" class="cp-card text-decoration-none text-reset d-block h-100">
+                    <div class="cp-card__corps text-center">
+                        <i class="bi bi-boxes fs-1 text-primary" aria-hidden="true"></i>
+                        <h2 class="h5 mt-3">Exemplaires</h2>
+                        <p class="text-muted small mb-0">Gérer les exemplaires physiques et leur état (disponible, maintenance, hors service...).</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <a href="{{ path('app_parc_index') }}" class="cp-card text-decoration-none text-reset d-block h-100">
+                    <div class="cp-card__corps text-center">
+                        <i class="bi bi-clipboard-data fs-1 text-primary" aria-hidden="true"></i>
+                        <h2 class="h5 mt-3">État du parc</h2>
+                        <p class="text-muted small mb-0">Consulter le nombre d'exemplaires par état, pour chaque matériel.</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

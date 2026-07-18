@@ -1,0 +1,13 @@
+{% extends 'emails/_layout.html.twig' %}
+{% block titre %}Votre prêt est validé{% endblock %}
+{% block contenu %}
+    <p>Bonjour {{ pret.emprunteur.prenom }},</p>
+    <p>Votre demande de prêt a été <strong>validée</strong>.</p>
+    <p>
+        <strong>Matériel :</strong> {{ pret.exemplaire.materiel.nom }} (exemplaire {{ pret.exemplaire.numeroInventaire }})<br>
+        <strong>Période :</strong> {{ pret.dateDebut|date('d/m/Y') }} au {{ pret.dateFin|date('d/m/Y') }}
+    </p>
+    <div style="margin-top:24px;">
+        <a href="{{ lien }}" style="display:inline-block; background-color:#0f6e56; color:#ffffff; text-decoration:none; padding:12px 24px; border-radius:6px; font-weight:bold;">Voir mes prêts</a>
+    </div>
+{% endblock %}

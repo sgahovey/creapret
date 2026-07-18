@@ -1,0 +1,65 @@
+security:
+    # argon2id impose sur tous les environnements (CLAUDE.md §5). Cout de test abaisse
+    # dans config/packages/test/security.yaml (time_cost 3 = plancher Sodium).
+    password_hashers:
+        App\Entity\Utilisateur:
+            algorithm: argon2id
+
+    # Provider d'entite : consomme a l'authentification (US-1.3 form_login).
+    providers:
+        app_utilisateur_provider:
+            entity:
+                class: App\Entity\Utilisateur
+                property: email
+
+    # Hierarchie cumulative des roles metier CréaPrêt (CLAUDE.md §5).
+    role_hierarchy:
+        ROLE_SUPER_ADMIN: [ROLE_GESTIONNAIRE, ROLE_EMPRUNTEUR]
+        ROLE_GESTIONNAIRE: [ROLE_EMPRUNTEUR]
+
+    firewalls:
+        dev:
+            # Ensure dev tools and static assets are always allowed
+            pattern: ^/(_profiler|_wdt|assets|build)/
+            security: false
+        main:
+            lazy: true
+            provider: app_utilisateur_provider
+            user_checker: App\Security\UserChecker
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                username_parameter: email
+                password_parameter: password
+                enable_csrf: true
+                default_target_path: app_home
+            logout:
+                path: app_logout
+                target: app_home
+            # Anti-brute-force (OWASP A07) : blocage au-dela de 5 tentatives echouees
+            # par couple (identifiant + IP).
+            login_throttling:
+                max_attempts: 5
+
+    # Note: Only the *first* matching rule is applied
+    # US-1.3 : connexion et inscription publiques. Pas de verrou global sur ^/ pour
+    # l'instant — les zones protegees recevront des regles dediees par fonctionnalite.
+    access_control:
+        - { path: ^/connexion, roles: PUBLIC_ACCESS }
+        - { path: ^/inscription, roles: PUBLIC_ACCESS }
+        # Pages legales publiques (US-5.4) : accessibles sans authentification. Placees ici
+        # pour l'intention explicite et la defense en profondeur (aucun attrape-tout ^/ global).
+        - { path: ^/mentions-legales, roles: PUBLIC_ACCESS }
+        - { path: ^/confidentialite, roles: PUBLIC_ACCESS }
+        - { path: ^/accessibilite, roles: PUBLIC_ACCESS }
+        # Zone de gestion cloisonnee : toute la branche /gestion (et /gestion/*)
+        # exige ROLE_GESTIONNAIRE (donc aussi ROLE_SUPER_ADMIN par hierarchie).
+        - { path: ^/admin, roles: ROLE_SUPER_ADMIN }
+        - { path: ^/gestion, roles: ROLE_GESTIONNAIRE }
+        # Catalogue emprunteur : reserve a tout utilisateur connecte (lecture seule).
+        - { path: ^/catalogue, roles: IS_AUTHENTICATED_FULLY }
+        # Demande de pret : tout utilisateur connecte (l'emprunteur = utilisateur courant).
+        - { path: ^/pret, roles: IS_AUTHENTICATED_FULLY }
+
+# Cout de hachage de test : voir config/packages/test/security.yaml (source unique,
+# argon2id time_cost 3 = plancher Sodium, cible App\Entity\Utilisateur).

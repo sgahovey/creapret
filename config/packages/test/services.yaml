@@ -1,0 +1,12 @@
+# Env TEST uniquement : expose des services prives par defaut, pour les tests qui assemblent
+# NotificationService a la main (necessaire pour tester la redirection avec un parametre custom).
+services:
+    Symfony\Component\Mailer\MailerInterface:
+        alias: mailer.mailer
+        public: true
+    Symfony\Component\Routing\Generator\UrlGeneratorInterface:
+        alias: router
+        public: true
+    Psr\Log\LoggerInterface:
+        alias: logger
+        public: true

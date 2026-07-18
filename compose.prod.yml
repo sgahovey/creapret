@@ -1,0 +1,136 @@
+# compose.prod.yml — CreaPret : preprod + prod, en PILE SEPAREE derriere le proxy CreaSlot.
+# Image build-once ghcr.io/sgahovey/creapret (tag = SHA, pose par le pipeline CI/CD).
+# A lancer AVEC le fichier d'infra dedie (non versionne) :
+#   docker compose -f compose.prod.yml --env-file .env.deploy.local <cmd>
+#
+# `name:` isole ce projet du projet de dev "creapret" (conteneurs/volumes/reseau distincts) :
+# un `down -v` ici n'affecte pas l'environnement de developpement.
+name: creapret_prod
+
+# Logs Docker bornes (evite la croissance non bornee du driver json-file) : 3 x 10 Mo par conteneur.
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+# Reglages communs aux conteneurs applicatifs (app + worker).
+x-app-base: &app-base
+  restart: unless-stopped
+  logging: *default-logging
+  depends_on:
+    db:
+      condition: service_healthy
+
+# Environnement applicatif — PREPROD. DATABASE_URL construit a partir du mot de passe de la base
+# (pas de secret en dur ici : tout provient de .env.deploy.local via interpolation).
+x-preprod-app-env: &preprod-app-env
+  APP_ENV: prod
+  APP_SHARE_DIR: var/share
+  APP_ENVIRONMENT_LABEL: preprod
+  APP_SECRET: ${APP_SECRET_PREPROD}
+  DATABASE_URL: "mysql://creapret_preprod:${MYSQL_PREPROD_PASSWORD}@db:3306/creapret_preprod?serverVersion=8.0&charset=utf8mb4"
+  MAILER_DSN: ${MAILER_DSN}
+  MESSENGER_TRANSPORT_DSN: "doctrine://default?auto_setup=0"
+  DEFAULT_URI: ${PREPROD_URL}
+  APP_NOTIFICATION_FROM: ${APP_NOTIFICATION_FROM}
+  APP_NOTIFICATION_REPLY_TO: ${APP_NOTIFICATION_REPLY_TO}
+  APP_MAILER_REDIRECT_TO: ${PREPROD_MAILER_REDIRECT_TO:-}
+  SYMFONY_TRUSTED_PROXIES: ${TRUSTED_PROXIES}
+
+# Environnement applicatif — PROD. Aucune redirection d'e-mail (envoi reel).
+x-prod-app-env: &prod-app-env
+  APP_ENV: prod
+  APP_SHARE_DIR: var/share
+  APP_ENVIRONMENT_LABEL: prod
+  APP_SECRET: ${APP_SECRET_PROD}
+  DATABASE_URL: "mysql://creapret_prod:${MYSQL_PROD_PASSWORD}@db:3306/creapret_prod?serverVersion=8.0&charset=utf8mb4"
+  MAILER_DSN: ${MAILER_DSN}
+  MESSENGER_TRANSPORT_DSN: "doctrine://default?auto_setup=0"
+  DEFAULT_URI: ${PROD_URL}
+  APP_NOTIFICATION_FROM: ${APP_NOTIFICATION_FROM}
+  APP_NOTIFICATION_REPLY_TO: ${APP_NOTIFICATION_REPLY_TO}
+  APP_MAILER_REDIRECT_TO: ""
+  SYMFONY_TRUSTED_PROXIES: ${TRUSTED_PROXIES}
+
+services:
+  db:
+    image: mysql:8.0
+    # --log-bin-trust-function-creators=1 IMPERATIF : sans lui, la migration du declencheur d'audit
+    # (Version20260707182041, historique_utilisateur) echoue avec l'erreur 1419 quand le binary logging
+    # est actif et que le user n'est pas SUPER. C'est la dette DT-1.
+    command: --log-bin-trust-function-creators=1
+    restart: unless-stopped
+    logging: *default-logging
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_PREPROD_PASSWORD: ${MYSQL_PREPROD_PASSWORD}
+      MYSQL_PROD_PASSWORD: ${MYSQL_PROD_PASSWORD}
+    volumes:
+      - mysql_data_prod:/var/lib/mysql
+      # Cree les 2 bases + 2 users applicatifs au tout premier demarrage (volume vierge).
+      - ./docker/mysql/init-prod.sh:/docker-entrypoint-initdb.d/init-prod.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p\"$$MYSQL_ROOT_PASSWORD\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    # La base n'est joignable QUE par le reseau interne : jamais exposee au reseau du proxy.
+    networks:
+      - creapret-interne
+
+  app-preprod:
+    <<: *app-base
+    image: ghcr.io/sgahovey/creapret:${PREPROD_IMAGE_TAG:-latest}
+    environment: *preprod-app-env
+    volumes:
+      - assets_preprod:/srv-assets
+    networks:
+      - creapret-interne   # acces base
+      - proxy              # servi par Caddy (php_fastcgi)
+
+  app-prod:
+    <<: *app-base
+    image: ghcr.io/sgahovey/creapret:${PROD_IMAGE_TAG:-latest}
+    environment: *prod-app-env
+    volumes:
+      - assets_prod:/srv-assets
+    networks:
+      - creapret-interne
+      - proxy
+
+  # Workers Messenger : sans eux, AUCUN courriel ne part (confirmation de pret, rappel d'echeance,
+  # alerte de retard passent par le transport async). Uniquement sur le reseau interne (pas de HTTP).
+  worker-preprod:
+    <<: *app-base
+    image: ghcr.io/sgahovey/creapret:${PREPROD_IMAGE_TAG:-latest}
+    command: ["php", "bin/console", "messenger:consume", "async", "-v", "--time-limit=3600", "--memory-limit=128M"]
+    environment: *preprod-app-env
+    networks:
+      - creapret-interne
+
+  worker-prod:
+    <<: *app-base
+    image: ghcr.io/sgahovey/creapret:${PROD_IMAGE_TAG:-latest}
+    command: ["php", "bin/console", "messenger:consume", "async", "-v", "--time-limit=3600", "--memory-limit=128M"]
+    environment: *prod-app-env
+    networks:
+      - creapret-interne
+
+volumes:
+  mysql_data_prod:
+  # Assets compiles de chaque env (peuples par l'entrypoint des app-*), destines a etre montes en
+  # lecture seule par le proxy Caddy (cote pile CreaSlot, en volume external).
+  assets_preprod:
+  assets_prod:
+
+networks:
+  # Reseau prive CreaPret : applications <-> base. La base n'est que la.
+  creapret-interne:
+    driver: bridge
+  # Reseau du proxy existant (pile CreaSlot), declare EXTERNAL : seuls les services app-* s'y
+  # connectent, pour etre joignables par Caddy. Doit exister sur le serveur (cree par CreaSlot).
+  proxy:
+    external: true
+    name: creaslot_prod_creaslot-prod-net

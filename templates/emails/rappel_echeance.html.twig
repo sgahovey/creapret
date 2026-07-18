@@ -1,0 +1,14 @@
+{% extends 'emails/_layout.html.twig' %}
+{% block titre %}Votre prêt arrive à échéance{% endblock %}
+{% block contenu %}
+    <p>Bonjour {{ pret.emprunteur.prenom }},</p>
+    <p>Nous vous rappelons que votre prêt doit être retourné <strong>demain</strong>.</p>
+    <p>
+        <strong>Matériel :</strong> {{ pret.exemplaire.materiel.nom }} (exemplaire {{ pret.exemplaire.numeroInventaire }})<br>
+        <strong>À retourner le :</strong> {{ pret.dateFin|date('d/m/Y') }}
+    </p>
+    <div style="margin-top:24px;">
+        <a href="{{ lien }}" style="display:inline-block; background-color:#0f6e56; color:#ffffff; text-decoration:none; padding:12px 24px; border-radius:6px; font-weight:bold;">Voir mes prêts</a>
+    </div>
+    <p style="margin-top:16px; font-size:13px; color:#777777;">Vous recevez ce rappel car vous avez activé les rappels d'échéance. Vous pouvez les désactiver dans votre profil.</p>
+{% endblock %}

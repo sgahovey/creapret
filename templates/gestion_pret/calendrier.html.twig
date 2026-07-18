@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Calendrier d'occupation du matériel{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {# Bundle global FullCalendar (window.FullCalendar) charge AVANT le module Stimulus differe (§10). #}
+    <script src="{{ asset('vendor/fullcalendar/index.global.min.js') }}"></script>
+    <script src="{{ asset('vendor/fullcalendar/locales/fr.global.min.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+<div class="container my-4 cp-calendrier"
+     data-controller="calendrier"
+     data-calendrier-url-value="{{ path('api_calendrier_prets') }}">
+
+    <div class="page-header">
+        <div>
+            <h1 class="page-header__titre h3">Calendrier d'occupation du matériel</h1>
+            <p class="page-header__soustitre">Vue des prêts en cours. Cliquez sur un événement pour les détails.</p>
+        </div>
+    </div>
+
+    {# Legende TEXTE : l'information n'est jamais portee par la seule couleur (RGAA 3.1). #}
+    <div class="mb-3">
+        <span class="badge" style="background-color: var(--creapret-primaire);">Prêt validé</span>
+    </div>
+
+    {# Region live : annonces de chargement pour les lecteurs d'ecran (RGAA 7.x). #}
+    <p class="visually-hidden" role="status" aria-live="polite" data-calendrier-target="statut"></p>
+
+    {# Grille FullCalendar (presentation). #}
+    <div data-calendrier-target="calendrier" aria-hidden="true"></div>
+
+    {# Equivalent NON graphique de la grille : tableau accessible (RGAA 1.x). #}
+    <details class="mt-4">
+        <summary>Version tableau (accessible)</summary>
+        <table class="table table-striped mt-2">
+            <caption>Liste des prêts affichés sur le calendrier</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Matériel</th>
+                    <th scope="col">Début</th>
+                    <th scope="col">Fin</th>
+                    <th scope="col">Statut</th>
+                </tr>
+            </thead>
+            <tbody data-calendrier-target="tableau">
+                <tr><td colspan="4">Chargement en cours.</td></tr>
+            </tbody>
+        </table>
+    </details>
+</div>
+{% endblock %}

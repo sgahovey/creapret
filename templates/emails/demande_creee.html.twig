@@ -1,0 +1,13 @@
+{% extends 'emails/_layout.html.twig' %}
+{% block titre %}Nouvelle demande de prêt{% endblock %}
+{% block contenu %}
+    <p>Une nouvelle demande de prêt attend une validation.</p>
+    <p>
+        <strong>Emprunteur :</strong> {{ pret.emprunteur.prenom }} {{ pret.emprunteur.nom }}<br>
+        <strong>Matériel :</strong> {{ pret.exemplaire.materiel.nom }} (exemplaire {{ pret.exemplaire.numeroInventaire }})<br>
+        <strong>Période :</strong> {{ pret.dateDebut|date('d/m/Y') }} au {{ pret.dateFin|date('d/m/Y') }}
+    </p>
+    <div style="margin-top:24px;">
+        <a href="{{ lien }}" style="display:inline-block; background-color:#0f6e56; color:#ffffff; text-decoration:none; padding:12px 24px; border-radius:6px; font-weight:bold;">Traiter les demandes</a>
+    </div>
+{% endblock %}

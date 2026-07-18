@@ -1,0 +1,7 @@
+# Configuration transverse des notifications (US-4.1).
+# NB : framework.router.default_uri est deja configure dans routing.yaml (%env(DEFAULT_URI)%) ;
+# genererLienAbsolu() reutilise ce reglage (indispensable pour les liens du worker Messenger CLI).
+twig:
+    globals:
+        # Expose le libelle d'environnement aux templates (bandeau d'email hors production).
+        app_environment_label: '%env(APP_ENVIRONMENT_LABEL)%'

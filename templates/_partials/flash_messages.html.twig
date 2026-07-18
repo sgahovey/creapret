@@ -1,0 +1,18 @@
+{% set flash_config = {
+    success: { icone: 'bi-check-circle-fill', classe: 'alert-success' },
+    info: { icone: 'bi-info-circle-fill', classe: 'alert-info' },
+    warning: { icone: 'bi-exclamation-triangle-fill', classe: 'alert-warning' },
+    danger: { icone: 'bi-exclamation-octagon-fill', classe: 'alert-danger' }
+} %}
+
+{% for type, messages in app.flashes %}
+    {% set config = flash_config[type] ?? flash_config.info %}
+    {% for message in messages %}
+        <div class="alert {{ config.classe }} alert-dismissible fade show d-flex align-items-center" role="alert"
+             data-controller="alerte-auto">
+            <i class="bi {{ config.icone }} me-2" aria-hidden="true"></i>
+            <div class="flex-grow-1">{{ message }}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+        </div>
+    {% endfor %}
+{% endfor %}

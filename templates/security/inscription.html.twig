@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer un compte{% endblock %}
+
+{% form_theme formulaire 'bootstrap_5_layout.html.twig' 'form/champ_mot_de_passe.html.twig' %}
+
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+{% block flash_messages %}{% endblock %}
+
+{% block body %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-logo"><a href="{{ path('app_home') }}" class="text-decoration-none" aria-label="Retour a l'accueil"><i class="bi bi-box-seam" aria-hidden="true"></i></a></div>
+        <h1 class="auth-title h4">Créer un compte</h1>
+        <p class="auth-subtitle">Rejoignez CréaPrêt pour emprunter du matériel.</p>
+
+        {% include '_partials/flash_messages.html.twig' %}
+
+        {{ form_start(formulaire) }}
+            {{ form_row(formulaire.prenom) }}
+            {{ form_row(formulaire.nom) }}
+            {{ form_row(formulaire.email) }}
+            {{ form_row(formulaire.plainPassword) }}
+            {{ form_row(formulaire.accepteCgu) }}
+            <button type="submit" class="btn btn-primary w-100 mt-2">Créer mon compte</button>
+        {{ form_end(formulaire) }}
+
+        <p class="auth-footer">Déjà un compte ? <a href="{{ path('app_login') }}">Se connecter</a><br><a href="{{ path('app_home') }}" class="text-muted small">← Retour à l'accueil</a></p>
+    </div>
+</div>
+{% endblock %}

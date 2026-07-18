@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+{% block flash_messages %}{% endblock %}
+
+{% block body %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-logo"><a href="{{ path('app_home') }}" class="text-decoration-none" aria-label="Retour a l'accueil"><i class="bi bi-box-seam" aria-hidden="true"></i></a></div>
+        <h1 class="auth-title h4">Connexion</h1>
+        <p class="auth-subtitle">Accedez a votre espace CréaPrêt.</p>
+
+        {% include '_partials/flash_messages.html.twig' %}
+
+        {% if erreur %}
+            <div class="alert alert-danger" role="alert">Identifiants invalides.</div>
+        {% endif %}
+
+        <form method="post" action="{{ path('app_login') }}">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            <div class="mb-3">
+                <label for="inputEmail" class="form-label">Adresse e-mail</label>
+                <input type="email" name="email" id="inputEmail" value="{{ dernierEmail }}"
+                       class="form-control" autocomplete="email" required autofocus>
+            </div>
+
+            <div class="mb-3" data-controller="afficher-mot-de-passe">
+                <label for="inputPassword" class="form-label">Mot de passe</label>
+                <div class="input-group">
+                    <input type="password" name="password" id="inputPassword"
+                           class="form-control" autocomplete="current-password" required
+                           data-afficher-mot-de-passe-target="champ">
+                    <button class="btn btn-outline-secondary" type="button"
+                            data-action="afficher-mot-de-passe#basculer"
+                            aria-label="Afficher ou masquer le mot de passe">
+                        <i class="bi bi-eye" data-afficher-mot-de-passe-target="icone" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Se connecter</button>
+        </form>
+
+        <p class="auth-footer">Pas encore de compte ? <a href="{{ path('app_inscription') }}">Créer un compte</a><br><a href="{{ path('app_home') }}" class="text-muted small">← Retour à l'accueil</a></p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'emails/_layout.html.twig' %}
+{% block titre %}Retour enregistré{% endblock %}
+{% block contenu %}
+    <p>Bonjour {{ pret.emprunteur.prenom }},</p>
+    <p>Le retour de votre prêt a bien été enregistré. Merci !</p>
+    <p>
+        <strong>Matériel :</strong> {{ pret.exemplaire.materiel.nom }} (exemplaire {{ pret.exemplaire.numeroInventaire }})<br>
+        <strong>Période :</strong> {{ pret.dateDebut|date('d/m/Y') }} au {{ pret.dateFin|date('d/m/Y') }}
+    </p>
+{% endblock %}

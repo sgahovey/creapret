@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes prêts{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="page-header">
+            <div>
+                <h1 class="page-header__titre h3">Mes prêts</h1>
+                <p class="page-header__soustitre">Suivez l'état de vos demandes et de vos prêts en cours.</p>
+            </div>
+            <a href="{{ path('app_catalogue_index') }}" class="btn btn-primary"><i class="bi bi-grid me-1" aria-hidden="true"></i>Parcourir le catalogue</a>
+        </div>
+
+        {% if prets is empty %}
+            <div class="empty-state">
+                <i class="bi bi-inbox empty-state__icone" aria-hidden="true"></i>
+                <p>Vous n'avez aucun prêt pour le moment.</p>
+            </div>
+        {% else %}
+            <div class="cp-card">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">Matériel</th>
+                                <th scope="col">Exemplaire</th>
+                                <th scope="col">Période</th>
+                                <th scope="col">Statut</th>
+                                <th scope="col">Demande le</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pret in prets %}
+                                <tr>
+                                    <td>{{ pret.exemplaire.materiel.nom }}</td>
+                                    <td>{{ pret.exemplaire.numeroInventaire }}</td>
+                                    <td>{{ pret.dateDebut|date('d/m/Y') }} au {{ pret.dateFin|date('d/m/Y') }}</td>
+                                    <td><span class="badge text-bg-{{ pret.statut.couleurBadge }}">{{ pret.statut.libelle }}</span></td>
+                                    <td>{{ pret.dateDemande|date('d/m/Y H:i') }}</td>
+                                    <td>
+                                        {% if is_granted(constant('App\\Security\\Voter\\PretVoter::ANNULER'), pret) %}
+                                            <form method="post" action="{{ path('app_pret_annuler', {id: pret.id}) }}"
+                                                  data-controller="confirmer" data-action="submit->confirmer#demander" data-confirmer-message-value="Annuler cette demande ?">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('annuler' ~ pret.id) }}">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">Annuler</button>
+                                            </form>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
