@@ -128,3 +128,18 @@ les laisser implicites).
 - **Resolution ecartee** : eliminer 'unsafe-inline' sur style-src supposerait de reecrire de nombreux
   gabarits (extraction de tous les style= vers app.css) pour un gain faible. Compromis assume, a revoir
   si les styles inline disparaissent d'eux-memes.
+
+
+## DT-10 — Deploiement non conditionne a une integration continue verte
+
+- **Statut** : Ouverte (ecart assume).
+- **Constat** : les workflows de deploiement (deploy-preprod.yml, deploy-prod.yml) construisent et
+  mettent en ligne sans dependre du succes du workflow d'integration continue (ci.yml : PHP-CS-Fixer,
+  PHPStan, PHPUnit). Sur un push vers `preprod`/`main`, CI et deploiement s'executent en PARALLELE :
+  un commit dont la suite echoue peut donc etre mis en ligne.
+- **Impact** : risque de deployer une regression que la CI aurait detectee ; le smoke final (code HTTP,
+  echec sur 000 ou 5xx) rattrape une panne franche mais pas un bug fonctionnel passe entre les mailles.
+- **Resolution differee** : relier les deux chaines -- soit en faisant dependre le job de deploiement
+  d'un job CI reussi (needs + reutilisation de ci.yml en workflow_call), soit via une regle de
+  protection de branche exigeant les checks CI verts avant merge vers preprod/main. Ecart assume pour
+  l'instant.

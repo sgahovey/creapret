@@ -1,0 +1,69 @@
+name: Deploiement prod
+
+# Construit puis deploie en prod. Declenchable manuellement, et automatiquement
+# sur push de la branche adaptee.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+# Concurrence : jamais deux deploiements prod simultanes ; on n'interrompt pas un
+# deploiement en cours (migration potentielle) -> le suivant est mis en file.
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  # 1. Construire et publier l'image (reutilise build-push.yml).
+  build:
+    uses: ./.github/workflows/build-push.yml
+    permissions:
+      contents: read
+      packages: write
+
+  # 2. Deployer sur le VPS via SSH (commande forcee cote serveur : deploy-ci.sh).
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    # Environnement GitHub protege : permet d'exiger une approbation manuelle (reviewers)
+    # avant la mise en ligne, et porte la variable d'environnement SITE_URL.
+    environment: production
+    steps:
+      - name: Installer la cle SSH de deploiement
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+      # Aucune commande composee a partir d'entree libre : on passe l'env fixe (prod) et le
+      # SHA (hexa, controle par GitHub) via des variables ; deploy-ci.sh (commande forcee) revalide.
+      - name: Declencher le deploiement prod
+        env:
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          DEPLOY_SHA: ${{ github.sha }}
+        run: |
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes \
+            "$VPS_USER@$VPS_HOST" "prod $DEPLOY_SHA"
+
+      # Etape finale : verifier que le site repond. On accepte tout code HTTP renvoye (ex. 401
+      # derriere le basic_auth de la preprod, 200 en prod) ; seul l'echec de connexion (000) echoue.
+      - name: Verifier que le site repond
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: |
+          code=$(curl -sS -o /dev/null -w "%{http_code}" --retry 5 --retry-delay 5 --max-time 30 "$SITE_URL" || echo "000")
+          case "$code" in
+            ""|000)
+              echo "ERREUR: le site prod ne repond pas (aucune reponse, code=$code) : $SITE_URL" >&2
+              exit 1 ;;
+            5??)
+              echo "ERREUR: le site prod renvoie une erreur serveur (HTTP $code) : $SITE_URL" >&2
+              exit 1 ;;
+          esac
+          echo "OK: $SITE_URL repond (HTTP $code)"
