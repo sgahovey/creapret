@@ -1,0 +1,16 @@
+%% Schema de conception -- cheminement d'une modification.
+%% Fleche pleine = passage franchi ; le libelle dit ce qui le declenche.
+%% [auto] = declenche automatiquement ; [decision] = choix humain.
+flowchart LR
+    T["Ligne temporaire<br/>(une modification isolee)"]
+    I["Ligne d'integration<br/>(travail courant)"]
+    V["Ligne de validation<br/>(bientot en service)"]
+    S["Ligne de service<br/>(effectivement en service)"]
+    ESSAI(["Environnement d'essai"])
+    PUBLIC(["Utilisateurs"])
+    T -->|"relecture + controles reussis [decision]"| I
+    I -->|"ensemble juge pret [decision]"| V
+    V -->|"deploiement [auto]"| ESSAI
+    V -->|"mise en service [decision]"| S
+    S -->|"publication [auto]"| PUBLIC
+    I -.->|"un controle echoue : retour a l'auteur"| T

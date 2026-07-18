@@ -15,3 +15,4 @@ la réalisation en donne la **mise en œuvre** concrète.
 | Surveillance | [`surveillance.md`](surveillance.md) | [`../conception/surveillance.md`](../conception/surveillance.md) |
 | Consultation des journaux | [`journaux.md`](journaux.md) | [`../conception/journaux.md`](../conception/journaux.md) |
 | Traitements automatiques | [`traitements-automatiques.md`](traitements-automatiques.md) | [`../conception/traitements-automatiques.md`](../conception/traitements-automatiques.md) |
+| Gestion des versions | [`versionnement.md`](versionnement.md) | [`../conception/versionnement.md`](../conception/versionnement.md) |

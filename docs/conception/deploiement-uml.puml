@@ -1,0 +1,50 @@
+@startuml deploiement-conception
+' =====================================================================
+' CreaPret — Diagramme de deploiement (CONCEPTION)
+' Designations generiques : aucun produit, plateforme ni commande.
+' Notation UML de deploiement : node / artifact / database + relations.
+' =====================================================================
+skinparam shadowing false
+title Diagramme de deploiement (conception) — designations generiques
+
+node "Poste de l'utilisateur" as USER {
+  artifact "Client de navigation" as NAV
+}
+
+node "Machine hebergeante (unique, partagee)" as HOST {
+
+  node "Point d'entree unique" as ENTRY
+
+  node "Environnement de validation\n(acces restreint)" as VAL {
+    artifact "Application (validation)" as APPVAL
+  }
+
+  node "Environnement de service\n(ouvert au public)" as SVC {
+    artifact "Application (service)" as APPSVC
+  }
+
+  database "Espace de donnees\n(deux jeux cloisonnes)" as DATA
+
+  node "Dispositif de surveillance" as MON
+}
+
+NAV --> ENTRY : <<flux chiffre>>
+ENTRY --> APPVAL : <<achemine / acces restreint>>
+ENTRY --> APPSVC : <<achemine / acces public>>
+APPVAL --> DATA : <<lit / ecrit>>
+APPSVC --> DATA : <<lit / ecrit>>
+MON ..> APPSVC : <<surveille>>
+MON ..> APPVAL : <<surveille>>
+
+legend right
+  | **Symbole** | **Signification** |
+  | Noeud (node) | Unite d'hebergement ou d'execution |
+  | Artefact (artifact) | Element logiciel deploye sur un noeud |
+  | Base (database) | Espace de donnees persistant |
+  | Noeud imbrique | Environnement contenu dans la machine |
+  | Fleche pleine (-->) | Communication / dependance de deploiement |
+  | Fleche pointillee (..>) | Observation, sans couplage fonctionnel |
+  | <<stereotype>> | Nature de la relation |
+endlegend
+
+@enduml

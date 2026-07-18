@@ -68,3 +68,36 @@ flowchart TB
     OUVERT --- DO
 ```
 
+## Diagramme de déploiement (UML)
+
+Vue **normalisée** (notation UML de déploiement) de l'agencement précédent : **nœuds** (unités
+d'hébergement ou d'exécution), **artefacts** (éléments logiciels déployés) et **relations orientées**.
+Toutes les désignations restent **génériques**. La source normalisée, prête à rendre, est **versionnée
+à côté** : [`deploiement-uml.puml`](deploiement-uml.puml) ; elle n'est **pas reproduite ici**, afin de
+ne pas exposer, dans un document de conception, la notation propre à un outil de rendu.
+
+**Structure représentée** (nœuds, artefacts, relations) :
+
+- **Poste de l'utilisateur** *(nœud)* — contient l'artefact *client de navigation*.
+- **Machine hébergeante** *(nœud, unique et partagée)* — contient :
+  - **Point d'entrée unique** *(nœud)* ;
+  - **Environnement de validation** *(nœud, accès restreint)* — artefact *application (validation)* ;
+  - **Environnement de service** *(nœud, ouvert au public)* — artefact *application (service)* ;
+  - **Espace de données** *(base, deux jeux cloisonnés)* ;
+  - **Dispositif de surveillance** *(nœud)*.
+- **Relations** : le client de navigation atteint le point d'entrée par un **flux chiffré** ; le point
+  d'entrée **achemine** vers chaque environnement (restreint / public) ; chaque application **lit et
+  écrit** dans l'espace de données ; le dispositif de surveillance **observe** les applications, sans
+  couplage fonctionnel.
+
+**Légende** (symboles de la notation) :
+
+| Symbole | Signification |
+|---|---|
+| Nœud (boîte) | Unité d'hébergement ou d'exécution |
+| Artefact | Élément logiciel déployé sur un nœud |
+| Base (cylindre) | Espace de données persistant |
+| Nœud imbriqué | Environnement contenu dans la machine |
+| Relation orientée pleine (→) | Communication / dépendance de déploiement |
+| Relation orientée pointillée (⇢) | Observation, sans couplage fonctionnel |
+| Étiquette de relation | Précise la nature du flux |

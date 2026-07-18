@@ -17,3 +17,4 @@ réels et les commandes. La conception énonce l'**exigence** ; la réalisation 
 | Surveillance de la disponibilité | [`surveillance.md`](surveillance.md) |
 | Consultation des traces d'activité | [`journaux.md`](journaux.md) |
 | Traitements automatiques | [`traitements-automatiques.md`](traitements-automatiques.md) |
+| Gestion des versions et déploiement | [`versionnement.md`](versionnement.md) |
