@@ -1,0 +1,75 @@
+@startuml analyse-fonctionnelle
+' =====================================================================
+' CréaPrêt — Analyse fonctionnelle : diagramme de cas d'utilisation
+' Dix objectifs métier + trois cas transverses. Acteurs cumulatifs.
+' <<include>> = toujours déclenché ; <<extend>> = conditionnel.
+' Fidèle aux enchaînements réels (contrôleurs / services).
+' =====================================================================
+skinparam shadowing false
+skinparam actorStyle awesome
+left to right direction
+
+title Cas d'utilisation — CréaPrêt
+
+actor "Visiteur" as VIS
+actor "Emprunteur" as EMP
+actor "Gestionnaire" as GES
+actor "Super-administrateur" as ADM
+
+' Généralisation : cumul des habilitations (chacun hérite du précédent)
+EMP --|> VIS
+GES --|> EMP
+ADM --|> GES
+
+rectangle "CréaPrêt" {
+    usecase "Se connecter à son espace" as UC1
+    usecase "Rechercher du matériel\ndisponible" as UC2
+    usecase "Emprunter du matériel" as UC3
+    usecase "Suivre ses prêts" as UC4
+    usecase "Décider d'une demande\nde prêt" as UC5
+    usecase "Enregistrer un retour" as UC6
+    usecase "Tenir l'inventaire à jour" as UC7
+    usecase "Suivre l'activité de prêt" as UC8
+    usecase "Administrer les comptes" as UC9
+    usecase "Consulter le journal\nd'administration" as UC10
+
+    ' Cas transverses (cibles d'include / extend)
+    usecase "Notifier la personne\nconcernée" as NOTIF
+    usecase "Tracer l'action\ndans le journal" as TRACE
+    usecase "Mettre l'exemplaire\nen maintenance" as MAINT
+}
+
+' Associations : chaque acteur porte ses PROPRES cas (le reste par cumul)
+VIS -- UC1
+EMP -- UC2
+EMP -- UC3
+EMP -- UC4
+GES -- UC5
+GES -- UC6
+GES -- UC7
+GES -- UC8
+ADM -- UC9
+ADM -- UC10
+
+' <<include>> : le cas source déclenche toujours le cas cible
+UC3 ..> NOTIF : <<include>>
+UC5 ..> NOTIF : <<include>>
+UC6 ..> NOTIF : <<include>>
+UC5 ..> TRACE : <<include>>
+UC6 ..> TRACE : <<include>>
+UC9 ..> TRACE : <<include>>
+
+' <<extend>> : conditionnel (retour d'un exemplaire endommagé)
+MAINT ..> UC6 : <<extend>>
+
+legend right
+  | **Symbole** | **Signification** |
+  | Silhouette | Acteur : un profil qui poursuit des objectifs |
+  | Ellipse | Cas d'utilisation : un objectif métier |
+  | Flèche à pointe creuse | Généralisation : l'acteur hérite des cas du précédent |
+  | Trait simple | Association : l'acteur poursuit ce cas |
+  | Pointillé <<include>> | Le cas source déclenche toujours le cas cible |
+  | Pointillé <<extend>> | Le cas source étend le cas cible sous condition |
+endlegend
+
+@enduml

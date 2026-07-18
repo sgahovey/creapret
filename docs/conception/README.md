@@ -13,6 +13,8 @@ réels et les commandes. La conception énonce l'**exigence** ; la réalisation 
 
 | Sujet | Document |
 |---|---|
+| Démarche de conception | [`demarche.md`](demarche.md) |
+| Analyse fonctionnelle (cas d'utilisation) | [`analyse-fonctionnelle.md`](analyse-fonctionnelle.md) |
 | Mise à disposition de l'application | [`deploiement.md`](deploiement.md) |
 | Surveillance de la disponibilité | [`surveillance.md`](surveillance.md) |
 | Consultation des traces d'activité | [`journaux.md`](journaux.md) |
