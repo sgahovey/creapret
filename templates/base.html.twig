@@ -27,6 +27,11 @@
         <a href="#contenu" class="visually-hidden-focusable position-absolute top-0 start-0 m-2 btn btn-light">Aller au contenu principal</a>
         {% block header %}{% include '_partials/header.html.twig' %}{% endblock %}
         <main id="contenu" role="main">
+        {% block flash_messages %}
+            <div class="container mt-3">
+                {% include '_partials/flash_messages.html.twig' %}
+            </div>
+        {% endblock %}
         {% block body %}{% endblock %}
         </main>
 

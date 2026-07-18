@@ -9,11 +9,6 @@
             <a href="{{ path('app_exemplaire_new') }}" class="btn btn-primary">Nouvel exemplaire</a>
         </div>
 
-        {% for label, messages in app.flashes %}
-            {% for message in messages %}
-                <div class="alert alert-{{ label }}" role="alert">{{ message }}</div>
-            {% endfor %}
-        {% endfor %}
 
         <table class="table table-striped align-middle">
             <thead>
