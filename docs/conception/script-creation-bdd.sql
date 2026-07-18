@@ -115,11 +115,13 @@ CREATE TABLE pret (
     date_demande              DATETIME     NOT NULL,
     date_validation           DATETIME     DEFAULT NULL,
     date_retour               DATETIME     DEFAULT NULL,
-    rappel_echeance_envoye_at DATETIME     DEFAULT NULL,
-    retard_notifie_at         DATETIME     DEFAULT NULL,
     id_exemplaire             INT          NOT NULL,
     id_emprunteur             INT          NOT NULL,
     id_validateur             INT          DEFAULT NULL,
+    -- Colonnes ajoutees ulterieurement (suivi des rappels d'echeance et des
+    -- retards) : appendues EN FIN de table dans le schema reel.
+    rappel_echeance_envoye_at DATETIME     DEFAULT NULL,
+    retard_notifie_at         DATETIME     DEFAULT NULL,
     PRIMARY KEY (id),
     INDEX IDX_52ECE979FB72BC45 (id_exemplaire),
     INDEX IDX_52ECE9791E108449 (id_validateur),
@@ -173,6 +175,16 @@ CREATE TABLE historique_utilisateur (
 
 
 -- ---------------------------------------------------------------------
+-- Le déclencheur et la procédure qui suivent contiennent des « ; »
+-- internes (le corps BEGIN ... END sépare ses instructions par « ; »).
+-- Envoyés en un seul bloc au client, ces « ; » internes seraient pris
+-- pour des fins d'instruction et interrompraient l'analyse. On remplace
+-- donc temporairement le séparateur d'instruction par « $$ » le temps de
+-- les définir, puis on rétablit « ; » juste après.
+-- ---------------------------------------------------------------------
+DELIMITER $$
+
+-- ---------------------------------------------------------------------
 -- Déclencheur d'audit : une ligne d'historique par champ sensible
 -- réellement modifié (rôle, activation). Placé DANS la base : l'audit
 -- est indépendant du chemin d'écriture applicatif, donc inviolable.
@@ -189,8 +201,7 @@ BEGIN
         INSERT INTO historique_utilisateur (utilisateur_id, champ_modifie, ancienne_valeur, nouvelle_valeur)
         VALUES (NEW.id, 'est_actif', CAST(OLD.est_actif AS CHAR), CAST(NEW.est_actif AS CHAR));
     END IF;
-END;
-
+END$$
 
 -- ---------------------------------------------------------------------
 -- Procédure de consultation de l'historique d'un compte (RGPD, CP8).
@@ -201,4 +212,7 @@ BEGIN
     FROM historique_utilisateur
     WHERE utilisateur_id = p_utilisateur_id
     ORDER BY date_modification DESC;
-END;
+END$$
+
+-- Rétablissement du séparateur d'instruction par défaut.
+DELIMITER ;
