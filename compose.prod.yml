@@ -126,12 +126,30 @@ services:
     networks:
       - creapret-interne
 
+  # Supervision (Uptime Kuma) DEDIEE a CreaPret : distincte de l'instance de l'autre application
+  # hebergee sur ce serveur (CreaSlot a la sienne), pour que le tableau de bord et la page de statut
+  # ne melangent PAS les deux projets. Nom de service UNIQUE a l'echelle du serveur (le reseau du
+  # proxy etant partage) : creapret-supervision.
+  creapret-supervision:
+    image: louislam/uptime-kuma:1
+    restart: unless-stopped
+    logging: *default-logging
+    volumes:
+      - creapret_supervision_data:/app/data
+    # Aucun port publie : joint UNIQUEMENT via le proxy Caddy (reverse_proxy vers le port interne
+    # 3001 d'Uptime Kuma).
+    networks:
+      - creapret-interne   # sonder les conteneurs applicatifs par leur nom (creapret-app-*)
+      - proxy              # etre expose par le proxy Caddy
+
 volumes:
   mysql_data_prod:
   # Assets compiles de chaque env (peuples par l'entrypoint des app-*), destines a etre montes en
   # lecture seule par le proxy Caddy (cote pile CreaSlot, en volume external).
   assets_preprod:
   assets_prod:
+  # Donnees d'Uptime Kuma (config des sondes, historique, page de statut).
+  creapret_supervision_data:
 
 networks:
   # Reseau prive CreaPret : applications <-> base. La base n'est que la.
