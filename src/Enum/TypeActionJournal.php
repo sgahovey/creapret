@@ -21,8 +21,8 @@ enum TypeActionJournal: string
     public function libelle(): string
     {
         return match ($this) {
-            self::PRET_VALIDATION => 'Validation de pret',
-            self::PRET_REFUS      => 'Refus de pret',
+            self::PRET_VALIDATION => 'Validation de prêt',
+            self::PRET_REFUS      => 'Refus de prêt',
             self::PRET_RETOUR     => 'Enregistrement de retour',
         };
     }
