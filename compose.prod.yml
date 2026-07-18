@@ -136,6 +136,12 @@ services:
     logging: *default-logging
     volumes:
       - creapret_supervision_data:/app/data
+      # Socket Docker en LECTURE SEULE : il donne acces au demon, donc au SERVEUR ENTIER ; le
+      # montage :ro limite la portee (consultation de l'etat, aucun controle), et l'acces au
+      # service reste protege par authentification au niveau du proxy. Cette permission sert a
+      # surveiller l'etat des CONSOMMATEURS de messages (creapret-worker-*), qui ne servent aucune
+      # page et ne peuvent donc pas etre sondes par une requete HTTP.
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     # Aucun port publie : joint UNIQUEMENT via le proxy Caddy (reverse_proxy vers le port interne
     # 3001 d'Uptime Kuma).
     networks:
