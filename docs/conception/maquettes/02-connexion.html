@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maquette lo-fi 02 — Connexion</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:system-ui,Arial,sans-serif; background:#fff; color:#444; font-size:14px; line-height:1.5; }
+  .wf { max-width:1000px; margin:0 auto; padding:18px 16px 40px; }
+  .wf-head { display:flex; align-items:baseline; gap:10px; margin-bottom:4px; }
+  .wf-head .num { border:1px solid #999; border-radius:5px; padding:1px 7px; font-size:12px; color:#666; }
+  .wf-head h1 { font-size:18px; color:#444; }
+  .wf-legend { color:#777; font-size:12px; font-style:italic; margin-bottom:16px; }
+  .nav { border:1px solid #ccc; border-radius:8px; padding:9px 12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:16px; }
+  .brand { display:flex; align-items:center; gap:7px; font-weight:700; color:#555; }
+  .sq { width:16px; height:16px; border:1px solid #999; border-radius:4px; display:inline-block; flex:0 0 auto; }
+  .nl { border:1px solid #ccc; border-radius:5px; padding:4px 9px; color:#666; font-size:12px; }
+  .nl.on { background:#eee; }
+  .sp { margin-left:auto; }
+  .bar { background:#ccc; border-radius:4px; display:block; }
+  .h { height:15px; background:#999; }
+  .t { height:9px; }
+  .zone { border:1px solid #ccc; border-radius:8px; padding:14px; margin-bottom:14px; }
+  .zt { color:#777; font-size:12px; text-transform:uppercase; letter-spacing:.05em; margin-bottom:10px; }
+  .field { border:1px solid #ccc; border-radius:6px; height:34px; background:#fff; }
+  .lab { display:block; font-size:12px; color:#888; margin:10px 0 5px; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; border:1px solid #999; border-radius:6px; background:#999; color:#fff; padding:8px 14px; font-size:13px; }
+  .btn.g { background:#fff; color:#666; }
+  .row-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .card { border:1px solid #ccc; border-radius:8px; padding:12px; }
+  .kpi { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:14px; }
+  .kpi .card { text-align:center; }
+  .kv { height:24px; width:46px; background:#999; border-radius:4px; margin:8px auto; }
+  .table { border:1px solid #ccc; border-radius:8px; overflow:hidden; margin-bottom:12px; }
+  .tr { display:grid; gap:10px; padding:9px 12px; border-bottom:1px solid #eee; align-items:center; }
+  .tr.head { background:#f4f4f4; }
+  .tr:last-child { border-bottom:0; }
+  .badge { border:1px solid #999; border-radius:10px; padding:1px 8px; font-size:11px; color:#666; display:inline-block; }
+  .filters { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+  .chip { border:1px solid #ccc; border-radius:14px; padding:3px 10px; font-size:12px; color:#666; }
+  .chip.on { background:#eee; }
+  .cal { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; }
+  .cal .c { border:1px solid #eee; border-radius:4px; height:58px; padding:3px; }
+  .cal .ev { height:11px; background:#ccc; border-radius:3px; margin-top:3px; }
+  .chart { border:1px dashed #bbb; border-radius:8px; height:150px; display:flex; align-items:flex-end; gap:10px; padding:12px; }
+  .chart .b { width:38px; background:#bbb; border-radius:3px 3px 0 0; }
+  .cap { text-align:center; color:#999; font-size:12px; font-style:italic; padding:12px; border-top:1px dashed #ccc; margin-top:22px; }
+  .bc { color:#888; font-size:12px; margin-bottom:10px; }
+  .note { color:#777; font-size:12px; border-left:3px solid #ddd; padding:6px 10px; margin:12px 0; background:#fafafa; }
+</style>
+</head>
+<body>
+<div class="wf">
+  <div class="wf-head"><span class="num">02</span><h1>Connexion</h1></div>
+  <p class="wf-legend">Profil visiteur — permet de s'authentifier. Représentation schématique (fil de fer), antérieure à tout choix graphique.</p>
+
+  <div class="zone" style="max-width:420px;margin:20px auto">
+    <div class="brand" style="margin-bottom:14px"><span class="sq"></span>CréaPrêt</div>
+    <div class="bar h" style="width:130px;margin-bottom:8px"></div>
+    <div class="bar t" style="width:70%;margin-bottom:14px"></div>
+    <label class="lab">Adresse e-mail</label><div class="field"></div>
+    <label class="lab">Mot de passe</label><div class="field"></div>
+    <div style="margin-top:18px"><span class="btn" style="width:100%">Se connecter</span></div>
+    <p class="wf-legend" style="text-align:center;margin-top:14px">Lien : créer un compte · retour à l'accueil.</p>
+  </div>
+
+</div>
+<footer class="cap">Maquette lo-fi 02 — Connexion</footer>
+</body>
+</html>
