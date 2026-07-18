@@ -133,4 +133,43 @@ final class PretTest extends KernelTestCase
         self::assertSame(StatutPret::RETOURNE, $retour->getStatut());
         self::assertSame($dateRetour, $retour->getDateRetour());
     }
+
+    public function test_est_en_retard_et_jours_de_retard(): void
+    {
+        // Instant de reference fixe : test deterministe (aucun now() implicite).
+        $maintenant = new \DateTimeImmutable('2026-09-10 12:00:00');
+
+        // Pret VALIDE, echeance depassee de 5 jours pleins, non rendu -> en retard.
+        $enRetard = (new Pret())
+            ->setStatut(StatutPret::VALIDE)
+            ->setDateDebut(new \DateTimeImmutable('2026-08-20 08:00:00'))
+            ->setDateFin(new \DateTimeImmutable('2026-09-05 12:00:00'));
+        self::assertTrue($enRetard->estEnRetard($maintenant));
+        self::assertSame(5, $enRetard->joursDeRetard($maintenant));
+
+        // Pret VALIDE dont l'echeance est a venir -> pas en retard.
+        $aVenir = (new Pret())
+            ->setStatut(StatutPret::VALIDE)
+            ->setDateDebut(new \DateTimeImmutable('2026-09-08 08:00:00'))
+            ->setDateFin(new \DateTimeImmutable('2026-09-15 12:00:00'));
+        self::assertFalse($aVenir->estEnRetard($maintenant));
+        self::assertSame(0, $aVenir->joursDeRetard($maintenant));
+
+        // Pret RETOURNE (dateRetour renseignee), meme si dateFin est passee -> pas en retard.
+        $rendu = (new Pret())
+            ->setStatut(StatutPret::RETOURNE)
+            ->setDateDebut(new \DateTimeImmutable('2026-08-20 08:00:00'))
+            ->setDateFin(new \DateTimeImmutable('2026-09-05 12:00:00'))
+            ->setDateRetour(new \DateTimeImmutable('2026-09-06 10:00:00'));
+        self::assertFalse($rendu->estEnRetard($maintenant));
+        self::assertSame(0, $rendu->joursDeRetard($maintenant));
+
+        // Pret non VALIDE (DEMANDE par defaut), echeance passee -> pas en retard (regle statut).
+        $demande = (new Pret())
+            ->setDateDebut(new \DateTimeImmutable('2026-08-20 08:00:00'))
+            ->setDateFin(new \DateTimeImmutable('2026-09-05 12:00:00'));
+        self::assertSame(StatutPret::DEMANDE, $demande->getStatut());
+        self::assertFalse($demande->estEnRetard($maintenant));
+        self::assertSame(0, $demande->joursDeRetard($maintenant));
+    }
 }

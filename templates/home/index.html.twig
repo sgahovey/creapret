@@ -3,10 +3,55 @@
 {% block title %}CréaPrêt — Accueil{% endblock %}
 
 {% block body %}
-    <div style="max-width:40rem;margin:3rem auto;font-family:system-ui,sans-serif;line-height:1.5;">
-        <h1>CréaPrêt</h1>
-        <p>Application de gestion de prêt de matériel — démonstrateur pédagogique CDA (Cnam La Réunion).</p>
-        <p>Preuve Stimulus (AssetMapper, sans Node) :
-           <span data-controller="hello" style="font-weight:600;"></span></p>
+    <div class="container py-5">
+        <div class="text-center py-4 mb-5">
+            <h1 class="display-5 fw-semibold"><i class="bi bi-box-seam me-2" aria-hidden="true"></i>CréaPrêt</h1>
+            <p class="lead text-muted col-lg-8 mx-auto">
+                Le service de prêt de matériel du Cnam La Réunion : consultez le catalogue, demandez un prêt et suivez vos emprunts en quelques clics.
+            </p>
+
+            <div class="d-flex flex-wrap gap-2 justify-content-center mt-4">
+                {% if not app.user %}
+                    <a href="{{ path('app_login') }}" class="btn btn-primary btn-lg"><i class="bi bi-box-arrow-in-right me-1" aria-hidden="true"></i>Se connecter</a>
+                    <a href="{{ path('app_inscription') }}" class="btn btn-outline-primary btn-lg"><i class="bi bi-person-plus me-1" aria-hidden="true"></i>Créer un compte</a>
+                {% elseif is_granted('ROLE_GESTIONNAIRE') %}
+                    <a href="{{ path('app_gestion_tableau_de_bord') }}" class="btn btn-primary btn-lg"><i class="bi bi-speedometer2 me-1" aria-hidden="true"></i>Tableau de bord</a>
+                    <a href="{{ path('app_gestion_prets') }}" class="btn btn-outline-primary btn-lg"><i class="bi bi-inbox me-1" aria-hidden="true"></i>Demandes en attente</a>
+                {% else %}
+                    <a href="{{ path('app_catalogue_index') }}" class="btn btn-primary btn-lg"><i class="bi bi-grid me-1" aria-hidden="true"></i>Parcourir le catalogue</a>
+                    <a href="{{ path('app_pret_mes_prets') }}" class="btn btn-outline-primary btn-lg"><i class="bi bi-bag me-1" aria-hidden="true"></i>Mes prêts</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="cp-card h-100">
+                    <div class="cp-card__corps text-center">
+                        <i class="bi bi-grid fs-1 text-primary" aria-hidden="true"></i>
+                        <h2 class="h5 mt-3">Consulter le catalogue</h2>
+                        <p class="text-muted small mb-0">Parcourez le matériel disponible et vérifiez sa disponibilité sur la période souhaitée.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="cp-card h-100">
+                    <div class="cp-card__corps text-center">
+                        <i class="bi bi-bag-check fs-1 text-primary" aria-hidden="true"></i>
+                        <h2 class="h5 mt-3">Demander un prêt</h2>
+                        <p class="text-muted small mb-0">Réservez un exemplaire en quelques clics ; votre demande est validée par un gestionnaire.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="cp-card h-100">
+                    <div class="cp-card__corps text-center">
+                        <i class="bi bi-clock-history fs-1 text-primary" aria-hidden="true"></i>
+                        <h2 class="h5 mt-3">Suivre ses prêts</h2>
+                        <p class="text-muted small mb-0">Retrouvez l'état de vos demandes, vos prêts en cours et leur échéance de retour.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

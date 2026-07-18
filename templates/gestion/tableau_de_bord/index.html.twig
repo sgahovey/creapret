@@ -9,49 +9,54 @@
 {% endblock %}
 
 {% block body %}
-<div class="container my-4">
-    <h1 class="mb-4">Tableau de bord</h1>
+<div class="container py-5">
+    <div class="page-header">
+        <div>
+            <h1 class="page-header__titre h3">Tableau de bord</h1>
+            <p class="page-header__soustitre">Vue d'ensemble de l'activité de prêt du parc.</p>
+        </div>
+    </div>
 
-    <div class="row g-3 mb-4">
-        <div class="col-6 col-lg-3">
-            <div class="card text-bg-light h-100">
-                <div class="card-body">
-                    <div class="text-muted small">Prêts en cours</div>
-                    <div class="display-6">{{ stats.pretsEnCours }}</div>
+    <div class="row g-4 mb-4">
+        <div class="col-sm-6 col-lg-3">
+            <div class="cp-card h-100">
+                <div class="cp-card__corps">
+                    <div class="text-muted small"><i class="bi bi-arrow-left-right me-1" aria-hidden="true"></i>Prêts en cours</div>
+                    <div class="display-6 fw-semibold">{{ stats.pretsEnCours }}</div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-lg-3">
-            <div class="card text-bg-light h-100">
-                <div class="card-body">
-                    <div class="text-muted small">Demandes en attente</div>
-                    <div class="display-6">{{ stats.demandesEnAttente }}</div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="cp-card h-100">
+                <div class="cp-card__corps">
+                    <div class="text-muted small"><i class="bi bi-hourglass-split me-1" aria-hidden="true"></i>Demandes en attente</div>
+                    <div class="display-6 fw-semibold">{{ stats.demandesEnAttente }}</div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-lg-3">
-            <div class="card h-100 {{ stats.pretsEnRetard > 0 ? 'text-bg-danger' : 'text-bg-light' }}">
-                <div class="card-body">
-                    <div class="small {{ stats.pretsEnRetard > 0 ? '' : 'text-muted' }}">Prêts en retard</div>
-                    <div class="display-6">{{ stats.pretsEnRetard }}</div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="h-100 {{ stats.pretsEnRetard > 0 ? 'card text-bg-danger' : 'cp-card' }}">
+                <div class="cp-card__corps">
+                    <div class="small {{ stats.pretsEnRetard > 0 ? '' : 'text-muted' }}"><i class="bi bi-exclamation-triangle me-1" aria-hidden="true"></i>Prêts en retard</div>
+                    <div class="display-6 fw-semibold">{{ stats.pretsEnRetard }}</div>
                 </div>
             </div>
         </div>
-        <div class="col-6 col-lg-3">
-            <div class="card text-bg-light h-100">
-                <div class="card-body">
-                    <div class="text-muted small">Taux d'occupation</div>
-                    <div class="display-6">{{ stats.tauxOccupation }} %</div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="cp-card h-100">
+                <div class="cp-card__corps">
+                    <div class="text-muted small"><i class="bi bi-pie-chart me-1" aria-hidden="true"></i>Taux d'occupation</div>
+                    <div class="display-6 fw-semibold">{{ stats.tauxOccupation }} %</div>
                     <div class="text-muted small">{{ stats.exemplairesEngages }} / {{ stats.exemplairesTotal }} exemplaires</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <section class="card"
+    <section class="cp-card"
              data-controller="graphique-materiels"
              data-graphique-materiels-series-value="{{ stats.topMateriels|json_encode|e('html_attr') }}">
-        <div class="card-body">
+        <div class="cp-card__corps">
             <h2 class="h5">Top 5 des matériels les plus empruntés</h2>
 
             {% if stats.topMateriels is empty %}

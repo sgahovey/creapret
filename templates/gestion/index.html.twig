@@ -4,45 +4,49 @@
 
 {% block body %}
     <div class="container py-5">
-        <h1 class="mb-4">Espace gestion</h1>
-        <p class="lead">Bienvenue dans l'espace de gestion du parc de matériel.</p>
+        <div class="page-header">
+            <div>
+                <h1 class="page-header__titre h3">Espace gestion</h1>
+                <p class="page-header__soustitre">Gérez le catalogue, le parc et les prêts.</p>
+            </div>
+        </div>
 
-        <div class="row g-4 mt-2">
-            <div class="col-md-6">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h2 class="h5 card-title">Catégories</h2>
-                        <p class="card-text">Gérer les catégories du catalogue (informatique, audiovisuel, mesure...).</p>
-                        <a href="{{ path('app_categorie_index') }}" class="btn btn-primary">Gérer les catégories</a>
+        <div class="row g-4">
+            <div class="col-sm-6 col-lg-3">
+                <a href="{{ path('app_categorie_index') }}" class="cp-card text-decoration-none text-reset d-block h-100">
+                    <div class="cp-card__corps text-center">
+                        <i class="bi bi-tags fs-1 text-primary" aria-hidden="true"></i>
+                        <h2 class="h5 mt-3">Catégories</h2>
+                        <p class="text-muted small mb-0">Gérer les catégories du catalogue (informatique, audiovisuel, mesure...).</p>
                     </div>
-                </div>
+                </a>
             </div>
-            <div class="col-md-6">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h2 class="h5 card-title">Matériels</h2>
-                        <p class="card-text">Gérer les matériels du catalogue et leur rattachement aux catégories.</p>
-                        <a href="{{ path('app_materiel_index') }}" class="btn btn-primary">Gérer les matériels</a>
+            <div class="col-sm-6 col-lg-3">
+                <a href="{{ path('app_materiel_index') }}" class="cp-card text-decoration-none text-reset d-block h-100">
+                    <div class="cp-card__corps text-center">
+                        <i class="bi bi-box-seam fs-1 text-primary" aria-hidden="true"></i>
+                        <h2 class="h5 mt-3">Matériels</h2>
+                        <p class="text-muted small mb-0">Gérer les matériels du catalogue et leur rattachement aux catégories.</p>
                     </div>
-                </div>
+                </a>
             </div>
-            <div class="col-md-6">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h2 class="h5 card-title">Exemplaires</h2>
-                        <p class="card-text">Gérer les exemplaires physiques et leur état (disponible, maintenance, hors service...).</p>
-                        <a href="{{ path('app_exemplaire_index') }}" class="btn btn-primary">Gérer les exemplaires</a>
+            <div class="col-sm-6 col-lg-3">
+                <a href="{{ path('app_exemplaire_index') }}" class="cp-card text-decoration-none text-reset d-block h-100">
+                    <div class="cp-card__corps text-center">
+                        <i class="bi bi-boxes fs-1 text-primary" aria-hidden="true"></i>
+                        <h2 class="h5 mt-3">Exemplaires</h2>
+                        <p class="text-muted small mb-0">Gérer les exemplaires physiques et leur état (disponible, maintenance, hors service...).</p>
                     </div>
-                </div>
+                </a>
             </div>
-            <div class="col-md-6">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h2 class="h5 card-title">État du parc</h2>
-                        <p class="card-text">Consulter le nombre d'exemplaires par état, pour chaque matériel.</p>
-                        <a href="{{ path('app_parc_index') }}" class="btn btn-primary">Voir l'état du parc</a>
+            <div class="col-sm-6 col-lg-3">
+                <a href="{{ path('app_parc_index') }}" class="cp-card text-decoration-none text-reset d-block h-100">
+                    <div class="cp-card__corps text-center">
+                        <i class="bi bi-clipboard-data fs-1 text-primary" aria-hidden="true"></i>
+                        <h2 class="h5 mt-3">État du parc</h2>
+                        <p class="text-muted small mb-0">Consulter le nombre d'exemplaires par état, pour chaque matériel.</p>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
     </div>

@@ -9,7 +9,7 @@
 {% block body %}
 <div class="auth-wrapper">
     <div class="auth-card">
-        <div class="auth-logo"><i class="bi bi-box-seam" aria-hidden="true"></i></div>
+        <div class="auth-logo"><a href="{{ path('app_home') }}" class="text-decoration-none" aria-label="Retour a l'accueil"><i class="bi bi-box-seam" aria-hidden="true"></i></a></div>
         <h1 class="auth-title h4">Connexion</h1>
         <p class="auth-subtitle">Accedez a votre espace CréaPrêt.</p>
 
@@ -45,7 +45,7 @@
             <button type="submit" class="btn btn-primary w-100">Se connecter</button>
         </form>
 
-        <p class="auth-footer">Pas encore de compte ? <a href="{{ path('app_inscription') }}">Créer un compte</a></p>
+        <p class="auth-footer">Pas encore de compte ? <a href="{{ path('app_inscription') }}">Créer un compte</a><br><a href="{{ path('app_home') }}" class="text-muted small">← Retour à l'accueil</a></p>
     </div>
 </div>
 {% endblock %}

@@ -18,10 +18,17 @@ export default class extends Controller {
         this.calendar = new window.FullCalendar.Calendar(this.calendrierTarget, {
             locale: 'fr',
             initialView: 'dayGridMonth',
+            firstDay: 1,
+            displayEventTime: false,
+            buttonText: {
+                today: 'Aujourd\'hui',
+                month: 'Mois',
+                list: 'Planning',
+            },
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,timeGridWeek,listWeek',
+                right: 'dayGridMonth,listWeek',
             },
             height: 'auto',
             events: (info, successCallback, failureCallback) => {

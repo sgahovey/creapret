@@ -104,7 +104,8 @@ final class GestionPretController extends AbstractController
     public function retours(PretRepository $prets): Response
     {
         return $this->render('gestion_pret/retours.html.twig', [
-            'prets' => $prets->findPretsEnCours(),
+            'prets'      => $prets->findPretsEnCours(),
+            'maintenant' => new \DateTimeImmutable(),
         ]);
     }
 

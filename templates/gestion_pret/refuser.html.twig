@@ -2,21 +2,38 @@
 
 {% block title %}Refuser une demande de prêt{% endblock %}
 
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+
 {% block body %}
-    <h1 class="h3 mb-4">Refuser une demande de prêt</h1>
-
-    <p>
-        Demande de <strong>{{ pret.emprunteur.prenom }} {{ pret.emprunteur.nom }}</strong>
-        pour <strong>{{ pret.exemplaire.materiel.nom }}</strong>
-        (exemplaire {{ pret.exemplaire.numeroInventaire }}),
-        du {{ pret.dateDebut|date('d/m/Y') }} au {{ pret.dateFin|date('d/m/Y') }}.
-    </p>
-
-    {{ form_start(form) }}
-        {{ form_row(form.motif) }}
-        <div class="d-flex gap-2 mt-3">
-            <button type="submit" class="btn btn-danger">Confirmer le refus</button>
-            <a href="{{ path('app_gestion_prets') }}" class="btn btn-outline-secondary">Annuler</a>
+    <div class="container py-5">
+        <div class="page-header">
+            <div>
+                <h1 class="page-header__titre h3">Refuser une demande de prêt</h1>
+                <p class="page-header__soustitre">Indiquez le motif du refus ; l'emprunteur en sera notifié par courriel.</p>
+            </div>
         </div>
-    {{ form_end(form) }}
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="cp-card">
+                    <div class="cp-card__corps">
+                        <p class="mb-4">
+                            Demande de <strong>{{ pret.emprunteur.prenom }} {{ pret.emprunteur.nom }}</strong>
+                            pour <strong>{{ pret.exemplaire.materiel.nom }}</strong>
+                            (exemplaire {{ pret.exemplaire.numeroInventaire }}),
+                            du {{ pret.dateDebut|date('d/m/Y') }} au {{ pret.dateFin|date('d/m/Y') }}.
+                        </p>
+
+                        {{ form_start(form) }}
+                            {{ form_row(form.motif) }}
+                            <div class="d-flex gap-2 mt-3">
+                                <button type="submit" class="btn btn-danger">Confirmer le refus</button>
+                                <a href="{{ path('app_gestion_prets') }}" class="btn btn-outline-secondary">Annuler</a>
+                            </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
