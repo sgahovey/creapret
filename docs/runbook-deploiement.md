@@ -318,27 +318,42 @@ succès. L'**absence** de signal (période dépassée) déclenche l'alerte côt�
 - **Instance dédiée** à CréaPrêt (`creapret-supervision`, Uptime Kuma), **distincte** de celle de
   l'autre application, pour ne pas mélanger les deux projets. Configurée via son interface (données
   persistées dans le volume `creapret_supervision_data`).
-- **Sondes recommandées (6)** — à configurer dans l'interface :
+- **Huit sondes en place** :
 
   | # | Sonde | Type | Attendu / seuil |
   |---|---|---|---|
-  | 1 | Application production | HTTP `<prod.domaine>/connexion` | code 200 |
-  | 2 | Application préproduction | HTTP `<preprod.domaine>/connexion` | code 401 accepté (basic_auth) |
-  | 3 | Battement « rappels d'échéance » | Push | période 24 h |
-  | 4 | Battement « purge du journal » | Push | période ~31 j |
-  | 5 | Battement « sauvegarde » | Push | période 24 h |
-  | 6 | Expiration du certificat TLS | (option des sondes HTTP 1 et 2) | alerte N jours avant échéance |
+  | 1 | Application production (vue externe) | HTTP `<prod.domaine>/connexion` | code 200 |
+  | 2 | Application préproduction (vue externe) | HTTP `<preprod.domaine>/connexion` | code 401 accepté (basic_auth) |
+  | 3 | Service applicatif production (vue interne) | Port/TCP `creapret-app-prod:9000` depuis le réseau interne | port ouvert |
+  | 4 | Battement « rappels d'échéance » | Push | période 24 h |
+  | 5 | Battement « purge du journal » | Push | période ~31 j |
+  | 6 | Battement « sauvegarde » | Push | période 24 h |
+  | 7 | Conteneur consommateur préproduction | État Docker (`creapret-worker-preprod`) | en cours d'exécution |
+  | 8 | Conteneur consommateur production | État Docker (`creapret-worker-prod`) | en cours d'exécution |
 
+  > Les sondes **1 et 2** valident le chemin complet vu de l'extérieur (proxy + application) ; la sonde
+  > **3**, depuis le réseau interne, isole l'état de l'application de celui du proxy.
+- **Pourquoi les sondes 7 et 8 (consommateurs)** : les consommateurs de messages **ne servent aucune
+  page** et ne peuvent donc pas être sondés par une requête. Or leur **interruption passerait
+  inaperçue** — plus aucun courriel ne partirait (confirmations de prêt, rappels d'échéance, alertes de
+  retard) **alors que le site continuerait de répondre normalement**, panne silencieuse. Ces deux sondes
+  surveillent donc l'**état du conteneur** (en cours d'exécution), en s'appuyant sur le **socket du démon
+  monté en lecture seule** sur `creapret-supervision`.
 - **Notifications** : configurer au moins un canal (courriel via le routeur, ou webhook) sur chaque
-  sonde. **Seuils d'expiration de certificat** réglés sur les sondes HTTP (alerte anticipée).
+  sonde. **Seuils d'expiration de certificat** réglés sur les sondes HTTP 1 et 2 (alerte anticipée).
 - **Consultation des journaux** (`creapret-journaux`, Dozzle) : **filtrée par projet** via
   `DOZZLE_FILTER=label=com.docker.compose.project=creapret_prod` → seuls les conteneurs de CréaPrêt
   apparaissent (l'autre application n'est pas visible). Accès protégé par authentification au niveau du
   proxy.
 
-> **Limite structurelle assumée** : si l'outil de supervision **tombe**, **aucune alerte ne part**, y
-> compris la sienne (il ne peut pas signaler sa propre panne). Un contrôle externe (page de statut
-> consultée, ou supervision tierce) resterait nécessaire pour couvrir ce cas.
+> **Limites assumées** :
+> - l'**espace disque n'est pas surveillé** — un disque plein (dumps, journaux, base) casserait les
+>   sauvegardes et les écritures sans qu'aucune sonde ne le signale ;
+> - un consommateur **vivant mais bloqué** (conteneur en cours d'exécution mais processus figé, ne
+>   consommant plus la file) **ne serait pas détecté** : les sondes 7 et 8 vérifient l'exécution du
+>   conteneur, pas le traitement effectif des messages ;
+> - la **supervision elle-même ne peut pas signaler sa propre panne** : si l'outil tombe, aucune alerte
+>   ne part, y compris la sienne. Un contrôle externe reste nécessaire pour couvrir ce cas.
 
 ---
 
