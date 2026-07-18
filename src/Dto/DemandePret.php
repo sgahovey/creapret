@@ -15,11 +15,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 final class DemandePret
 {
-    #[Assert\NotNull(message: 'Indiquez une date de debut.')]
-    #[Assert\GreaterThanOrEqual('today', message: 'La periode ne peut pas commencer dans le passe.')]
+    #[Assert\NotNull(message: 'Indiquez une date de début.')]
+    #[Assert\GreaterThanOrEqual('today', message: 'La période ne peut pas commencer dans le passé.')]
     public ?\DateTimeImmutable $debut = null;
 
     #[Assert\NotNull(message: 'Indiquez une date de fin.')]
-    #[Assert\GreaterThan(propertyPath: 'debut', message: 'La date de fin doit etre posterieure a la date de debut.')]
+    #[Assert\GreaterThan(propertyPath: 'debut', message: 'La date de fin doit être postérieure à la date de début.')]
     public ?\DateTimeImmutable $fin = null;
 }

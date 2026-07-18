@@ -55,7 +55,7 @@ final class PretService
                 $pret->setStatut(StatutPret::REFUSE)
                     ->setValidateur($validateur)
                     ->setDateValidation(new \DateTimeImmutable())
-                    ->setMotifRefus('Un pret concurrent a ete valide sur cette periode.');
+                    ->setMotifRefus('Un prêt concurrent a été validé sur cette période.');
                 $this->em->flush();
                 $this->em->commit();
 

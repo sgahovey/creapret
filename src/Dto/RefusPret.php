@@ -13,6 +13,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class RefusPret
 {
     #[Assert\NotBlank(message: 'Le motif de refus est obligatoire.')]
-    #[Assert\Length(min: 3, max: 255, minMessage: 'Motif trop court.', maxMessage: 'Motif trop long (255 caracteres max).')]
+    #[Assert\Length(min: 3, max: 255, minMessage: 'Motif trop court.', maxMessage: 'Motif trop long (255 caractères max).')]
     public ?string $motif = null;
 }

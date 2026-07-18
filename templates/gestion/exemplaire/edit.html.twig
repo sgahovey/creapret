@@ -3,7 +3,7 @@
 {% block title %}Modifier l'exemplaire{% endblock %}
 
 {% block body %}
-    <main class="container py-5" style="max-width: 40rem;">
+    <div class="container py-5" style="max-width: 40rem;">
         <h1 class="mb-4">Modifier l'exemplaire</h1>
 
         {{ form_start(form) }}
@@ -13,5 +13,5 @@
             <button type="submit" class="btn btn-primary">Enregistrer</button>
             <a href="{{ path('app_exemplaire_index') }}" class="btn btn-link">Annuler</a>
         {{ form_end(form) }}
-    </main>
+    </div>
 {% endblock %}

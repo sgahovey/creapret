@@ -3,7 +3,7 @@
 {% block title %}Exemplaires{% endblock %}
 
 {% block body %}
-    <main class="container py-5">
+    <div class="container py-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>Exemplaires</h1>
             <a href="{{ path('app_exemplaire_new') }}" class="btn btn-primary">Nouvel exemplaire</a>
@@ -18,9 +18,9 @@
         <table class="table table-striped align-middle">
             <thead>
                 <tr>
-                    <th scope="col">Numero d'inventaire</th>
-                    <th scope="col">Materiel</th>
-                    <th scope="col">Etat</th>
+                    <th scope="col">Numéro d'inventaire</th>
+                    <th scope="col">Matériel</th>
+                    <th scope="col">État</th>
                     <th scope="col"><span class="visually-hidden">Actions</span></th>
                 </tr>
             </thead>
@@ -45,6 +45,6 @@
             </tbody>
         </table>
 
-        <a href="{{ path('app_gestion') }}">Retour a l'espace gestion</a>
-    </main>
+        <a href="{{ path('app_gestion') }}">Retour à l'espace gestion</a>
+    </div>
 {% endblock %}

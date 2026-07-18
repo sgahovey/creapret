@@ -23,10 +23,10 @@ enum StatutPret: string
     {
         return match ($this) {
             self::DEMANDE  => 'En attente',
-            self::VALIDE   => 'Valide',
-            self::REFUSE   => 'Refuse',
-            self::RETOURNE => 'Retourne',
-            self::ANNULE   => 'Annule',
+            self::VALIDE   => 'Validé',
+            self::REFUSE   => 'Refusé',
+            self::RETOURNE => 'Retourné',
+            self::ANNULE   => 'Annulé',
         };
     }
 

@@ -3,10 +3,10 @@
 {% block title %}Catalogue{% endblock %}
 
 {% block body %}
-    <main class="container py-5">
-        <h1 class="mb-4">Catalogue du materiel</h1>
+    <div class="container py-5">
+        <h1 class="mb-4">Catalogue du matériel</h1>
 
-        <nav class="mb-4" aria-label="Filtrer par categorie">
+        <nav class="mb-4" aria-label="Filtrer par catégorie">
             <a href="{{ path('app_catalogue_index') }}"
                class="btn btn-sm {{ categorieActive is null ? 'btn-primary' : 'btn-outline-primary' }}">Toutes</a>
             {% for categorie in categories %}
@@ -34,8 +34,8 @@
                 </div>
             </div>
         {% else %}
-            <p>Aucun materiel dans cette categorie pour le moment.</p>
+            <p>Aucun matériel dans cette catégorie pour le moment.</p>
         {% endfor %}
         </div>
-    </main>
+    </div>
 {% endblock %}

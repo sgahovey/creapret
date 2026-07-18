@@ -195,4 +195,28 @@ final class ExemplaireControllerTest extends WebTestCase
         $em->clear();
         self::assertNull($em->getRepository(Exemplaire::class)->find($id));
     }
+
+    public function test_suppression_avec_jeton_invalide_est_rejetee(): void
+    {
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $hasher = static::getContainer()->get(UserPasswordHasherInterface::class);
+
+        $mat = $this->materiel($em);
+        $ex = (new Exemplaire())
+            ->setNumeroInventaire(self::MARQUEUR . '-csrf-' . uniqid())
+            ->setEtat(EtatExemplaire::DISPONIBLE)
+            ->setMateriel($mat);
+        $em->persist($ex);
+        $em->flush();
+        $id = $ex->getId();
+
+        $client->loginUser($this->gestionnaire($em, $hasher));
+        // Jeton CSRF invalide : la suppression est refusee, l'exemplaire subsiste.
+        $client->request('POST', '/gestion/exemplaire/' . $id . '/supprimer', ['_token' => 'faux']);
+
+        self::assertResponseRedirects('/gestion/exemplaire');
+        $em->clear();
+        self::assertNotNull($em->getRepository(Exemplaire::class)->find($id));
+    }
 }

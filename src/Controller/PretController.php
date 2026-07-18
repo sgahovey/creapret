@@ -56,7 +56,7 @@ final class PretController extends AbstractController
         // RG-4 : au moins un exemplaire libre sur la periode ?
         $exemplaire = $exemplaires->trouverUnLibreSurPeriode($materiel, $demande->debut, $demande->fin);
         if (null === $exemplaire) {
-            $this->addFlash('warning', 'Aucun exemplaire disponible sur cette periode.');
+            $this->addFlash('warning', 'Aucun exemplaire disponible sur cette période.');
 
             return $this->redirectToRoute('app_catalogue_show', ['id' => $materiel->getId()]);
         }
@@ -77,7 +77,7 @@ final class PretController extends AbstractController
         // Notifier les gestionnaires (apres persistance : on ne notifie qu'un fait acquis).
         $notifications->notifierDemandeCreee($pret);
 
-        $this->addFlash('success', 'Votre demande de pret a ete enregistree.');
+        $this->addFlash('success', 'Votre demande de prêt a été enregistrée.');
 
         return $this->redirectToRoute('app_catalogue_show', ['id' => $materiel->getId()]);
     }
@@ -98,7 +98,7 @@ final class PretController extends AbstractController
     public function annuler(Request $request, Pret $pret, PretService $service): Response
     {
         if (!$this->isCsrfTokenValid('annuler' . $pret->getId(), (string) $request->request->get('_token'))) {
-            $this->addFlash('danger', 'Jeton de securite invalide.');
+            $this->addFlash('danger', 'Jeton de sécurité invalide.');
 
             return $this->redirectToRoute('app_pret_mes_prets');
         }
@@ -107,7 +107,7 @@ final class PretController extends AbstractController
         \assert($utilisateur instanceof Utilisateur);
 
         $service->annuler($pret, $utilisateur);
-        $this->addFlash('success', 'Demande annulee.');
+        $this->addFlash('success', 'Demande annulée.');
 
         return $this->redirectToRoute('app_pret_mes_prets');
     }

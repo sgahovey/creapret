@@ -23,7 +23,7 @@ enum EtatExemplaire: string
     {
         return match ($this) {
             self::DISPONIBLE     => 'Disponible',
-            self::PRETE          => 'Prete',
+            self::PRETE          => 'Prêté',
             self::EN_MAINTENANCE => 'En maintenance',
             self::HORS_SERVICE   => 'Hors service',
             self::PERDU          => 'Perdu',

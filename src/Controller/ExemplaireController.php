@@ -40,7 +40,7 @@ final class ExemplaireController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($exemplaire);
             $em->flush();
-            $this->addFlash('success', 'Exemplaire cree.');
+            $this->addFlash('success', 'Exemplaire créé.');
 
             return $this->redirectToRoute('app_exemplaire_index');
         }
@@ -58,7 +58,7 @@ final class ExemplaireController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
-            $this->addFlash('success', 'Exemplaire modifie.');
+            $this->addFlash('success', 'Exemplaire modifié.');
 
             return $this->redirectToRoute('app_exemplaire_index');
         }
@@ -73,7 +73,7 @@ final class ExemplaireController extends AbstractController
     public function delete(Request $request, Exemplaire $exemplaire, EntityManagerInterface $em): Response
     {
         if (!$this->isCsrfTokenValid('supprimer_exemplaire_' . $exemplaire->getId(), (string) $request->request->get('_token'))) {
-            $this->addFlash('danger', 'Jeton de securite invalide.');
+            $this->addFlash('danger', 'Jeton de sécurité invalide.');
 
             return $this->redirectToRoute('app_exemplaire_index');
         }
@@ -82,7 +82,7 @@ final class ExemplaireController extends AbstractController
         // (FK RESTRICT pret -> exemplaire). Pas de pret a ce stade.
         $em->remove($exemplaire);
         $em->flush();
-        $this->addFlash('success', 'Exemplaire supprime.');
+        $this->addFlash('success', 'Exemplaire supprimé.');
 
         return $this->redirectToRoute('app_exemplaire_index');
     }

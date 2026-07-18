@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Prets en cours - retours{% endblock %}
+{% block title %}Prêts en cours - retours{% endblock %}
 
 {% block body %}
-    <h1 class="h3 mb-4">Prets en cours</h1>
+    <h1 class="h3 mb-4">Prêts en cours</h1>
     <p><a href="{{ path('app_gestion_prets') }}">&larr; Demandes en attente</a></p>
 
     {% if prets is empty %}
@@ -13,9 +13,9 @@
             <thead>
                 <tr>
                     <th scope="col">Emprunteur</th>
-                    <th scope="col">Materiel</th>
+                    <th scope="col">Matériel</th>
                     <th scope="col">Exemplaire</th>
-                    <th scope="col">Periode</th>
+                    <th scope="col">Période</th>
                     <th scope="col">Retour</th>
                 </tr>
             </thead>
@@ -31,7 +31,7 @@
                                 <input type="hidden" name="_token" value="{{ csrf_token('retour' ~ pret.id) }}">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="dommage" value="1" id="dommage-{{ pret.id }}">
-                                    <label class="form-check-label" for="dommage-{{ pret.id }}">Materiel endommage</label>
+                                    <label class="form-check-label" for="dommage-{{ pret.id }}">Matériel endommagé</label>
                                 </div>
                                 <button type="submit" class="btn btn-primary btn-sm">Enregistrer le retour</button>
                             </form>

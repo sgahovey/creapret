@@ -74,3 +74,15 @@ les laisser implicites).
   ('~^(?!historique_utilisateur|messenger_messages)~') pour que l'outil de diff ignore ces tables.
   Toute nouvelle table non-ORM devra etre ajoutee a ce filtre. A reevaluer si l'audit est un jour
   mappe en entite en lecture seule (cf. DT-2).
+
+## DT-6 — Accentuation incoherente du texte visible du front
+
+- **Statut** : Resolue (accents des templates HTML termines ; chantier complet : enums, landmarks, tous les templates HTML, emails, Form Types, validateur, messages PHP (flash/erreurs) et marque desormais accentues et coherents).
+- **Constat** : le front a ete construit par iterations ; les templates et libelles anciens portent du
+  texte non accentue (Materiels, Categories, Etat du parc, Prete...) tandis que les pages recentes
+  (tableau de bord, journal, pages legales) et les emails sont accentues. Etat mixte.
+- **Impact** : cosmetique uniquement (aucun defaut fonctionnel) ; nuit a la coherence visuelle et a la
+  qualite percue du francais.
+- **Resolution** : re-accentuation ciblee, lot par lot (edition chaine exacte par fichier, jamais de
+  regex de substitution ; les segments Twig, attributs et valeurs backed d'enum sont preserves), avec
+  resynchronisation des assertions de tests couplees dans le meme lot.

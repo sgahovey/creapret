@@ -37,20 +37,20 @@ final class MaterielType extends AbstractType
                 'attr'     => ['maxlength' => 100],
             ])
             ->add('modele', TextType::class, [
-                'label'    => 'Modele',
+                'label'    => 'Modèle',
                 'required' => false,
                 'attr'     => ['maxlength' => 100],
             ])
             ->add('reference', TextType::class, [
-                'label'    => 'Reference',
+                'label'    => 'Référence',
                 'required' => false,
                 'attr'     => ['maxlength' => 100],
             ])
             ->add('categorie', EntityType::class, [
                 'class'         => Categorie::class,
                 'choice_label'  => 'nom',
-                'placeholder'   => 'Choisir une categorie',
-                'label'         => 'Categorie',
+                'placeholder'   => 'Choisir une catégorie',
+                'label'         => 'Catégorie',
                 'query_builder' => static fn (EntityRepository $r) => $r->createQueryBuilder('c')->orderBy('c.nom', 'ASC'),
             ]);
     }

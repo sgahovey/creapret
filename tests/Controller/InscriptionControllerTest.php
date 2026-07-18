@@ -23,7 +23,7 @@ final class InscriptionControllerTest extends WebTestCase
         $client->request('GET', '/inscription');
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Creer un compte');
+        self::assertSelectorTextContains('h1', 'Créer un compte');
     }
 
     public function test_inscription_valide_cree_un_emprunteur_avec_consentement(): void
@@ -33,7 +33,7 @@ final class InscriptionControllerTest extends WebTestCase
         $this->purgerUtilisateurs($em);
 
         $client->request('GET', '/inscription');
-        $client->submitForm('Creer mon compte', [
+        $client->submitForm('Créer mon compte', [
             'inscription[email]'         => 'emprunteur@cnam-reunion.fr',
             'inscription[prenom]'        => 'Marie',
             'inscription[nom]'           => 'Payet',
@@ -62,7 +62,7 @@ final class InscriptionControllerTest extends WebTestCase
         $this->purgerUtilisateurs($em);
 
         $client->request('GET', '/inscription');
-        $client->submitForm('Creer mon compte', [
+        $client->submitForm('Créer mon compte', [
             'inscription[email]'         => 'faible@cnam-reunion.fr',
             'inscription[prenom]'        => 'Jean',
             'inscription[nom]'           => 'Hoarau',
@@ -82,7 +82,7 @@ final class InscriptionControllerTest extends WebTestCase
         $this->purgerUtilisateurs($em);
 
         $client->request('GET', '/inscription');
-        $client->submitForm('Creer mon compte', [
+        $client->submitForm('Créer mon compte', [
             'inscription[email]'         => 'sanscgu@cnam-reunion.fr',
             'inscription[prenom]'        => 'Luc',
             'inscription[nom]'           => 'Grondin',
@@ -110,7 +110,7 @@ final class InscriptionControllerTest extends WebTestCase
         $em->flush();
 
         $client->request('GET', '/inscription');
-        $client->submitForm('Creer mon compte', [
+        $client->submitForm('Créer mon compte', [
             'inscription[email]'         => 'doublon@cnam-reunion.fr',
             'inscription[prenom]'        => 'Deux',
             'inscription[nom]'           => 'Test',

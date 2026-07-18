@@ -60,7 +60,7 @@ final class CategorieControllerTest extends WebTestCase
         $client->request('GET', '/gestion/categorie');
 
         self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Categories');
+        self::assertSelectorTextContains('h1', 'Catégories');
     }
 
     public function test_creation_valide(): void
@@ -163,6 +163,26 @@ final class CategorieControllerTest extends WebTestCase
         $client->submitForm('Supprimer', []);
 
         // FK RESTRICT (DC-10) : refus, la categorie existe toujours.
+        self::assertResponseRedirects('/gestion/categorie');
+        $em->clear();
+        self::assertNotNull($em->getRepository(Categorie::class)->find($id));
+    }
+
+    public function test_suppression_avec_jeton_invalide_est_rejetee(): void
+    {
+        $client = static::createClient();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $hasher = static::getContainer()->get(UserPasswordHasherInterface::class);
+
+        $c = (new Categorie())->setNom(self::MARQUEUR . '-csrf');
+        $em->persist($c);
+        $em->flush();
+        $id = $c->getId();
+
+        $client->loginUser($this->gestionnaire($em, $hasher));
+        // Jeton CSRF invalide : la suppression est refusee, la categorie subsiste.
+        $client->request('POST', '/gestion/categorie/' . $id . '/supprimer', ['_token' => 'faux']);
+
         self::assertResponseRedirects('/gestion/categorie');
         $em->clear();
         self::assertNotNull($em->getRepository(Categorie::class)->find($id));

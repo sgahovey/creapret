@@ -52,9 +52,9 @@ final class CatalogueController extends AbstractController
             $fin = \DateTimeImmutable::createFromFormat('Y-m-d', $finSaisie) ?: null;
 
             if (null === $debut || null === $fin) {
-                $erreurPeriode = 'Dates invalides : utilisez le format jour/mois/annee.';
+                $erreurPeriode = 'Dates invalides : utilisez le format jour/mois/année.';
             } elseif ($fin <= $debut) {
-                $erreurPeriode = 'La date de fin doit etre posterieure a la date de debut.';
+                $erreurPeriode = 'La date de fin doit être postérieure à la date de début.';
             } else {
                 $nbSurPeriode = $exemplaires->compterLibresSurPeriode($materiel, $debut, $fin);
             }

@@ -38,7 +38,7 @@ final class GestionPretController extends AbstractController
     public function valider(Request $request, Pret $pret, PretService $service, NotificationService $notifications, JournalAdminService $journal, EntityManagerInterface $em): Response
     {
         if (!$this->isCsrfTokenValid('valider' . $pret->getId(), (string) $request->request->get('_token'))) {
-            $this->addFlash('danger', 'Jeton de securite invalide.');
+            $this->addFlash('danger', 'Jeton de sécurité invalide.');
 
             return $this->redirectToRoute('app_gestion_prets');
         }
@@ -48,9 +48,9 @@ final class GestionPretController extends AbstractController
 
         $resultat = $service->valider($pret, $validateur);
         match ($resultat) {
-            ResultatValidation::VALIDE      => $this->addFlash('success', 'Pret valide.'),
-            ResultatValidation::CONFLIT     => $this->addFlash('warning', 'Refuse : un pret concurrent a ete valide sur cette periode.'),
-            ResultatValidation::DEJA_TRAITE => $this->addFlash('info', 'Cette demande a deja ete traitee.'),
+            ResultatValidation::VALIDE      => $this->addFlash('success', 'Prêt validé.'),
+            ResultatValidation::CONFLIT     => $this->addFlash('warning', 'Refusé : un prêt concurrent a été validé sur cette période.'),
+            ResultatValidation::DEJA_TRAITE => $this->addFlash('info', 'Cette demande a déjà été traitée.'),
         };
 
         // Notifier apres commit du service (fait persiste). CONFLIT => le pret est REFUSE (motif pose).
@@ -71,7 +71,7 @@ final class GestionPretController extends AbstractController
     {
         // On ne refuse qu'une demande encore en attente.
         if (StatutPret::DEMANDE !== $pret->getStatut()) {
-            $this->addFlash('info', 'Cette demande a deja ete traitee.');
+            $this->addFlash('info', 'Cette demande a déjà été traitée.');
 
             return $this->redirectToRoute('app_gestion_prets');
         }
@@ -89,7 +89,7 @@ final class GestionPretController extends AbstractController
             $notifications->notifierRefus($pret);
             $journal->enregistrer(TypeActionJournal::PRET_REFUS, $validateur, $pret->getEmprunteur(), $refus->motif);
             $em->flush();
-            $this->addFlash('success', 'Demande refusee.');
+            $this->addFlash('success', 'Demande refusée.');
 
             return $this->redirectToRoute('app_gestion_prets');
         }
@@ -112,7 +112,7 @@ final class GestionPretController extends AbstractController
     public function retour(Request $request, Pret $pret, PretService $service, NotificationService $notifications, JournalAdminService $journal, EntityManagerInterface $em): Response
     {
         if (!$this->isCsrfTokenValid('retour' . $pret->getId(), (string) $request->request->get('_token'))) {
-            $this->addFlash('danger', 'Jeton de securite invalide.');
+            $this->addFlash('danger', 'Jeton de sécurité invalide.');
 
             return $this->redirectToRoute('app_gestion_retours');
         }
@@ -126,8 +126,8 @@ final class GestionPretController extends AbstractController
         $journal->enregistrer(TypeActionJournal::PRET_RETOUR, $gestionnaire, $pret->getEmprunteur(), $dommage ? 'Retour avec dommage' : null);
         $em->flush();
         $this->addFlash('success', $dommage
-            ? 'Retour enregistre : exemplaire mis en maintenance.'
-            : 'Retour enregistre : exemplaire disponible.');
+            ? 'Retour enregistré : exemplaire mis en maintenance.'
+            : 'Retour enregistré : exemplaire disponible.');
 
         return $this->redirectToRoute('app_gestion_retours');
     }
