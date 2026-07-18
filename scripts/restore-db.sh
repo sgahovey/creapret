@@ -52,5 +52,5 @@ echo ">>> Restauration terminee dans '$DB_NAME'."
 # 4. Rappel : le schema restaure peut etre anterieur au code deploye.
 echo ""
 echo "RAPPEL : verifier l'etat des migrations et migrer si necessaire :"
-echo "  ${COMPOSE[*]} exec -T app-<env> php bin/console doctrine:migrations:status"
-echo "  ${COMPOSE[*]} exec -T app-<env> php bin/console doctrine:migrations:migrate --no-interaction"
+echo "  ${COMPOSE[*]} exec -T creapret-app-<env> php bin/console doctrine:migrations:status"
+echo "  ${COMPOSE[*]} exec -T creapret-app-<env> php bin/console doctrine:migrations:migrate --no-interaction"
