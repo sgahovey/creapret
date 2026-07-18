@@ -143,3 +143,19 @@ les laisser implicites).
   d'un job CI reussi (needs + reutilisation de ci.yml en workflow_call), soit via une regle de
   protection de branche exigeant les checks CI verts avant merge vers preprod/main. Ecart assume pour
   l'instant.
+
+## DT-11 — Nommage `accepteCgu` / `version_cgu` alors que le consentement porte sur la confidentialité
+
+- **Statut** : Ouverte (écart assumé, interne).
+- **Constat** : le consentement recueilli à l'inscription porte désormais sur la **politique de
+  confidentialité** (US-1.2 corrigée : le formulaire renvoie à la page de confidentialité, aucune CGU
+  n'étant publiée). Les identifiants techniques conservent toutefois un vocabulaire de **conditions
+  générales** : champ de formulaire `accepteCgu` (non mappé), propriété/colonne `version_cgu`, méthode
+  `Utilisateur::consentir()` documentée « CGU », commentaires de `InscriptionController` et
+  `UtilisateurAdminType`.
+- **Impact** : **nul pour l'utilisateur** — le texte visible (libellé de la case, message de contrainte,
+  lien vers la page) parle bien de politique de confidentialité. L'écart est purement interne
+  (lisibilité du code).
+- **Résolution écartée** : aligner les identifiants supposerait de **renommer la colonne `version_cgu`**
+  et de **migrer les données** existantes (consentements déjà enregistrés), pour un bénéfice strictement
+  interne. Compromis assumé ; à traiter si une migration touchant `utilisateur` intervient par ailleurs.

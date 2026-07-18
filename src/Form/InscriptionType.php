@@ -14,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -25,6 +26,10 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 final class InscriptionType extends AbstractType
 {
+    public function __construct(private readonly UrlGeneratorInterface $urlGenerator)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -59,10 +64,17 @@ final class InscriptionType extends AbstractType
                 ],
             ])
             ->add('accepteCgu', CheckboxType::class, [
-                'label'       => 'J\'accepte les conditions générales d\'utilisation.',
+                // Le consentement porte sur la politique de confidentialite (RGPD) : le libelle
+                // renvoie a la page pour que la personne lise ce a quoi elle consent avant d'accepter.
+                // (Le nom du champ reste 'accepteCgu' -- ecart de nommage interne assume, cf. DT-11.)
+                'label'       => sprintf(
+                    'J\'ai lu et j\'accepte la <a href="%s" target="_blank" rel="noopener">politique de confidentialité</a>.',
+                    $this->urlGenerator->generate('app_confidentialite'),
+                ),
+                'label_html'  => true,
                 'mapped'      => false,
                 'constraints' => [
-                    new IsTrue(message: 'Vous devez accepter les conditions générales d\'utilisation.'),
+                    new IsTrue(message: 'Vous devez accepter la politique de confidentialité pour créer un compte.'),
                 ],
             ]);
     }
