@@ -144,8 +144,8 @@ Niveau(x) : **U** = unitaire, **I** = intégration, **F** = fonctionnel.
 ## 6. Jeux d'essai détaillés
 
 Format : données en entrée, résultat attendu, résultat obtenu, analyse d'écart. Résultats obtenus =
-exécution automatisée **verte** des fichiers cités (sauf le §6.3, jeu d'essai **opérationnel** sur les
-scripts).
+exécution automatisée **verte** des fichiers cités (sauf les §6.3 et §6.4, jeux d'essai
+**opérationnels** sur les scripts).
 
 ### 6.1 RG-1 — Non-chevauchement des prêts validés (fonction la plus représentative)
 
@@ -215,6 +215,22 @@ des croisements d'environnement). Jeu d'essai **opérationnel** (scripts, hors P
 **Analyse d'écart** : l'écart initial (base cible ignorée) est **corrigé** — le 2ᵉ argument détermine
 désormais la base, et un garde-fou refuse tout croisement d'environnement détecté. Détail dans
 `docs/runbook-deploiement.md` §6.
+
+### 6.4 Exécutabilité du script de création de la base — incident réel
+
+**Fonctionnalité** : le script consolidé [`docs/conception/script-creation-bdd.sql`](conception/script-creation-bdd.sql) doit s'exécuter **en un seul bloc** sur une base vierge (destiné à la rétro-conception et à une recréation rapide et lisible). Jeu d'essai **opérationnel** (client de base, hors PHPUnit).
+
+**État initial** : base **vierge** jetable (`creapret_verif`), supprimée en fin d'essai.
+
+| Étape | Entrée | Résultat attendu | Résultat obtenu | Écart |
+|---|---|---|---|:--:|
+| Première exécution | script transmis **en un seul bloc** à une base vierge | 7 tables + déclencheur + procédure, sans erreur | **7 tables créées** puis **interruption sur une erreur de syntaxe** au niveau du déclencheur ; **ni déclencheur ni procédure** créés | **Écart bloquant** |
+| Diagnostic | analyse de l'interruption | — | les **séparateurs d'instruction internes** aux corps de routines étaient interprétés comme des **fins d'instruction**, le script étant transmis d'un bloc alors que les migrations les envoyaient **séparément** | Cause identifiée |
+| Correction | **changement du séparateur d'usage** autour de ces définitions, puis rétablissement | script exécutable d'un bloc | déclencheur et procédure encadrés du changement de séparateur | Résolu |
+| Seconde exécution | script corrigé, base vierge | 7 tables, 1 déclencheur, 1 procédure, sans erreur | Conforme : **7 tables, 1 déclencheur, 1 procédure**, **aucune erreur** | — |
+| Nettoyage | suppression de la base de vérification | base jetable supprimée | Base `creapret_verif` supprimée | — |
+
+**Analyse d'écart** : l'écart initial (interruption sur le déclencheur) est **corrigé** — le séparateur d'instruction est temporairement modifié autour du déclencheur et de la procédure, puis rétabli. **Enseignement** : un artefact **valide à la lecture n'est pas nécessairement valide à l'exécution — seule l'exécution le prouve**. L'analyse statique jugeait le script cohérent ; le défaut n'est apparu qu'une fois le script **réellement transmis** à la base.
 
 ---
 
