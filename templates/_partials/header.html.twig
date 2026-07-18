@@ -1,5 +1,12 @@
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#0f6e56;" role="banner">
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: var(--creapret-primaire);" role="banner" aria-label="Navigation principale">
     <div class="container">
+        {% set route = app.request.attributes.get('_route') %}
+        {% set inventaireActif = route == 'app_gestion'
+            or route starts with 'app_categorie'
+            or route starts with 'app_materiel'
+            or route starts with 'app_exemplaire'
+            or route starts with 'app_parc' %}
+
         <a class="navbar-brand fw-semibold" href="{{ path('app_home') }}">
             <i class="bi bi-box-seam me-1"></i>CréaPrêt
         </a>
@@ -14,46 +21,51 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 {% if is_granted('ROLE_GESTIONNAIRE') %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_gestion_tableau_de_bord') }}">
+                        <a class="nav-link{{ route starts with 'app_gestion_tableau' ? ' active' : '' }}"{{ route starts with 'app_gestion_tableau' ? ' aria-current="page"' : '' }} href="{{ path('app_gestion_tableau_de_bord') }}">
                             <i class="bi bi-speedometer2 me-1"></i>Tableau de bord
                         </a>
                     </li>
                     {% if is_granted('ROLE_SUPER_ADMIN') %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_admin_journal') }}">
+                            <a class="nav-link{{ route starts with 'app_admin' ? ' active' : '' }}"{{ route starts with 'app_admin' ? ' aria-current="page"' : '' }} href="{{ path('app_admin_journal') }}">
                                 <i class="bi bi-journal-text me-1"></i>Journal
                             </a>
                         </li>
                     {% endif %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_gestion_prets') }}">
+                        <a class="nav-link{{ route starts with 'app_gestion_pret' ? ' active' : '' }}"{{ route starts with 'app_gestion_pret' ? ' aria-current="page"' : '' }} href="{{ path('app_gestion_prets') }}">
                             <i class="bi bi-inbox me-1"></i>Demandes
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_gestion_retours') }}">
+                        <a class="nav-link{{ route starts with 'app_gestion_retours' ? ' active' : '' }}"{{ route starts with 'app_gestion_retours' ? ' aria-current="page"' : '' }} href="{{ path('app_gestion_retours') }}">
                             <i class="bi bi-arrow-return-left me-1"></i>Retours
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_gestion_calendrier') }}">
+                        <a class="nav-link{{ route starts with 'app_gestion_calendrier' ? ' active' : '' }}"{{ route starts with 'app_gestion_calendrier' ? ' aria-current="page"' : '' }} href="{{ path('app_gestion_calendrier') }}">
                             <i class="bi bi-calendar3 me-1"></i>Calendrier
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_catalogue_index') }}">
+                        <a class="nav-link{{ inventaireActif ? ' active' : '' }}"{{ inventaireActif ? ' aria-current="page"' : '' }} href="{{ path('app_gestion') }}">
+                            <i class="bi bi-box-seam me-1"></i>Inventaire
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link{{ route starts with 'app_catalogue' ? ' active' : '' }}"{{ route starts with 'app_catalogue' ? ' aria-current="page"' : '' }} href="{{ path('app_catalogue_index') }}">
                             <i class="bi bi-grid me-1"></i>Catalogue
                         </a>
                     </li>
                 {% elseif is_granted('ROLE_EMPRUNTEUR') %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_catalogue_index') }}">
+                        <a class="nav-link{{ route starts with 'app_catalogue' ? ' active' : '' }}"{{ route starts with 'app_catalogue' ? ' aria-current="page"' : '' }} href="{{ path('app_catalogue_index') }}">
                             <i class="bi bi-grid me-1"></i>Catalogue
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_pret_mes_prets') }}">
-                            <i class="bi bi-bag me-1"></i>Mes prets
+                        <a class="nav-link{{ route starts with 'app_pret' ? ' active' : '' }}"{{ route starts with 'app_pret' ? ' aria-current="page"' : '' }} href="{{ path('app_pret_mes_prets') }}">
+                            <i class="bi bi-bag me-1"></i>Mes prêts
                         </a>
                     </li>
                 {% endif %}
@@ -66,7 +78,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('app_logout') }}">
-                            <i class="bi bi-box-arrow-right me-1"></i>Deconnexion
+                            <i class="bi bi-box-arrow-right me-1"></i>Déconnexion
                         </a>
                     </li>
                 {% else %}
