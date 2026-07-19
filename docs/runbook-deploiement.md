@@ -293,7 +293,7 @@ Crontab de l'utilisateur `<utilisateur>` — **3 entrées**, serveur en **UTC** 
 
 | Tâche | Horaire UTC | Équivalent local (Indian/Reunion, UTC+4) | Commande | Journal |
 |---|---|---|---|---|
-| Rappels d'échéance | `0 14 * * *` | 18h00 | `app:envoyer-rappels` | `~/cron-logs/rappels.log` |
+| Rappels d'échéance | `0 4 * * *` | 08h00 | `app:prets:rappels` | `~/cron-logs/rappels.log` |
 | Purge du journal RGPD | `0 3 1 * *` | 07h00, le 1er du mois | `app:audit:purger` | `~/cron-logs/purge-audit.log` |
 | Sauvegarde de la base | `30 2 * * *` | 06h30 | `scripts/backup-db.sh` | `~/cron-logs/backup.log` |
 
@@ -304,7 +304,7 @@ d'Uptime Kuma, **seulement si elle réussit** — l'appel est chaîné en `&&`, 
 succès. L'**absence** de signal (période dépassée) déclenche l'alerte côté supervision. Exemple :
 
 ```bash
-0 14 * * * cd ~/creapret && $PFX exec -T creapret-app-prod php bin/console app:envoyer-rappels \
+0 4 * * * cd ~/creapret && $PFX exec -T creapret-app-prod php bin/console app:prets:rappels \
   >> ~/cron-logs/rappels.log 2>&1 && curl -fsS "<url-push-rappels>" >/dev/null
 ```
 

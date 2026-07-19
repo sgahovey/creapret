@@ -186,3 +186,31 @@ les laisser implicites).
   vérifié » (dossier §2.7.2) n'est pas tenue.
 - **Condition de levée** : **réutiliser l'artefact validé par son empreinte** — promouvoir l'image de
   préproduction identifiée par son SHA plutôt que la reconstruire en production.
+
+## DT-14 — La surcharge des ports hôte reposait sur `.env.local`, que Compose ne lit pas
+
+- **Statut** : Levée (par le présent correctif).
+- **Constat** : `docker-compose.yml` interpole `${NGINX_PORT:-8000}` et `${PMA_PORT:-8080}` **sur
+  l'hôte**, au moment où Compose lit le YAML. Cette interpolation ne lit que `.env` (ou un `--env-file`
+  explicite), **jamais `.env.local`** — où les surcharges de ports avaient été placées. Les valeurs
+  personnalisées étaient donc **ignorées en silence** et les valeurs par défaut (8000/8080)
+  s'appliquaient. `.env.local` n'est lu que par Symfony et par `env_file` (variables injectées **dans**
+  le conteneur), pas par le moteur d'interpolation de Compose : deux mécanismes, deux moments, deux
+  fichiers — que le service `app`, qui utilise les deux, rendait faciles à confondre.
+- **Conséquence** : **échec silencieux** tant que les ports par défaut restaient libres ; sur un poste
+  où 8000 ou 8080 sont déjà pris (cohabitation avec la stack CreaSlot), le démarrage échouait **sans que
+  la cause soit lisible** — la surcharge paraissait posée mais restait inerte.
+- **Condition de levée** : **levée** — surcharge déplacée dans `docker-compose.override.yml` (non
+  versionné, chargé automatiquement par Compose, donc lu au bon moment), lignes erronées retirées du
+  `.env` versionné, et commentaires de `docker-compose.yml` corrigés pour signaler que `${VAR}` est
+  interpolé sur l'hôte à partir de `.env` uniquement.
+- **Note (mécanisme connexe)** : le **même** mécanisme d'interpolation touche `MYSQL_DATABASE`,
+  `MYSQL_USER`, `MYSQL_PASSWORD` et `MYSQL_ROOT_PASSWORD` (service `db`), dont les valeurs sont
+  définies dans `.env.local` mais absentes de `.env` — Compose applique donc leurs **défauts**
+  (`creapret` / `rootpassword`) au conteneur `db`, sans jamais lire `.env.local`. L'incohérence est
+  **neutralisée** en alignant `DATABASE_URL` sur ces défauts (`creapret:creapret`), de sorte que
+  l'application et le conteneur `db` utilisent les mêmes identifiants : **cohérence obtenue par
+  convergence, pas par lecture du bon fichier**. Conséquence pratique à garder en tête : **toute
+  nouvelle variable ajoutée à `.env.local` et attendue par Compose subira le même sort,
+  silencieusement** — sa valeur sera ignorée et le défaut (ou l'absence de valeur) s'appliquera sans
+  erreur visible.

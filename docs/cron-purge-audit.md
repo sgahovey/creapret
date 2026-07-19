@@ -23,11 +23,18 @@ php bin/console app:audit:purger --jours=180
 ## Planification (cron)
 
 En production, la purge est planifiee une fois par mois. Le serveur (VPS) etant en UTC, l\'heure est
-choisie en dehors des periodes d\'activite.
+choisie en dehors des periodes d\'activite. Le prefixe `$PFX` designe la composition de production
+(`docker compose -f compose.prod.yml --env-file .env.deploy.local`), comme dans le runbook (§7).
 
 ```cron
 # Purge mensuelle des traces d\'audit (le 1er du mois a 03h00 UTC, retention 365 jours)
-0 3 1 * * cd /var/www/creapret && php bin/console app:audit:purger >> var/log/purge-audit.log 2>&1
+# Service nomme explicitement : le service generique "app" n'existe que dans la
+# composition de developpement ; la production ne definit que creapret-app-preprod
+# et creapret-app-prod. On vise donc creapret-app-prod (environnement production).
+# Journal en chemin absolu (~/cron-logs/) : une entree cron herite du repertoire
+# courant ; un chemin relatif redirigerait le journal ailleurs en silence si ce
+# repertoire de travail venait a changer.
+0 3 1 * * cd ~/creapret && $PFX exec -T creapret-app-prod php bin/console app:audit:purger >> ~/cron-logs/purge-audit.log 2>&1
 ```
 
 ## Notes

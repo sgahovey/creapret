@@ -70,6 +70,9 @@ docker compose exec app php bin/console doctrine:fixtures:load --no-interaction
 
 Accès : **http://localhost:8000** (application) · **http://localhost:8080** (phpMyAdmin).
 
+> Ports par défaut, surchargeables par machine via `docker-compose.override.yml` (non versionné) —
+> par exemple en cas de cohabitation avec une autre stack occupant déjà 8000/8080.
+
 ---
 
 ## Tests et qualité

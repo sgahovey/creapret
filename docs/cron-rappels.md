@@ -13,10 +13,18 @@ Les bornes sont calculees en `Indian/Reunion` (UTC+4). Un cron planifie en UTC d
 
 ## Exemple de cron (production, sur le VPS)
 
-Passage quotidien a 08:00 heure de La Reunion (= 04:00 UTC) :
+Passage quotidien a 08:00 heure de La Reunion (= 04:00 UTC). Le prefixe `$PFX` designe la
+composition de production (`docker compose -f compose.prod.yml --env-file .env.deploy.local`),
+comme dans le runbook (§7) :
 
 ```cron
-0 4 * * * cd /chemin/vers/creapret && docker compose exec -T app php bin/console app:prets:rappels >> var/log/rappels.log 2>&1
+# Service nomme explicitement : le service generique "app" n'existe que dans la
+# composition de developpement ; la production ne definit que creapret-app-preprod
+# et creapret-app-prod. On vise donc creapret-app-prod (environnement production).
+# Journal en chemin absolu (~/cron-logs/) : une entree cron herite du repertoire
+# courant ; un chemin relatif redirigerait le journal ailleurs en silence si ce
+# repertoire de travail venait a changer.
+0 4 * * * cd ~/creapret && $PFX exec -T creapret-app-prod php bin/console app:prets:rappels >> ~/cron-logs/rappels.log 2>&1
 ```
 
 Le worker Messenger (`messenger:consume async`) doit tourner en parallele pour depiler les emails

@@ -9,6 +9,11 @@
 /vendor/
 ###< symfony/framework-bundle ###
 
+###> docker ###
+# Surcharge Compose propre a la machine (ports hote, etc.) -- jamais partagee.
+/docker-compose.override.yml
+###< docker ###
+
 ###> phpunit/phpunit ###
 /phpunit.xml
 /.phpunit.cache/

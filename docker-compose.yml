@@ -36,9 +36,13 @@ services:
     restart: unless-stopped
 
   # ---------------------------------------------------------------------------
-  # nginx : serveur web — sert l'application HTTP.
-  # Port hôte : défaut 8000 (portable). Surcharge via NGINX_PORT dans .env.local
-  # (8001 sur cette machine, cohabitation avec la stack CreaSlot). Port conteneur : 80.
+  # nginx : serveur web -- sert l'application HTTP. Port conteneur : 80.
+  # Port hote : la valeur par defaut de l'interpolation (${...:-<defaut>} plus bas)
+  # est portable. Pour la surcharger sur une machine donnee, definir le port dans
+  # docker-compose.override.yml (non versionne, charge automatiquement par Compose).
+  # ATTENTION : ${VAR} est interpole par Compose SUR L'HOTE, qui ne lit que .env,
+  # jamais .env.local. .env.local n'est lu que par Symfony et par env_file, donc
+  # uniquement DANS le conteneur -- y definir un port hote n'a aucun effet.
   # ---------------------------------------------------------------------------
   nginx:
     image: nginx:1.27-alpine
@@ -62,8 +66,13 @@ services:
     restart: unless-stopped
 
   # ---------------------------------------------------------------------------
-  # phpmyadmin : interface web MySQL (dev uniquement).
-  # Port hôte : défaut 8080 (portable). Surcharge via PMA_PORT dans .env.local (8081 sur cette machine).
+  # phpmyadmin : interface web MySQL (dev uniquement). Port conteneur : 80.
+  # Port hote : la valeur par defaut de l'interpolation (${...:-<defaut>} plus bas)
+  # est portable. Pour la surcharger sur une machine donnee, definir le port dans
+  # docker-compose.override.yml (non versionne, charge automatiquement par Compose).
+  # ATTENTION : ${VAR} est interpole par Compose SUR L'HOTE, qui ne lit que .env,
+  # jamais .env.local. .env.local n'est lu que par Symfony et par env_file, donc
+  # uniquement DANS le conteneur -- y definir un port hote n'a aucun effet.
   # ---------------------------------------------------------------------------
   phpmyadmin:
     image: phpmyadmin:5.2-apache
@@ -98,7 +107,9 @@ services:
     networks:
       - creapret-net
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      # $$ (double dollar) : echappe l'interpolation Compose sur l'hote -- la variable
+      # est resolue par le shell DANS le conteneur, ou MYSQL_ROOT_PASSWORD est defini.
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p\"$$MYSQL_ROOT_PASSWORD\" || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
