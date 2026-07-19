@@ -214,3 +214,13 @@ les laisser implicites).
   nouvelle variable ajoutée à `.env.local` et attendue par Compose subira le même sort,
   silencieusement** — sa valeur sera ignorée et le défaut (ou l'absence de valeur) s'appliquera sans
   erreur visible.
+- **Rebond — le correctif initial était lui-même incomplet** : le fichier `docker-compose.override.yml`
+  était bien **chargé** par Compose, mais la sémantique de fusion des listes en faisait un **ajout** et
+  non un **remplacement** : Compose **concatène** les listes (dont `ports`), il ne les écrase pas. Les
+  ports du fichier de base (8000/8080) **et** ceux de la surcharge (8001/8081) étaient donc **tous**
+  publiés, et le démarrage échouait encore sur 8000/8080 déjà pris — la surcharge était *lue* mais pas
+  *appliquée* comme prévu, exactement la même signature que le défaut d'origine. Corrigé par le marqueur
+  `ports: !override` (Compose ≥ 2.24), qui force le remplacement de la liste.
+- **Leçon** : **vérifier la configuration effective avec `docker compose config`** plutôt que de
+  présumer qu'un fichier *lu* produit l'effet attendu. La preuve n'est pas qu'un fichier soit chargé,
+  mais que la configuration résolue soit celle voulue (ici : un seul port publié par service).
