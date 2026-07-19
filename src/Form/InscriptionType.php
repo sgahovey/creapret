@@ -67,7 +67,7 @@ final class InscriptionType extends AbstractType
                 // Le consentement porte sur la politique de confidentialite (RGPD) : le libelle
                 // renvoie a la page pour que la personne lise ce a quoi elle consent avant d'accepter.
                 // (Le nom du champ reste 'accepteCgu' -- ecart de nommage interne assume, cf. DT-11.)
-                'label'       => sprintf(
+                'label' => sprintf(
                     'J\'ai lu et j\'accepte la <a href="%s" target="_blank" rel="noopener">politique de confidentialité</a>.',
                     $this->urlGenerator->generate('app_confidentialite'),
                 ),
