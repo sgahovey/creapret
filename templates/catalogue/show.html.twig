@@ -25,6 +25,10 @@
             </div>
         </div>
 
+        {# Carte des caracteristiques : rendue seulement si au moins un champ est renseigne,
+           sinon elle produirait un encadre vide. La description est incluse dans le test car
+           elle est nullable et vit dans la meme dl -- l'exclure masquerait une description seule. #}
+        {% if materiel.description or materiel.marque or materiel.modele or materiel.reference %}
         <div class="cp-card">
             <div class="cp-card__corps">
                 <dl class="row mb-0">
@@ -47,6 +51,7 @@
                 </dl>
             </div>
         </div>
+        {% endif %}
 
         <section class="mt-4" aria-labelledby="titre-dispo">
             <h2 id="titre-dispo" class="h5">Disponibilité sur une période</h2>

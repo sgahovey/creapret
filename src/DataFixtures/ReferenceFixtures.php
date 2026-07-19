@@ -26,17 +26,20 @@ final class ReferenceFixtures extends Fixture implements FixtureGroupInterface
      * Catalogue de reference : pour chaque materiel, sa categorie, son prefixe d'inventaire,
      * le nombre d'exemplaires et une cle de reference stable.
      *
-     * @var list<array{cle: string, nom: string, categorie: string, prefixe: string, exemplaires: int}>
+     * @var list<array{cle: string, nom: string, marque?: string, modele?: string, reference?: string, categorie: string, prefixe: string, exemplaires: int}>
      */
     private const CATALOGUE = [
-        ['cle' => 'videoprojecteur', 'nom' => 'Videoprojecteur Epson EB-982W', 'categorie' => 'Video', 'prefixe' => 'VP', 'exemplaires' => 3],
-        ['cle' => 'micro', 'nom' => 'Micro-cravate sans fil', 'categorie' => 'Video', 'prefixe' => 'MC', 'exemplaires' => 2],
-        ['cle' => 'casque', 'nom' => 'Casque audio', 'categorie' => 'Video', 'prefixe' => 'CA', 'exemplaires' => 3],
-        ['cle' => 'pc', 'nom' => 'PC portable', 'categorie' => 'Informatique', 'prefixe' => 'PC', 'exemplaires' => 4],
-        ['cle' => 'chargeur', 'nom' => 'Chargeur PC portable', 'categorie' => 'Informatique', 'prefixe' => 'CH', 'exemplaires' => 4],
-        ['cle' => 'souris', 'nom' => 'Souris ergonomique Logitech', 'categorie' => 'Informatique', 'prefixe' => 'SO', 'exemplaires' => 5],
-        ['cle' => 'clavier', 'nom' => 'Clavier mecanique', 'categorie' => 'Informatique', 'prefixe' => 'CL', 'exemplaires' => 3],
-        ['cle' => 'webcam', 'nom' => 'Webcam HD', 'categorie' => 'Informatique', 'prefixe' => 'WC', 'exemplaires' => 2],
+        ['cle' => 'videoprojecteur', 'nom' => 'Videoprojecteur', 'marque' => 'Epson', 'modele' => 'EB-982W', 'reference' => 'V11H987040', 'categorie' => 'Video', 'prefixe' => 'VP', 'exemplaires' => 3],
+        ['cle' => 'micro', 'nom' => 'Micro-cravate sans fil', 'marque' => 'Rode', 'modele' => 'Wireless GO II', 'reference' => 'WIGOII', 'categorie' => 'Video', 'prefixe' => 'MC', 'exemplaires' => 2],
+        ['cle' => 'casque', 'nom' => 'Casque audio', 'marque' => 'Sony', 'modele' => 'WH-CH520', 'reference' => 'WHCH520B', 'categorie' => 'Video', 'prefixe' => 'CA', 'exemplaires' => 3],
+        ['cle' => 'pc', 'nom' => 'PC portable', 'marque' => 'Dell', 'modele' => 'Latitude 5540', 'reference' => 'L5540-I5-16G', 'categorie' => 'Informatique', 'prefixe' => 'PC', 'exemplaires' => 4],
+        ['cle' => 'chargeur', 'nom' => 'Chargeur PC portable', 'marque' => 'Dell', 'modele' => '65 W USB-C', 'reference' => 'DA65NM170', 'categorie' => 'Informatique', 'prefixe' => 'CH', 'exemplaires' => 4],
+        ['cle' => 'souris', 'nom' => 'Souris ergonomique', 'marque' => 'Logitech', 'modele' => 'MX Vertical', 'reference' => '910-005448', 'categorie' => 'Informatique', 'prefixe' => 'SO', 'exemplaires' => 5],
+        ['cle' => 'clavier', 'nom' => 'Clavier mecanique', 'marque' => 'Keychron', 'modele' => 'K8 Pro', 'reference' => 'K8P-J1', 'categorie' => 'Informatique', 'prefixe' => 'CL', 'exemplaires' => 3],
+        ['cle' => 'webcam', 'nom' => 'Webcam HD', 'marque' => 'Logitech', 'modele' => 'C920 HD Pro', 'reference' => '960-001055', 'categorie' => 'Informatique', 'prefixe' => 'WC', 'exemplaires' => 2],
+        // Cas nul VOLONTAIRE : aucune marque, aucun modele, aucune reference (ni description). Represente
+        // le materiel sans caracteristiques, pour que la carte conditionnelle de catalogue/show reste
+        // verifiable a l'ecran (elle ne doit alors PAS s'afficher).
         ['cle' => 'ssd', 'nom' => 'Disque dur externe SSD', 'categorie' => 'Informatique', 'prefixe' => 'SSD', 'exemplaires' => 2],
     ];
 
@@ -67,6 +70,9 @@ final class ReferenceFixtures extends Fixture implements FixtureGroupInterface
 
             $materiel = (new Materiel())
                 ->setNom($ligne['nom'])
+                ->setMarque($ligne['marque'] ?? null)
+                ->setModele($ligne['modele'] ?? null)
+                ->setReference($ligne['reference'] ?? null)
                 ->setCategorie($categories[$nomCategorie]);
             $manager->persist($materiel);
 
