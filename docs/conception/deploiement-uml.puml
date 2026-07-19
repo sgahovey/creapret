@@ -1,21 +1,21 @@
 @startuml deploiement-conception
 ' =====================================================================
-' CreaPret — Diagramme de deploiement (CONCEPTION)
-' Designations generiques : aucun produit, plateforme ni commande.
-' Notation UML de deploiement : node / artifact / database + relations.
+' CréaPrêt — Diagramme de déploiement (CONCEPTION)
+' Désignations génériques : aucun produit, plateforme ni commande.
+' Notation UML de déploiement : node / artifact / database + relations.
 ' =====================================================================
 skinparam shadowing false
-title Diagramme de deploiement (conception) — designations generiques
+title Diagramme de déploiement (conception) — désignations génériques
 
 node "Poste de l'utilisateur" as USER {
   artifact "Client de navigation" as NAV
 }
 
-node "Machine hebergeante (unique, partagee)" as HOST {
+node "Machine hébergeante (unique, partagée)" as HOST {
 
-  node "Point d'entree unique" as ENTRY
+  node "Point d'entrée unique" as ENTRY
 
-  node "Environnement de validation\n(acces restreint)" as VAL {
+  node "Environnement de validation\n(accès restreint)" as VAL {
     artifact "Application (validation)" as APPVAL
   }
 
@@ -23,28 +23,28 @@ node "Machine hebergeante (unique, partagee)" as HOST {
     artifact "Application (service)" as APPSVC
   }
 
-  database "Espace de donnees\n(deux jeux cloisonnes)" as DATA
+  database "Espace de données\n(deux jeux cloisonnés)" as DATA
 
   node "Dispositif de surveillance" as MON
 }
 
-NAV --> ENTRY : <<flux chiffre>>
-ENTRY --> APPVAL : <<achemine / acces restreint>>
-ENTRY --> APPSVC : <<achemine / acces public>>
-APPVAL --> DATA : <<lit / ecrit>>
-APPSVC --> DATA : <<lit / ecrit>>
+NAV --> ENTRY : <<flux chiffré>>
+ENTRY --> APPVAL : <<achemine / accès restreint>>
+ENTRY --> APPSVC : <<achemine / accès public>>
+APPVAL --> DATA : <<lit / écrit>>
+APPSVC --> DATA : <<lit / écrit>>
 MON ..> APPSVC : <<surveille>>
 MON ..> APPVAL : <<surveille>>
 
 legend right
   | **Symbole** | **Signification** |
-  | Noeud (node) | Unite d'hebergement ou d'execution |
-  | Artefact (artifact) | Element logiciel deploye sur un noeud |
-  | Base (database) | Espace de donnees persistant |
-  | Noeud imbrique | Environnement contenu dans la machine |
-  | Fleche pleine (-->) | Communication / dependance de deploiement |
-  | Fleche pointillee (..>) | Observation, sans couplage fonctionnel |
-  | <<stereotype>> | Nature de la relation |
+  | Nœud (node) | Unité d'hébergement ou d'exécution |
+  | Artefact (artifact) | Élément logiciel déployé sur un nœud |
+  | Base (database) | Espace de données persistant |
+  | Nœud imbriqué | Environnement contenu dans la machine |
+  | Flèche pleine (-->) | Communication / dépendance de déploiement |
+  | Flèche pointillée (..>) | Observation, sans couplage fonctionnel |
+  | <<stéréotype>> | Nature de la relation |
 endlegend
 
 @enduml

@@ -23,7 +23,7 @@ Trois traitements doivent s'exécuter **sans intervention** :
 |---|---|---|---|
 | Rappels et retards | Quotidienne | Un emprunteur non prévenu, un retard non signalé | Moins d'un jour |
 | Effacement des traces échues | Périodique (mensuelle) | Conservation au-delà de la durée → non-conformité | Quelques jours |
-| Copie de sauvegarde | Quotidienne | **Aucun point de restauration récent** en cas d'incident | Moins d'un jour (le plus critique) |
+| Copie de sauvegarde | Quotidienne | **Aucun point de restauration récent** en cas d'incident | Dès l'échéance manquée (le plus critique) |
 
 Un échec de l'un de ces traitements relevant souvent d'une **absence** (le traitement ne s'exécute
 pas), sa détection relève de la **surveillance** (voir `../conception/surveillance.md`) : chaque

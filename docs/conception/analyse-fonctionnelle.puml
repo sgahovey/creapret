@@ -1,9 +1,8 @@
 @startuml analyse-fonctionnelle
 ' =====================================================================
-' CréaPrêt — Analyse fonctionnelle : diagramme de cas d'utilisation
-' Dix objectifs métier + trois cas transverses. Acteurs cumulatifs.
-' <<include>> = toujours déclenché ; <<extend>> = conditionnel.
-' Fidèle aux enchaînements réels (contrôleurs / services).
+' CréaPrêt — Analyse fonctionnelle : cas d'utilisation
+' CU-nn aligné 1:1 sur BF-nn (CU-01..CU-15). Transverses CU-T1/T2/T3.
+' Acteurs cumulatifs. Fidèle aux enchaînements réels (contrôleurs/services).
 ' =====================================================================
 skinparam shadowing false
 skinparam actorStyle awesome
@@ -11,61 +10,77 @@ left to right direction
 
 title Cas d'utilisation — CréaPrêt
 
-actor "Visiteur" as VIS
 actor "Emprunteur" as EMP
 actor "Gestionnaire" as GES
 actor "Super-administrateur" as ADM
 
-' Généralisation : cumul des habilitations (chacun hérite du précédent)
-EMP --|> VIS
+' Généralisation : cumul des habilitations
 GES --|> EMP
 ADM --|> GES
 
 rectangle "CréaPrêt" {
-    usecase "Se connecter à son espace" as UC1
-    usecase "Rechercher du matériel\ndisponible" as UC2
-    usecase "Emprunter du matériel" as UC3
-    usecase "Suivre ses prêts" as UC4
-    usecase "Décider d'une demande\nde prêt" as UC5
-    usecase "Enregistrer un retour" as UC6
-    usecase "Tenir l'inventaire à jour" as UC7
-    usecase "Suivre l'activité de prêt" as UC8
-    usecase "Administrer les comptes" as UC9
-    usecase "Consulter le journal\nd'administration" as UC10
+    ' — Emprunteur (BF-1 à BF-6) —
+    usecase "CU-01 · S'inscrire et se connecter" as CU01
+    usecase "CU-02 · Consulter le catalogue" as CU02
+    usecase "CU-03 · Consulter la disponibilité\nsur une période" as CU03
+    usecase "CU-04 · Demander un prêt" as CU04
+    usecase "CU-05 · Suivre ses prêts" as CU05
+    usecase "CU-06 · Annuler une demande\nnon validée" as CU06
 
-    ' Cas transverses (cibles d'include / extend)
-    usecase "Notifier la personne\nconcernée" as NOTIF
-    usecase "Tracer l'action\ndans le journal" as TRACE
-    usecase "Mettre l'exemplaire\nen maintenance" as MAINT
+    ' — Gestionnaire (BF-7 à BF-12 + BF-14) —
+    usecase "CU-07 · Valider / refuser une demande" as CU07
+    usecase "CU-08 · Enregistrer un retour" as CU08
+    usecase "CU-09 · Gérer le catalogue" as CU09
+    usecase "CU-10 · Gérer l'inventaire" as CU10
+    usecase "CU-11 · Consulter l'état du parc" as CU11
+    usecase "CU-12 · Consulter le calendrier\nd'occupation" as CU12
+    ' CU-14 sous Gestionnaire par DC-11 (élargissement ; ADM conserve l'accès par cumul)
+    usecase "CU-14 · Consulter le tableau de bord" as CU14
+
+    ' — Super-administrateur (BF-13, BF-15) —
+    usecase "CU-13 · Gérer les comptes" as CU13
+    usecase "CU-15 · Consulter le journal\nd'administration" as CU15
+
+    ' — Cas transverses (cibles include/extend) —
+    usecase "CU-T1 · Notifier la personne\nconcernée" as CUT1
+    usecase "CU-T2 · Tracer l'action\ndans le journal" as CUT2
+    usecase "CU-T3 · Mettre l'exemplaire\nen maintenance" as CUT3
 }
 
 ' Associations : chaque acteur porte ses PROPRES cas (le reste par cumul)
-VIS -- UC1
-EMP -- UC2
-EMP -- UC3
-EMP -- UC4
-GES -- UC5
-GES -- UC6
-GES -- UC7
-GES -- UC8
-ADM -- UC9
-ADM -- UC10
+EMP -- CU01
+EMP -- CU02
+EMP -- CU03
+EMP -- CU04
+EMP -- CU05
+EMP -- CU06
+GES -- CU07
+GES -- CU08
+GES -- CU09
+GES -- CU10
+GES -- CU11
+GES -- CU12
+GES -- CU14
+ADM -- CU13
+ADM -- CU15
 
-' <<include>> : le cas source déclenche toujours le cas cible
-UC3 ..> NOTIF : <<include>>
-UC5 ..> NOTIF : <<include>>
-UC6 ..> NOTIF : <<include>>
-UC5 ..> TRACE : <<include>>
-UC6 ..> TRACE : <<include>>
-UC9 ..> TRACE : <<include>>
+' «include» : le cas source déclenche toujours le cas cible
+CU04 ..> CUT1 : <<include>>
+CU07 ..> CUT1 : <<include>>
+CU08 ..> CUT1 : <<include>>
+CU07 ..> CUT2 : <<include>>
+CU08 ..> CUT2 : <<include>>
+CU13 ..> CUT2 : <<include>>
+' Conçu ; non implémenté à ce jour — écart documenté en DT-12
+CU06 ..> CUT2 : <<include>>
 
-' <<extend>> : conditionnel (retour d'un exemplaire endommagé)
-MAINT ..> UC6 : <<extend>>
+' «extend» : conditionnel (retour d'un exemplaire endommagé)
+CUT3 ..> CU08 : <<extend>>
 
 legend right
   | **Symbole** | **Signification** |
   | Silhouette | Acteur : un profil qui poursuit des objectifs |
-  | Ellipse | Cas d'utilisation : un objectif métier |
+  | Ellipse | Cas d'utilisation (CU-nn = BF-nn ; CU-Tx = transverse) |
   | Flèche à pointe creuse | Généralisation : l'acteur hérite des cas du précédent |
   | Trait simple | Association : l'acteur poursuit ce cas |
   | Pointillé <<include>> | Le cas source déclenche toujours le cas cible |

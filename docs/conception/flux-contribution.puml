@@ -1,0 +1,63 @@
+@startuml flux-contribution
+' Figure 2.7b - Flux de contribution, de la ligne de fonctionnalite au service
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 13
+skinparam ArrowColor #4A4A45
+skinparam ArrowThickness 1.2
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #0F6E56
+  FontColor #14312A
+  BorderThickness 1.4
+}
+skinparam legend {
+  BackgroundColor #FFFFFF
+  BorderColor #BFBFBF
+  FontColor #40403C
+  FontSize 12
+}
+
+rectangle "Ligne de fonctionnalité" as L1 #FBFDFC {
+  rectangle "**Développement**\nd'un lot de travail\n//éphémère//" as F1 #EDF5F2
+}
+rectangle "Ligne d'intégration" as L2 #FBFDFC {
+  rectangle "**Coexistence**\ndes lots achevés" as I1 #EDF5F2
+}
+rectangle "Ligne de validation" as L3 #FBFDFC {
+  rectangle "**Version candidate**" as V1 #EDF5F2
+  rectangle "**Livrable construit**\ndésigné par son empreinte" as V2 #EDF5F2
+  rectangle "**Environnement**\nde vérification" as V3 #EDF5F2
+}
+rectangle "Ligne de service" as L4 #F2F8F6 {
+  rectangle "**Version publiée**" as S1 #D6E9E2
+  rectangle "**Environnement**\npublic" as S2 #D6E9E2
+  rectangle "**Étiquette de version**\ndésignation d'usage" as S3 #D6E9E2
+}
+
+rectangle "**Contrôles automatiques**\nconformité de style · analyse\nstatique · exécution des tests" as CTL #FFF4E6
+
+F1 -right-> I1 : intégration
+I1 -right-> V1 : promotion
+V1 -down-> V2
+V2 -down-> V3 : installation\nautomatique
+V1 -right-> S1 : publication\n//déclenchement manuel//
+S1 -down-> S2
+S2 -down-> S3
+
+F1 ..> CTL
+I1 ..> CTL
+V1 ..> CTL
+S1 ..> CTL
+
+V2 ..> S2 : #B06A00 **EXIGENCE**\npromouvoir ce livrable
+CTL ..> S2 : #B06A00 **EXIGENCE**\nsubordonner l'installation
+
+legend bottom
+  |= |= Lecture du schéma |
+  | Trait plein | Cheminement effectif d'une modification |
+  | Trait pointillé | Déclenchement des contrôles automatiques |
+  | <b>EXIGENCE</b> | Garantie conçue que la chaîne ne tient pas encore |
+  | <b>Note</b> | L'installation en service est déclenchée manuellement :\nla décision de publier relève de l'exploitation. |
+endlegend
+@enduml

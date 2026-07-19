@@ -1,0 +1,57 @@
+@startuml chaine-artefacts
+' Figure 2.1 - Chaine de production des artefacts de conception
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 13
+skinparam ArrowColor #4A4A45
+skinparam ArrowThickness 1.2
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #0F6E56
+  FontColor #14312A
+  BorderThickness 1.4
+}
+skinparam legend {
+  BackgroundColor #FFFFFF
+  BorderColor #BFBFBF
+  FontColor #40403C
+  FontSize 12
+}
+
+rectangle "**1 · Expression des besoins**\nbesoins fonctionnels, besoins non\nfonctionnels, périmètre et exclusions" as A1 #D6E9E2
+rectangle "**2 · Règles de gestion**\ninvariants métier" as A2 #D6E9E2
+rectangle "**3 · Cas d'utilisation**\npar acteur, fiches détaillées" as A3 #EDF5F2
+rectangle "**4 · Maquettes et enchaînement**\ndes écrans" as A4 #EDF5F2
+rectangle "**5 · Architecture**\nen couches" as A5 #EDF5F2
+rectangle "**6 · Modèle de données**\nconceptuel, logique, physique" as A6 #EDF5F2
+rectangle "**7 · Diagramme**\nde classes" as A7 #EDF5F2
+rectangle "**8 · Diagrammes de séquence**\ndes cas critiques" as A8 #F7F7F5
+rectangle "**9 · Conception**\nde la sécurité" as A9 #F7F7F5
+rectangle "**10 · Conception du déploiement**\net de l'exploitation" as A10 #F7F7F5
+rectangle "**11 · Stratégie de tests**\npar niveaux" as A11 #F7F7F5
+
+A1 --> A2
+A1 --> A3
+A2 --> A3
+A3 --> A4
+A3 --> A5
+A3 --> A6
+A6 --> A7
+A2 --> A8
+A5 --> A8
+A7 --> A8
+A5 --> A9
+A6 --> A9
+A5 --> A10
+A2 --> A11
+A4 --> A11
+A8 --> A11
+
+legend bottom
+  |= |= Lecture du schéma |
+  | <b>A → B</b> | B ne peut être élaboré qu'une fois A établi |
+  | Teinte soutenue | Socle : ce dont tout le reste dérive |
+  | Teinte claire | Artefacts de modélisation |
+  | Teinte grise | Artefacts dérivés de plusieurs sources |
+endlegend
+@enduml

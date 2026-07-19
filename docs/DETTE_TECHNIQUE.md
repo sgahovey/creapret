@@ -159,3 +159,30 @@ les laisser implicites).
 - **Résolution écartée** : aligner les identifiants supposerait de **renommer la colonne `version_cgu`**
   et de **migrer les données** existantes (consentements déjà enregistrés), pour un bénéfice strictement
   interne. Compromis assumé ; à traiter si une migration touchant `utilisateur` intervient par ailleurs.
+
+## DT-12 — L'annulation d'une demande par l'emprunteur n'est pas tracée
+
+- **Statut** : Ouverte (écart assumé).
+- **Constat** : l'annulation d'une demande de prêt par l'emprunteur (CU-06 / BF-6, self-service —
+  `PretController::annuler` → `PretService::annuler`) fait passer le prêt à `ANNULE` **sans** écrire
+  dans `journal_admin` ; `TypeActionJournal` ne comporte **aucun** cas d'annulation. L'historique
+  d'administration présente donc des **demandes disparues sans cause** visible.
+- **Conséquence** : un lecteur du journal ne peut expliquer la disparition d'une demande. Non
+  bloquant — l'annulation est une action *self-service* de l'emprunteur, pas une décision
+  d'administration — mais lacune de traçabilité.
+- **Condition de levée** : ajouter un cas `TypeActionJournal` (p. ex. `PRET_ANNULATION`) et
+  journaliser l'annulation (dans `PretController::annuler` ou le service) ; **puis** rétablir la
+  relation `CU-06 «include» CU-T2` dans l'analyse fonctionnelle.
+
+## DT-13 — Le livrable mis en production est reconstruit au lieu d'être promu depuis la validation
+
+- **Statut** : Ouverte (écart de conception).
+- **Constat** : la mise en production (`.github/workflows/deploy-prod.yml`) exécute son **propre**
+  travail de construction (`build:` → `uses: ./.github/workflows/build-push.yml`) au lieu de réutiliser
+  l'image déjà construite et vérifiée en préproduction. L'image est **reconstruite** à partir des
+  sources du commit (tag = empreinte `GITHUB_SHA`), puis déployée.
+- **Conséquence** : **ce qui est vérifié n'est pas ce qui est exposé** — la production reçoit une
+  reconstruction, non l'artefact validé ; la garantie « le livrable installé est celui qui a été
+  vérifié » (dossier §2.7.2) n'est pas tenue.
+- **Condition de levée** : **réutiliser l'artefact validé par son empreinte** — promouvoir l'image de
+  préproduction identifiée par son SHA plutôt que la reconstruire en production.

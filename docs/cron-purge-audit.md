@@ -22,12 +22,12 @@ php bin/console app:audit:purger --jours=180
 
 ## Planification (cron)
 
-En production, la purge est planifiee une fois par jour. Le serveur (VPS) etant en UTC, l\'heure est
+En production, la purge est planifiee une fois par mois. Le serveur (VPS) etant en UTC, l\'heure est
 choisie en dehors des periodes d\'activite.
 
 ```cron
-# Purge quotidienne des traces d\'audit a 03h00 UTC (retention 365 jours)
-0 3 * * * cd /var/www/creapret && php bin/console app:audit:purger >> var/log/purge-audit.log 2>&1
+# Purge mensuelle des traces d\'audit (le 1er du mois a 03h00 UTC, retention 365 jours)
+0 3 1 * * cd /var/www/creapret && php bin/console app:audit:purger >> var/log/purge-audit.log 2>&1
 ```
 
 ## Notes
