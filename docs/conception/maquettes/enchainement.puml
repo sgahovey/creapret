@@ -1,0 +1,55 @@
+@startuml enchainement
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 13
+skinparam rectangle {
+  BorderColor #0F6E56
+  BackgroundColor #F7F7F5
+}
+rectangle "Point d'entrée" as START
+rectangle "01 - Accueil" as ACC
+rectangle "02 - Connexion" as CON
+rectangle "Selon le profil" as AIG
+rectangle "Profil emprunteur" as EMP #D6E9E2 {
+  rectangle "03 - Catalogue" as CAT
+  rectangle "04 - Fiche matériel" as FIC
+  rectangle "05 - Mes prêts" as MES
+}
+rectangle "Profil gestionnaire" as GES #EDF5F2 {
+  rectangle "06 - Tableau de bord" as TDB
+  rectangle "07 - Demandes en attente" as DEM
+  rectangle "08 - Retours" as RET
+  rectangle "09 - Calendrier" as CAL
+  rectangle "10 - Liste d'inventaire" as INV
+  rectangle "11 - Formulaire de création" as FRM
+}
+rectangle "Profil super-administrateur" as ADM #F7F7F5 {
+  rectangle "12 - Gestion des comptes" as CPT
+  rectangle "13 - Journal d'administration" as JRN
+}
+START --> ACC
+ACC --> CON
+CON ..> AIG : s'authentifier (traitement)
+CAT --> FIC
+CAT -- MES
+FIC ..> MES : demander un prêt (traitement)
+MES ..> MES : annuler une demande (traitement)
+TDB -- DEM
+DEM -- RET
+RET -- CAL
+CAL -- INV
+DEM ..> DEM : valider / refuser (traitement)
+RET ..> RET : enregistrer le retour (traitement)
+INV --> FRM
+FRM ..> INV : enregistrer (traitement)
+CPT -- JRN
+CPT ..> CPT : créer / modifier / (dés)activer (traitement)
+AIG --> CAT
+AIG --> TDB
+AIG --> CPT
+legend bottom
+|= Trait |= Signification |
+| Trait plein | Navigation libre entre écrans (consultation) |
+| Flèche pointillée libellée | Action qui déclenche un traitement |
+endlegend
+@enduml

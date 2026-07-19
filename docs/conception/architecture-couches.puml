@@ -1,0 +1,38 @@
+@startuml architecture-couches
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 13
+skinparam rectangle {
+  BorderColor #0F6E56
+  BackgroundColor #EDF5F2
+}
+skinparam database {
+  BorderColor #0F6E56
+  BackgroundColor #D6E9E2
+}
+rectangle "Requête entrante" as R #F7F7F5
+rectangle "Contrôle d'accès\n(habilitations)" as AC #F7F7F5
+rectangle "Couche de présentation\n(contrôleur + vue)" as CTRL #D6E9E2
+rectangle "Validation des entrées\n(contraintes déclaratives)" as VAL #F7F7F5
+rectangle "Couche de traitement métier\n(règles, transaction, verrou)" as SRV #D6E9E2
+rectangle "Couche d'accès aux données\n(dépôts)" as REPO #D6E9E2
+database "Base de données" as DB
+rectangle "Traitement différé\n(notification)" as ASYNC #EDF5F2
+rectangle "Réponse" as RESP #F7F7F5
+R --> AC
+AC --> CTRL : autorisé
+CTRL --> VAL
+VAL --> SRV : valide
+SRV --> REPO
+REPO --> DB
+SRV --> CTRL
+CTRL --> RESP
+SRV ..> ASYNC : événement
+VAL ..> RESP : invalide
+AC ..> RESP : refusé
+legend bottom
+|= Trait |= Signification |
+| Flèche pleine | Passage nominal d'une couche à la suivante |
+| Flèche pointillée | Branche : accès refusé, entrée invalide, ou traitement différé |
+endlegend
+@enduml

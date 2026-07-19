@@ -1,0 +1,103 @@
+@startuml diagramme-classes
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 13
+skinparam class {
+  BorderColor #0F6E56
+  BackgroundColor #EDF5F2
+}
+skinparam enum {
+  BorderColor #0F6E56
+  BackgroundColor #F7F7F5
+}
+class Categorie {
+  nom : texte
+  description : texte
+}
+class Materiel {
+  nom : texte
+  marque : texte
+  modele : texte
+  reference : texte
+}
+class Exemplaire {
+  numeroInventaire : texte
+  etat : énuméré
+}
+class Pret {
+  dateDebut : date
+  dateFin : date
+  statut : énuméré
+  dateDemande : date
+  dateValidation : date
+  dateRetour : date
+  motifRefus : texte
+  estEnRetard(instant) : booléen
+}
+class Utilisateur {
+  email : texte
+  nom : texte
+  prenom : texte
+  role : énuméré
+  estActif : booléen
+  emailRappel : booléen
+}
+class JournalAdmin {
+  dateAction : date
+  typeAction : énuméré
+  acteurLibelle : texte
+  cibleLibelle : texte
+  details : texte
+}
+enum Role {
+  EMPRUNTEUR
+  GESTIONNAIRE
+  SUPER_ADMIN
+}
+enum EtatExemplaire {
+  DISPONIBLE
+  PRETE
+  EN_MAINTENANCE
+  HORS_SERVICE
+  PERDU
+  estPretable() : booléen
+}
+enum StatutPret {
+  DEMANDE
+  VALIDE
+  REFUSE
+  RETOURNE
+  ANNULE
+  estTerminal() : booléen
+}
+enum TypeActionJournal {
+  PRET_VALIDATION
+  PRET_REFUS
+  PRET_RETOUR
+  COMPTE_CREATION
+  COMPTE_MODIFICATION
+  COMPTE_CHANGEMENT_ROLE
+  COMPTE_ACTIVATION
+  COMPTE_DESACTIVATION
+}
+Categorie "1" --> "*" Materiel : classe
+Materiel "1" *-- "*" Exemplaire : décline en
+Exemplaire "1" --> "*" Pret : est prêté via
+Utilisateur "1" --> "*" Pret : emprunte
+Utilisateur "0..1" --> "*" Pret : valide
+Utilisateur ..> Role : porte
+Exemplaire ..> EtatExemplaire : a pour état
+Pret ..> StatutPret : a pour statut
+JournalAdmin ..> TypeActionJournal : a pour type
+note bottom of JournalAdmin
+  Classe isolée, sans association (choix délibéré) :
+  acteur et cible figés en libellés (append-only).
+  La trace survit à la suppression des comptes.
+end note
+legend bottom
+|= Trait |= Signification |
+| Association orientée (flèche pleine) | Lien navigable, avec cardinalités et rôle |
+| Composition (losange plein) | La partie n'existe pas sans le tout |
+| Dépendance (flèche pointillée) | La classe utilise un ensemble de valeurs (énumération) |
+endlegend
+@enduml

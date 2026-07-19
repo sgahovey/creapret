@@ -1,0 +1,46 @@
+@startuml surveillance
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 13
+skinparam ArrowColor #4A4A45
+skinparam ArrowThickness 1.2
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #0F6E56
+  FontColor #14312A
+  BorderThickness 1.4
+}
+skinparam actor {
+  BorderColor #0F6E56
+  FontColor #14312A
+}
+skinparam legend {
+  BackgroundColor #FFFFFF
+  BorderColor #BFBFBF
+  FontColor #40403C
+  FontSize 12
+}
+
+rectangle "Ce qui est surveillé" as SURV #FBFDFC {
+  rectangle "**Services visibles**\nde l'extérieur\n//défaillance qui se voit//" as V #EDF5F2
+  rectangle "**Traitements internes**\ninvisibles de l'extérieur\n//défaillance qui ne se voit pas//" as I #EDF5F2
+  rectangle "**Tâches attendues à échéance**\n//défaillance qui ne se voit jamais//\n//car c'est une absence//" as A #FFF4E6
+}
+
+rectangle "**Observateur permanent**\ninterroge sans intervention humaine" as OBS #D6E9E2
+rectangle "**Alerte**\npoussée sur un canal consulté" as AL #D6E9E2
+actor "Exploitant" as EX
+
+V -right-> OBS : réponse attendue\n//moins de 2 minutes//
+I -right-> OBS : signe de bon\nfonctionnement
+A .right.> OBS : signal attendu ;\n**son absence alarme**
+OBS -right-> AL : défaillance détectée
+AL -right-> EX
+
+legend bottom
+  |= |= Lecture du schéma |
+  | Trait plein | Élément dont l'état s'observe directement |
+  | Trait pointillé | Élément dont on surveille le **silence**, non l'activité |
+  | <b>Point clé</b> | Une tâche qui ne s'exécute pas ne produit ni erreur ni message.\nElle ne se détecte qu'en attendant un signal qui ne vient pas. |
+endlegend
+@enduml

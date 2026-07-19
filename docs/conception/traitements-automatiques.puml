@@ -1,0 +1,46 @@
+@startuml traitements-automatiques
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 13
+skinparam ArrowColor #4A4A45
+skinparam ArrowThickness 1.2
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #0F6E56
+  FontColor #14312A
+  BorderThickness 1.4
+}
+skinparam legend {
+  BackgroundColor #FFFFFF
+  BorderColor #BFBFBF
+  FontColor #40403C
+  FontSize 12
+}
+
+rectangle "Les trois traitements" as T #FBFDFC {
+  rectangle "**Rappel d'échéance**\nprévenir avant le terme,\nsignaler les retards\n//service rendu//" as T1 #EDF5F2
+  rectangle "**Purge des traces**\neffacer au-delà de la\ndurée de conservation\n//obligation réglementaire//" as T2 #EDF5F2
+  rectangle "**Copie de sauvegarde**\npermettre le rétablissement\naprès incident\n//continuité//" as T3 #EDF5F2
+}
+
+rectangle "**Déclenchement**\nà l'heure prévue" as DECL #D6E9E2
+rectangle "**Exécution**\ndu traitement" as EXEC #D6E9E2
+hexagon "Réussite ?" as OK #EDF5F2
+rectangle "**Confirmation émise**\nle traitement signale\nson bon déroulement" as CONF #D6E9E2
+rectangle "**Aucune confirmation**\n→ alerte\n//voir figure 2.7c//" as ABS #FFF4E6
+
+T1 -down-> DECL
+T2 -down-> DECL
+T3 -down-> DECL
+DECL -right-> EXEC
+EXEC -right-> OK
+OK -right-> CONF : oui
+OK -down-> ABS : non, ou rien
+
+legend bottom
+  |= |= Lecture du schéma |
+  | Cycle commun | Les trois traitements suivent le même cycle |
+  | <b>Point clé</b> | C'est l'**absence** de confirmation qui déclenche l'alerte,\nnon la présence d'une erreur. Un traitement qui ne s'exécute\npas ne produit aucune erreur à signaler. |
+  | <b>Conséquence</b> | Le traitement dont l'échec est le plus silencieux — la copie de\nsauvegarde — est celui dont la détection doit être la plus rapide. |
+endlegend
+@enduml
