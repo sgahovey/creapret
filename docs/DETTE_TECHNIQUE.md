@@ -224,3 +224,35 @@ les laisser implicites).
 - **Leçon** : **vérifier la configuration effective avec `docker compose config`** plutôt que de
   présumer qu'un fichier *lu* produit l'effet attendu. La preuve n'est pas qu'un fichier soit chargé,
   mais que la configuration résolue soit celle voulue (ici : un seul port publié par service).
+
+## DT-15 — Fuite d'isolation de la table `journal_admin` en base de test
+
+- **Statut** : **Clôturée** (correctif appliqué et vérifié).
+- **Constat** : trois tests fonctionnels — `GestionPretControllerTest`, `NotificationsPretTest`,
+  `RetourGestionTest` — déclenchent la journalisation d'administration en passant par le **contrôleur
+  réel** (validation, refus, retour), mais leur `purger()` ne nettoyait que cinq entités par
+  **marqueur** (prêt, exemplaire, matériel, catégorie, utilisateur). La table `journal_admin` restait
+  intacte. Elle est **append-only et sans clé étrangère** — donc hors d'atteinte de toute suppression
+  en cascade — et ses libellés d'acteur/cible sont **figés à l'écriture** (`« gest T »`, `« emp T »`,
+  issus de `getNomComplet()`), **sans le marqueur du test** : aucune purge par marqueur ne pouvait
+  les atteindre. Mesure : **+8 lignes par exécution** de la suite (32 lignes résiduelles constatées).
+- **Conséquence** : le nombre d'assertions de la suite **n'était pas reproductible** — il dérivait de
+  **+3 par exécution** (696, 699, 702 sur trois exécutions consécutives), pour un nombre de cas
+  rigoureusement stable. Cause de la dérive :
+  `JournalAdminRepositoryTest::test_find_pour_admin_filtre_par_type_et_pagine` asserte **une fois par
+  entrée retournée**, y compris les entrées **préexistantes** ; chaque exécution en ajoutait trois de
+  type `PRET_VALIDATION`. Le symptôme était doublement trompeur : la suite restait **verte**, et la
+  dérive aurait **cessé d'elle-même** à 25 entrées (plafond de pagination de `findPourAdmin`), donnant
+  l'illusion d'une stabilisation. C'est cette dérive qui expliquait les écarts entre les chiffres
+  d'assertions publiés successivement dans le plan de tests.
+- **Correctif appliqué** : **remise à zéro déterministe** de `journal_admin` en `tearDown` dans les
+  trois tests qui l'alimentent (`DELETE FROM App\Entity\JournalAdmin j`). Approche retenue **après avoir
+  écarté** la fiabilisation de la purge par marqueur : la rendre étanche aurait exigé d'inscrire le
+  marqueur dans les nom et prénom des comptes de test, donc d'altérer la donnée même que le journal
+  fige. En base de **test**, cette table n'a pas vocation à survivre à un test.
+- **Vérification** : **cinq exécutions consécutives** de la suite complète donnent **exactement 690
+  assertions** (207 cas), et `SELECT COUNT(*) FROM journal_admin` revient à **0** après chacune.
+- **Leçon** : une table **append-only et sans clé étrangère** est délibérément hors du jeu des
+  contraintes d'intégrité (cf. DC-12) — cette propriété, voulue en production pour protéger la valeur
+  de preuve de la trace, **la place aussi hors de portée des mécanismes de nettoyage** en test. Une
+  donnée volontairement non contrainte doit faire l'objet d'une stratégie d'isolation **explicite**.
