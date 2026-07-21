@@ -32,6 +32,10 @@ class PretRepository extends ServiceEntityRepository
      */
     public function existePretChevauchant(Exemplaire $exemplaire, \DateTimeImmutable $debut, \DateTimeImmutable $fin): bool
     {
+        // S'appuie sur l'index composite idx_pret_dispo
+        // (id_exemplaire, statut, date_debut, date_fin) : les deux criteres
+        // d'egalite precedent les criteres d'intervalle, ce qui permet a
+        // l'index d'etre exploite sur toute sa longueur.
         $n = (int) $this->createQueryBuilder('p')
             ->select('COUNT(p.id)')
             ->andWhere('p.exemplaire = :exemplaire')
