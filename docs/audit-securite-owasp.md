@@ -13,7 +13,7 @@ Audit **statique et applicatif** de la posture de sécurité de CréaPrêt. Chaq
 - **Hors périmètre** : test d'intrusion externe, audit de configuration du serveur, et les en-têtes posés
   par le reverse-proxy (qui appartient à l'autre application — cf. `docs/architecture-deploiement.md`).
 - **Date de l'audit** : 18/07/2026. **Version auditée** : état courant de la branche `develop` (dernière
-  suite verte : 206 cas, 670 assertions ; PHPStan niveau 8 « No errors » ; PHP-CS-Fixer sans écart).
+  suite verte : 206 cas ; PHPStan niveau 8 « No errors » ; PHP-CS-Fixer sans écart).
 - **Démarche** : (1) revue de la posture applicative mappée sur l'**OWASP Top 10 (2021)**, catégorie par
   catégorie, chaque mesure étant confrontée au fichier qui l'implémente ; (2) contrôle des dépendances
   par `composer audit` (§4). Les preuves automatisées des contrôles sont détaillées dans
