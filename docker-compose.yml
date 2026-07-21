@@ -99,6 +99,11 @@ services:
     command: --log-bin-trust-function-creators=1
     volumes:
       - mysql_data:/var/lib/mysql
+      # Scripts d'initialisation joues UNE SEULE FOIS, sur un volume VIERGE
+      # (comportement de l'image MySQL). Garantit qu'un nouveau clone obtient
+      # d'emblee la base de test et ses privileges. Sur un volume deja initialise,
+      # ce montage est sans effet : utiliser scripts/init-test-db.sh.
+      - ./docker/mysql/init-dev.d:/docker-entrypoint-initdb.d:ro
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE:-creapret}
       MYSQL_USER: ${MYSQL_USER:-creapret}
