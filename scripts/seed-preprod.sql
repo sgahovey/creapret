@@ -127,6 +127,39 @@ VALUES
     (6, DATE_ADD(NOW(), INTERVAL 20 DAY), DATE_ADD(NOW(), INTERVAL 24 DAY), 'annule',  NULL,
         DATE_SUB(NOW(), INTERVAL 5 DAY),  NULL,                             NULL, NULL, NULL, 7, 1, NULL);
 
+-- =============================================================================
+-- 6. JOURNAL D'ADMINISTRATION — trace consultee par le super-administrateur.
+--    Reprend a l'identique les 11 entrees de src/DataFixtures/DemoFixtures.php
+--    (memes types, memes details, memes dates), afin que le developpement et la
+--    preproduction montrent la MEME chose. Seules les identites sont remappees :
+--    le seed ne cree que trois comptes, la ou les fixtures en creent cinq. Les
+--    trois emprunteurs des fixtures (Marie, Jean, Sophie) se rabattent donc sur
+--    l'unique emprunteur du seed (id 1, « Emma Etudiant »).
+--    acteur/cible sont FIGES (id + libelle recopies), conformement a la nature
+--    append-only et sans cle etrangere de cette table.
+--    date_action en valeur EXPLICITE (jamais NOW()) : la chronologie du journal
+--    doit rester stable d'un peuplement a l'autre.
+-- =============================================================================
+INSERT INTO journal_admin
+    (id, date_action, type_action, acteur_id, acteur_libelle, cible_id, cible_libelle, details)
+VALUES
+    -- Cycle de vie du compte gestionnaire, par le super-administrateur.
+    (1,  '2026-04-10 08:05:00', 'COMPTE_CREATION',        3, 'Sacha Admin',     2, 'Gabriel Gestion', 'Compte cree avec le role emprunteur'),
+    (2,  '2026-04-11 09:15:00', 'COMPTE_CHANGEMENT_ROLE', 3, 'Sacha Admin',     2, 'Gabriel Gestion', 'Role modifie : emprunteur vers gestionnaire'),
+    -- Suspension puis reactivation d'un emprunteur : l'etat final reste ACTIF,
+    -- coherent avec le compte reellement seede.
+    (3,  '2026-05-06 10:40:00', 'COMPTE_DESACTIVATION',   3, 'Sacha Admin',     1, 'Emma Etudiant',   'Compte suspendu temporairement'),
+    -- Decisions de pret prises par le gestionnaire.
+    (4,  '2026-05-15 09:30:00', 'PRET_RETOUR',            2, 'Gabriel Gestion', 1, 'Emma Etudiant',   'Retour avec dommage : coque rayee'),
+    (5,  '2026-05-20 11:00:00', 'COMPTE_ACTIVATION',      3, 'Sacha Admin',     1, 'Emma Etudiant',   'Compte reactive'),
+    (6,  '2026-06-02 14:25:00', 'COMPTE_MODIFICATION',    3, 'Sacha Admin',     1, 'Emma Etudiant',   'Correction du nom de famille'),
+    (7,  '2026-06-18 16:10:00', 'PRET_REFUS',             2, 'Gabriel Gestion', 1, 'Emma Etudiant',   'Aucun exemplaire disponible sur la periode demandee'),
+    (8,  '2026-06-25 10:05:00', 'PRET_RETOUR',            2, 'Gabriel Gestion', 1, 'Emma Etudiant',   'Retour conforme'),
+    -- Validations : aucun detail (le motif n'a de sens que pour un refus).
+    (9,  '2026-07-02 08:30:00', 'PRET_VALIDATION',        2, 'Gabriel Gestion', 1, 'Emma Etudiant',   NULL),
+    (10, '2026-07-04 09:45:00', 'PRET_VALIDATION',        2, 'Gabriel Gestion', 1, 'Emma Etudiant',   NULL),
+    (11, '2026-07-07 15:20:00', 'PRET_VALIDATION',        2, 'Gabriel Gestion', 1, 'Emma Etudiant',   NULL);
+
 COMMIT;
 
 -- =============================================================================

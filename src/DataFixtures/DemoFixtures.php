@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\Entity\Exemplaire;
+use App\Entity\JournalAdmin;
 use App\Entity\Pret;
 use App\Entity\Utilisateur;
 use App\Enum\Role;
 use App\Enum\StatutPret;
+use App\Enum\TypeActionJournal;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -20,7 +22,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  * demo du rappel J-1) et un historique de prets RETOURNE. L'historique alimente le classement des
  * materiels les plus empruntes du tableau de bord ; comme RG-1 interdit deux prets VALIDE chevauchants
  * sur un meme exemplaire, la volumetrie passee est representee par des prets RETOURNE (periodes
- * anterieures, date de retour renseignee). Depend de ReferenceFixtures.
+ * anterieures, date de retour renseignee). Alimente aussi le journal d'administration (US-5.3 / US-6.2),
+ * trace append-only consultee par le super-administrateur. Depend de ReferenceFixtures.
  */
 final class DemoFixtures extends Fixture implements DependentFixtureInterface, FixtureGroupInterface
 {
@@ -95,6 +98,55 @@ final class DemoFixtures extends Fixture implements DependentFixtureInterface, F
         }
 
         $manager->flush();
+
+        // --- Journal d'administration (US-5.3 / US-6.2) : trace consultee par le super-administrateur.
+        // Les prets de demo sont crees directement en base (sans passer par le controleur qui alimente
+        // normalement le journal) ; on reconstitue donc ici des entrees representatives -- decisions de
+        // pret d'un gestionnaire et actions de compte du super-administrateur -- pour que l'ecran de
+        // consultation ne soit pas vide. L'acteur et la cible sont figes (id + libelle) : leurs IDs ne
+        // sont connus qu'apres le premier flush, d'ou ce second bloc. Les dates couvrent les huit cas de
+        // l'enum et sont coherentes avec les roles/etats reellement seedes (Gerard finit gestionnaire,
+        // Jean reste actif apres reactivation). ---
+        $this->entreeJournal($manager, TypeActionJournal::COMPTE_CREATION, $superAdmin, $gestionnaire, 'Compte cree avec le role emprunteur', '2026-04-10 08:05:00');
+        $this->entreeJournal($manager, TypeActionJournal::COMPTE_CHANGEMENT_ROLE, $superAdmin, $gestionnaire, 'Role modifie : emprunteur vers gestionnaire', '2026-04-11 09:15:00');
+        $this->entreeJournal($manager, TypeActionJournal::COMPTE_DESACTIVATION, $superAdmin, $jean, 'Compte suspendu temporairement', '2026-05-06 10:40:00');
+        $this->entreeJournal($manager, TypeActionJournal::COMPTE_ACTIVATION, $superAdmin, $jean, 'Compte reactive', '2026-05-20 11:00:00');
+        $this->entreeJournal($manager, TypeActionJournal::COMPTE_MODIFICATION, $superAdmin, $marie, 'Correction du nom de famille', '2026-06-02 14:25:00');
+
+        $this->entreeJournal($manager, TypeActionJournal::PRET_RETOUR, $gestionnaire, $sophie, 'Retour avec dommage : coque rayee', '2026-05-15 09:30:00');
+        $this->entreeJournal($manager, TypeActionJournal::PRET_REFUS, $gestionnaire, $marie, 'Aucun exemplaire disponible sur la periode demandee', '2026-06-18 16:10:00');
+        $this->entreeJournal($manager, TypeActionJournal::PRET_RETOUR, $gestionnaire, $jean, 'Retour conforme', '2026-06-25 10:05:00');
+        $this->entreeJournal($manager, TypeActionJournal::PRET_VALIDATION, $gestionnaire, $sophie, null, '2026-07-02 08:30:00');
+        $this->entreeJournal($manager, TypeActionJournal::PRET_VALIDATION, $gestionnaire, $marie, null, '2026-07-04 09:45:00');
+        $this->entreeJournal($manager, TypeActionJournal::PRET_VALIDATION, $gestionnaire, $jean, null, '2026-07-07 15:20:00');
+
+        $manager->flush();
+    }
+
+    /**
+     * Cree une entree de journal d'administration a une date choisie. Le constructeur de JournalAdmin
+     * fige `dateAction` a l'instant courant (entree append-only, sans setter) ; pour la demo on recale
+     * cette date par reflexion -- meme approche que PurgeAuditCommandTest.
+     */
+    private function entreeJournal(
+        ObjectManager $manager,
+        TypeActionJournal $type,
+        Utilisateur $acteur,
+        ?Utilisateur $cible,
+        ?string $details,
+        string $date,
+    ): void {
+        $entree = new JournalAdmin(
+            typeAction: $type,
+            acteurId: (int) $acteur->getId(),
+            acteurLibelle: $acteur->getNomComplet(),
+            cibleId: $cible?->getId(),
+            cibleLibelle: $cible?->getNomComplet(),
+            details: $details,
+        );
+        (new \ReflectionProperty(JournalAdmin::class, 'dateAction'))
+            ->setValue($entree, new \DateTimeImmutable($date));
+        $manager->persist($entree);
     }
 
     private function exemplaire(string $cle): Exemplaire
