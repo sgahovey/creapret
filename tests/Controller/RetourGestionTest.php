@@ -39,6 +39,11 @@ final class RetourGestionTest extends WebTestCase
             ->setParameter('p', self::MARQUEUR . '%')->execute();
         $em->createQuery('DELETE FROM App\Entity\Utilisateur u WHERE u.email LIKE :p')
             ->setParameter('p', 'retourgest.%')->execute();
+        // Le journal d'administration est append-only et SANS cle etrangere : aucune suppression
+        // en cascade ne l'atteint, et ses libelles figes (acteur/cible) ne portent pas le marqueur
+        // de ce test. Une purge par marqueur ne peut donc pas etre etanche ici -> remise a zero
+        // DETERMINISTE : en base de TEST, cette table n'a pas vocation a survivre a un test.
+        $em->createQuery('DELETE FROM App\\Entity\\JournalAdmin j')->execute();
     }
 
     private function utilisateur(EntityManagerInterface $em, UserPasswordHasherInterface $hasher, Role $role, string $suffixe): Utilisateur
