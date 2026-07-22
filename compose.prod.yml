@@ -183,8 +183,11 @@ networks:
   # Reseau prive CreaPret : applications <-> base. La base n'est que la.
   creapret-interne:
     driver: bridge
-  # Reseau du proxy existant (pile CreaSlot), declare EXTERNAL : seuls les services app-* s'y
-  # connectent, pour etre joignables par Caddy. Doit exister sur le serveur (cree par CreaSlot).
+  # Reseau du reverse proxy mutualise (stack infra-proxy, depot dedie), declare EXTERNAL :
+  # seuls les services exposes au public s'y connectent, pour etre joignables par Caddy.
+  # Cree une seule fois sur l'hote (`docker network create web`) et partage avec les autres
+  # applications. Compose y pose automatiquement le nom du service comme alias reseau
+  # (creapret-app-prod, creapret-app-preprod...), qui est ce que le Caddyfile cible.
   proxy:
     external: true
-    name: creaslot_prod_creaslot-prod-net
+    name: web
